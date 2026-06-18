@@ -191,24 +191,24 @@ export default function LearnerDashboard() {
             {loadingTutors && <p className="text-sm text-slate-500">Mencari tutor rekomendasi...</p>}
             
             {!loadingTutors && tutors.slice(0, 3).map((tutor, i) => (
-              <div key={i} className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center gap-4 cursor-pointer hover:border-emerald-200 hover:shadow-md transition-all" onClick={() => navigate(`/learner/tutors/${tutor.id}`)}>
+              <div key={i} className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center gap-4 cursor-pointer hover:border-emerald-200 hover:shadow-md transition-all" onClick={() => navigate(`/tutors/${tutor.id}`)}>
                 <div className="relative">
                   <img src={(tutor.avatar as string) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${tutor.name || 'Tutor'}`} className="w-20 h-20 bg-slate-200 rounded-2xl object-cover" alt="Tutor" />
                   <div className="absolute top-1 right-1 bg-white px-1.5 py-0.5 rounded-lg shadow-sm flex items-center text-[10px] font-bold">
-                    <Star className="w-3 h-3 text-amber-400 fill-amber-400 mr-0.5" /> {(tutor.rating as number) || '4.9'}
+                    <Star className="w-3 h-3 text-amber-400 fill-amber-400 mr-0.5" /> {Number(tutor.rating_avg || tutor.rating || 0).toFixed(1) || '0.0'}
                   </div>
                 </div>
                 <div>
                   <h4 className="font-bold text-[#111840]">{tutor.name as string}</h4>
-                  <p className="text-xs text-slate-500 font-medium mb-1">{(tutor.major as string) || (tutor.matkul as string[])?.[0] || 'Matematika Diskrit'}</p>
-                  <p className="text-[10px] text-slate-400 font-medium">({(tutor.reviews_count as number) || Math.floor(Math.random() * 100) + 10} ulasan)</p>
+                  <p className="text-xs text-slate-500 font-medium mb-1">{(tutor.major as string) || (tutor.taught_courses as any[])?.[0]?.course_name || 'Tutor Umum'}</p>
+                  <p className="text-[10px] text-slate-400 font-medium">({(tutor.total_reviews as number) || (tutor.reviews_count as number) || 0} ulasan)</p>
                 </div>
               </div>
             ))}
           </div>
 
           <Link 
-            to="/learner/tutors"
+            to="/tutors"
             className="block w-full border-2 border-dashed border-emerald-500 text-emerald-600 hover:bg-emerald-50 font-bold px-6 py-4 rounded-3xl text-center transition-colors"
           >
             Jelajahi Tutor Lainnya
