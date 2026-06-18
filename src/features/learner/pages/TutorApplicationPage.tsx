@@ -106,7 +106,9 @@ export default function TutorApplicationPage() {
       });
       
       formData.append('bio', bio);
-      formData.append('portfolio_link', portfolioLink);
+      if (portfolioLink) {
+        formData.append('portfolio_urls[]', portfolioLink);
+      }
       
       certificateFiles.forEach((file) => {
         formData.append('certificate_files[]', file);
@@ -128,38 +130,40 @@ export default function TutorApplicationPage() {
       
       {/* Left Column: Thesis & Information */}
       <div className="flex flex-col pt-8 lg:pt-16 lg:sticky lg:top-8 h-fit">
-        <div className="inline-flex items-center gap-2 text-brand-600 dark:text-brand-400 font-extrabold tracking-widest text-xs uppercase mb-6 bg-brand-50 dark:bg-brand-500/10 px-3 py-1.5 rounded-full w-fit">
-          <GraduationCap className="w-4 h-4" />
-          KonekDin Tutor
-        </div>
-        
-        <h1 className="text-4xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-6">
-          Bantu yang lain,<br/>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-brand-400">
-            Kembangkan dirimu.
-          </span>
-        </h1>
-        
-        <p className="text-slate-600 dark:text-slate-300 text-lg font-medium leading-relaxed max-w-md mb-12">
-          Bagikan keahlianmu pada mata kuliah yang telah kamu kuasai. Menjadi tutor tidak hanya menambah penghasilan, tapi juga mengasah pemahamanmu sendiri.
-        </p>
+        <div className="bg-white/90 dark:bg-bgSecondary/90 backdrop-blur-2xl border border-white/50 dark:border-borderColor rounded-[32px] shadow-xl shadow-slate-200/20 dark:shadow-none p-8 lg:p-10">
+          <div className="inline-flex items-center gap-2 text-brand-600 dark:text-brand-400 font-extrabold tracking-widest text-xs uppercase mb-6 bg-brand-50 dark:bg-brand-500/10 px-3 py-1.5 rounded-full w-fit">
+            <GraduationCap className="w-4 h-4" />
+            KonekDin Tutor
+          </div>
+          
+          <h1 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.15] mb-6">
+            Bantu yang lain,<br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-brand-400">
+              Kembangkan dirimu.
+            </span>
+          </h1>
+          
+          <p className="text-slate-600 dark:text-slate-300 text-base font-medium leading-relaxed max-w-md mb-10">
+            Bagikan keahlianmu pada mata kuliah yang telah kamu kuasai. Menjadi tutor tidak hanya menambah penghasilan, tapi juga mengasah pemahamanmu sendiri.
+          </p>
 
-        <div className="space-y-8 max-w-md">
-          {[
-            { title: "Verifikasi Semester", desc: "Upload transkrip nilai sesuai jumlah semester yang telah kamu lewati." },
-            { title: "Pilih Mata Kuliah", desc: "Kamu hanya bisa mengajar mata kuliah dari semester di bawahmu." },
-            { title: "Tunggu Persetujuan", desc: "Sistem akan memverifikasi IPK dan nilaimu secara otomatis sebelum kamu bisa mengajar." }
-          ].map((item, i) => (
-            <div key={i} className="flex gap-4 items-start">
-              <div className="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-sm shrink-0">
-                {i + 1}
+          <div className="space-y-8 max-w-md">
+            {[
+              { title: "Verifikasi Semester", desc: "Upload transkrip nilai sesuai jumlah semester yang telah kamu lewati." },
+              { title: "Pilih Mata Kuliah", desc: "Kamu hanya bisa mengajar mata kuliah dari semester di bawahmu." },
+              { title: "Tunggu Persetujuan", desc: "Sistem akan memverifikasi IPK dan nilaimu secara otomatis sebelum kamu bisa mengajar." }
+            ].map((item, i) => (
+              <div key={i} className="flex gap-4 items-start">
+                <div className="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-sm shrink-0">
+                  {i + 1}
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 dark:text-white text-base mb-1">{item.title}</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{item.desc}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-bold text-slate-900 dark:text-white text-base mb-1">{item.title}</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{item.desc}</p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
