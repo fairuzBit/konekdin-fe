@@ -14,6 +14,7 @@ export default function TutorApplicationPage() {
   const [courseId, setCourseId] = useState<string>('');
   const [bio, setBio] = useState<string>('');
   const [portfolioLink, setPortfolioLink] = useState<string>('');
+  const [certificateFiles, setCertificateFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [courses, setCourses] = useState<any[]>([]);
@@ -78,6 +79,12 @@ export default function TutorApplicationPage() {
     });
   };
 
+  const handleCertificateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setCertificateFiles(Array.from(e.target.files));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!courseId || transcriptFiles.some(f => f === null)) {
@@ -100,6 +107,10 @@ export default function TutorApplicationPage() {
       
       formData.append('bio', bio);
       formData.append('portfolio_link', portfolioLink);
+      
+      certificateFiles.forEach((file) => {
+        formData.append('certificate_files[]', file);
+      });
 
       await learnerService.upgradeToTutor(formData);
       setShowSuccess(true);
@@ -289,6 +300,38 @@ export default function TutorApplicationPage() {
                     placeholder="https://github.com/username" 
                     className="h-14 rounded-2xl bg-slate-50 dark:bg-bgPrimary border-slate-300 dark:border-borderColor focus-visible:ring-brand-500 text-sm font-medium text-slate-900 dark:text-white pl-12 pr-5 placeholder-slate-400"
                   />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase ml-1 flex items-center gap-1.5">
+                  Sertifikat Pendukung <span className="text-slate-400 font-medium normal-case tracking-normal">(Opsional)</span>
+                </label>
+                <div className="relative">
+                  <input 
+                    type="file" 
+                    multiple
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={handleCertificateChange}
+                    className="block w-full text-sm text-slate-500 dark:text-slate-400
+                      file:mr-4 file:py-2.5 file:px-4
+                      file:rounded-xl file:border-0
+                      file:text-sm file:font-bold
+                      file:bg-brand-50 file:text-brand-700
+                      dark:file:bg-brand-500/10 dark:file:text-brand-400
+                      hover:file:bg-brand-100 dark:hover:file:bg-brand-500/20
+                      cursor-pointer"
+                  />
+                  {certificateFiles.length > 0 && (
+                    <ul className="mt-3 space-y-2">
+                      {certificateFiles.map((f, i) => (
+                        <li key={i} className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-500" /> {f.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-2 ml-1">Format: PDF, JPG, PNG (Maks. 5MB/file)</p>
                 </div>
               </div>
             </div>
