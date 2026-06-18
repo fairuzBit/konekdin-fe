@@ -21,6 +21,7 @@ const MOCK_COURSES = [
 export default function TutorApplicationPage() {
   const navigate = useNavigate();
   const [currentSemester, setCurrentSemester] = useState<number>(3);
+  const [semesterInputValue, setSemesterInputValue] = useState<string>('3'); // Separate state for typing
   const [courseId, setCourseId] = useState<string>('');
   const [bio, setBio] = useState<string>('');
   const [portfolioLink, setPortfolioLink] = useState<string>('');
@@ -35,23 +36,35 @@ export default function TutorApplicationPage() {
     return MOCK_COURSES.filter(course => course.semester < currentSemester);
   }, [currentSemester]);
 
-  const handleSemesterChange = (val: number) => {
-    const newSem = Math.max(3, Math.min(14, val)); // Validate bounds 3-14
-    setCurrentSemester(newSem);
-    
-    // Reset course if the currently selected one is no longer valid
-    const isCurrentCourseValid = MOCK_COURSES.find(c => c.id.toString() === courseId && c.semester < newSem);
-    if (!isCurrentCourseValid) setCourseId('');
+  const handleSemesterChange = (val: string) => {
+    setSemesterInputValue(val); // Always update what they type
 
-    // Adjust transcript files array size
-    const newRequiredCount = Math.max(1, newSem - 1);
-    setTranscriptFiles(prev => {
-      const newFiles = [...prev];
-      if (newFiles.length < newRequiredCount) {
-        return [...newFiles, ...Array(newRequiredCount - newFiles.length).fill(null)];
-      }
-      return newFiles.slice(0, newRequiredCount);
-    });
+    const parsed = parseInt(val);
+    
+    // Only update the actual semantic semester if it's a valid number
+    if (!isNaN(parsed)) {
+      const newSem = Math.min(5, Math.max(3, parsed));
+      setCurrentSemester(newSem);
+      
+      // Reset course if the currently selected one is no longer valid
+      const isCurrentCourseValid = MOCK_COURSES.find(c => c.id.toString() === courseId && c.semester < newSem);
+      if (!isCurrentCourseValid) setCourseId('');
+
+      // Adjust transcript files array size
+      const newRequiredCount = Math.max(1, newSem - 1);
+      setTranscriptFiles(prev => {
+        const newFiles = [...prev];
+        if (newFiles.length < newRequiredCount) {
+          return [...newFiles, ...Array(newRequiredCount - newFiles.length).fill(null)];
+        }
+        return newFiles.slice(0, newRequiredCount);
+      });
+    }
+  };
+
+  const handleSemesterBlur = () => {
+    // When they leave the input, if it's empty or invalid, force it back to current valid state
+    setSemesterInputValue(currentSemester.toString());
   };
 
   const handleFileChange = (index: number, file: File | null) => {
@@ -150,13 +163,14 @@ export default function TutorApplicationPage() {
               </label>
               <Input 
                 type="number" 
-                min="3" max="14"
-                value={currentSemester}
-                onChange={(e) => handleSemesterChange(parseInt(e.target.value) || 3)}
+                min="3" max="5"
+                value={semesterInputValue}
+                onChange={(e) => handleSemesterChange(e.target.value)}
+                onBlur={handleSemesterBlur}
                 className="h-14 rounded-2xl bg-slate-50 dark:bg-bgPrimary border-slate-300 dark:border-borderColor focus-visible:ring-brand-500 text-lg font-bold px-5 text-slate-900 dark:text-white"
                 required
               />
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium ml-1">Minimal semester 3. Anda memerlukan {requiredFilesCount} transkrip nilai.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium ml-1">Minimal semester 3, maksimal 5. Anda memerlukan {requiredFilesCount} transkrip nilai.</p>
             </div>
 
             {/* Dynamic Transcripts Upload */}
