@@ -87,7 +87,7 @@ class TutorService {
   async updateProfile(payload: Record<string, unknown> | FormData) {
     if (payload instanceof FormData) {
       payload.append('_method', 'PATCH');
-      const response = await apiClient.post('/tutor/profile', payload);
+      const response = await apiClient.post('/tutor/profile', payload, { headers: { 'Content-Type': 'multipart/form-data' } });
       return response.data;
     }
     const response = await apiClient.patch('/tutor/profile', payload);

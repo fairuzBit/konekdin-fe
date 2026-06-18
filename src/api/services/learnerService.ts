@@ -26,7 +26,7 @@ class LearnerService {
   async updateProfile(payload: Record<string, unknown> | FormData) {
     if (payload instanceof FormData) {
       payload.append('_method', 'PATCH');
-      const response = await apiClient.post('/me', payload);
+      const response = await apiClient.post('/me', payload, { headers: { 'Content-Type': 'multipart/form-data' } });
       return response.data;
     }
     const response = await apiClient.patch('/me', payload);

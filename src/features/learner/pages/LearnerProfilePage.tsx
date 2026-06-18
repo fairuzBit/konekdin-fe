@@ -35,9 +35,7 @@ export default function LearnerProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(() => {
-    return localStorage.getItem('learner_avatar_preview') || null;
-  });
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
@@ -96,12 +94,16 @@ export default function LearnerProfilePage() {
       if (fileInputRef.current?.files?.[0]) {
         payload.append('avatar', fileInputRef.current.files[0]);
       }
-
-      await learnerService.updateProfile(payload);
       
-      if (avatarPreview) {
-        localStorage.setItem('learner_avatar_preview', avatarPreview);
-      }
+      const response = await learnerService.updateProfile(payload);
+      const updatedData = response?.data ?? response;
+      
+      setProfile(prev => ({
+        ...prev,
+        avatar: (updatedData?.avatar as string) || prev.avatar
+      }));
+      setAvatarPreview(null);
+      
       alert('Profil berhasil diperbarui!');
       setIsEditModalOpen(false);
     } catch (err: any) {
