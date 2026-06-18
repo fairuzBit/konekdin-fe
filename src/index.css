@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: 250 250 250; /* very light gray */
+    --bg-secondary: 255 255 255; /* white */
+    --text-primary: 17 24 39; /* gray-900 */
+    --text-secondary: 107 114 128; /* gray-500 */
+    --border-color: 229 231 235; /* gray-200 */
+    
+    /* Brand (Deep Emerald Green in Light Mode) */
+    --brand-50: 236 253 245;
+    --brand-100: 209 250 229;
+    --brand-400: 52 211 153;
+    --brand-500: 36 88 70; /* #245846 Deep green */
+    --brand-600: 26 69 54;
+    --brand-700: 20 54 42;
+    --brand-800: 15 41 32;
+    --brand-900: 10 27 21;
+    
+    /* Accents */
+    --accent-pink: 236 102 153; /* #ec6699 */
+    --accent-yellow: 250 204 21; /* #facc15 */
+    --accent-green: 36 88 70; /* Deep green */
+    
+    /* Gradients */
+    --grad-start: 36 88 70; /* Green */
+    --grad-end: 236 102 153; /* Pink */
+    
+    /* Global App BG */
+    --app-bg: 236 253 245; /* Soft green tint for light mode */
+    
+    /* Sidebar (Light Mode) */
+    --sidebar-bg: 24 54 44; /* Very rich forest green */
+    --sidebar-text: 248 250 252;
+    --sidebar-border: 36 88 70;
+    --sidebar-hover: 36 88 70;
+  }
+
+  .dark {
+    /* Deep Midnight Teal for a lively Dark Mode */
+    --bg-primary: 8 25 21; /* #081915 */
+    --bg-secondary: 14 36 30; /* #0e241e */
+    --text-primary: 248 250 252;
+    --text-secondary: 148 163 184; 
+    --border-color: 21 53 44; /* #15352c */
+    
+    /* Brand (Mint Green in Dark Mode) */
+    --brand-50: 10 27 21;
+    --brand-100: 15 41 32;
+    --brand-400: 52 211 153;
+    --brand-500: 30 226 156; /* #1ee29c Mint green */
+    --brand-600: 24 186 128;
+    --brand-700: 20 155 106;
+    --brand-800: 16 124 85;
+    --brand-900: 12 93 64;
+
+    /* Accents */
+    --accent-pink: 236 102 153;
+    --accent-yellow: 253 224 71; /* yellow-300 */
+    --accent-green: 30 226 156; /* Mint green */
+    
+    /* Gradients */
+    --grad-start: 14 36 30; 
+    --grad-end: 8 25 21; 
+    
+    /* Global App BG */
+    --app-bg: 8 25 21; 
+    
+    /* Sidebar (Dark Mode) */
+    --sidebar-bg: 10 27 21; /* Extra dark teal */
+    --sidebar-text: 248 250 252;
+    --sidebar-border: 21 53 44;
+    --sidebar-hover: 21 53 44;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--text-primary));
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+* {
+  box-sizing: border-box;
+}

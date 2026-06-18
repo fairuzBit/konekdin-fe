@@ -1,0 +1,204 @@
+import { useState, useEffect, type ElementType, type ReactNode } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Bell, ChevronRight, GraduationCap, LogOut, Menu, X, ArrowLeft, Sun, Moon } from 'lucide-react';
+import { useAuth, getRoleLabel } from '@/context/AuthContext';
+
+interface AppLayoutProps {
+  children: ReactNode;
+  navigation: Array<{
+    label: string;
+    to: string;
+    icon: ElementType;
+  }>;
+}
+
+export default function AppLayout({ children, navigation }: AppLayoutProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
+  // Theme state
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login', { replace: true });
+  };
+
+  const roleLabel = getRoleLabel(user);
+
+  return (
+    <div className="min-h-screen bg-appBg text-textPrimary transition-colors duration-300 relative z-0 overflow-hidden">
+      {/* Decorative Background Shapes (Light Mode only, hidden in dark mode via CSS variables or opacity) */}
+      <div className="absolute inset-0 z-[-1] flex overflow-hidden pointer-events-none dark:hidden">
+        <div className="w-[75%] h-full bg-accentGreen opacity-100"></div>
+        <div className="w-[25%] h-full bg-accentPink opacity-90"></div>
+        
+        {/* Giant Text Overlay - TOP */}
+        {/* Di sini Anda bisa mengatur tulisan KonekDin di Background */}
+        <div className="absolute top-0 w-full flex justify-center pt-8 opacity-40">
+          <span className="text-[25vw] leading-none font-black uppercase tracking-widest text-white/30 whitespace-nowrap select-none">
+            KonekDin
+          </span>
+        </div>
+
+        {/* Giant Text Overlay - BOTTOM */}
+        <div className="absolute bottom-0 w-full flex justify-center pb-8 opacity-40">
+          <span className="text-[25vw] leading-none font-black uppercase tracking-widest text-white/30 whitespace-nowrap select-none">
+            KonekDin
+          </span>
+        </div>
+      </div>
+
+      <div className="flex min-h-screen relative z-10">
+        {/* Sidebar Overlay for Mobile */}
+        {isSidebarOpen && (
+          <div 
+            className="fixed inset-0 z-40 bg-black/50 lg:hidden" 
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
+        {/* Sidebar */}
+        <aside 
+          className={`fixed inset-y-0 left-0 z-50 w-64 transform flex flex-col border-r border-borderColor bg-bgSecondary rounded-r-[32px] shadow-[4px_0_24px_rgba(0,0,0,0.02)] text-textPrimary transition-transform duration-300 ease-in-out ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          {/* Logo */}
+          <div className="flex items-center gap-3 p-6 pb-4">
+            <div className="flex items-center justify-center rounded-lg p-2 text-brand-500">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+              </svg>
+            </div>
+            <span className="text-xl font-bold text-brand-600 tracking-tight">KonekDin</span>
+            <button 
+              className="ml-auto rounded-lg p-2 hover:bg-bgPrimary text-textSecondary transition-colors" 
+              onClick={() => setIsSidebarOpen(false)}
+              title="Tutup Sidebar"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* User Profile in Sidebar */}
+          <div className="px-6 pb-6">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-700 shadow-sm">
+                {(user?.name ?? 'U').slice(0, 2).toUpperCase()}
+              </div>
+              <div className="flex flex-col overflow-hidden">
+                <span className="truncate text-sm font-bold text-textPrimary">{user?.name ?? 'Budi Santoso'}</span>
+                <span className="truncate text-xs text-textSecondary">{roleLabel}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 space-y-1 overflow-y-auto px-4">
+            {navigation.map((item) => {
+              const Icon = item.icon;
+              const active = location.pathname === item.to;
+
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => {
+                    if (window.innerWidth < 1024) setIsSidebarOpen(false);
+                  }}
+                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-colors ${
+                    active 
+                      ? 'bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400' 
+                      : 'text-textSecondary hover:bg-bgPrimary hover:text-textPrimary'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Bottom Actions */}
+          <div className="p-4 border-t border-borderColor space-y-1">
+            <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-textSecondary hover:bg-bgPrimary transition-colors">
+              <div className="flex items-center justify-center h-4 w-4 rounded-full border-2 border-current">
+                <span className="text-[10px]">?</span>
+              </div>
+              Bantuan
+            </button>
+            <button 
+              onClick={handleLogout} 
+              className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
+            >
+              <LogOut className="h-4 w-4" />
+              Keluar
+            </button>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main 
+          className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out p-4 md:p-6 lg:p-8 ${
+            isSidebarOpen ? 'lg:ml-64' : 'ml-0'
+          }`}
+        >
+          {/* Unified Header (Back Button, Menu Toggle, Theme) */}
+          <header className="mb-6 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {!isSidebarOpen && (
+                <button 
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="rounded-xl border border-borderColor bg-bgSecondary p-2.5 text-textSecondary shadow-sm hover:text-brand-500 hover:border-brand-500 transition-colors"
+                  title="Buka Sidebar"
+                >
+                  <Menu className="h-5 w-5" />
+                </button>
+              )}
+              <button 
+                onClick={() => navigate(-1)}
+                className="rounded-xl border border-borderColor bg-bgSecondary p-2.5 text-textSecondary shadow-sm hover:text-brand-500 hover:border-brand-500 transition-colors flex items-center gap-2"
+                title="Go Back"
+              >
+                <ArrowLeft className="h-5 w-5" />
+                <span className="text-sm font-bold hidden sm:inline">Kembali</span>
+              </button>
+            </div>
+            
+            <div className="flex gap-2 z-50 relative">
+              <button 
+                onClick={toggleTheme} 
+                className="rounded-xl border border-borderColor bg-bgSecondary p-2.5 text-textSecondary shadow-sm hover:text-brand-500 hover:border-brand-500 transition-colors"
+                title="Toggle Theme"
+              >
+                {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+              </button>
+            </div>
+          </header>
+
+          <div className="flex-1">{children}</div>
+        </main>
+      </div>
+    </div>
+  );
+}
