@@ -11,12 +11,20 @@ export default function LoginPage() {
   const location = useLocation();
   const { login, isAuthenticated, loading, logout, user } = useAuth();
   
-  const [loginMode, setLoginMode] = useState<'learner' | 'tutor'>('learner');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [loginMode, setLoginMode] = useState<'learner' | 'tutor'>(() => {
+    return (sessionStorage.getItem('konekdin_login_mode') as 'learner' | 'tutor') || 'learner';
+  });
+  const [email, setEmail] = useState(() => sessionStorage.getItem('konekdin_login_email') || '');
+  const [password, setPassword] = useState(() => sessionStorage.getItem('konekdin_login_password') || '');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    sessionStorage.setItem('konekdin_login_mode', loginMode);
+    sessionStorage.setItem('konekdin_login_email', email);
+    sessionStorage.setItem('konekdin_login_password', password);
+  }, [loginMode, email, password]);
 
   const from = location.state?.from?.pathname;
 
@@ -44,6 +52,8 @@ export default function LoginPage() {
       
       if (loginMode === 'tutor') {
         if (hasRole(loggedUser, 'tutor') || getRoleLabel(loggedUser) === 'admin') {
+          sessionStorage.removeItem('konekdin_login_email');
+          sessionStorage.removeItem('konekdin_login_password');
           navigate('/tutor', { replace: true });
         } else {
           setError('Akun Anda belum terdaftar sebagai Pengajar. Silakan masuk sebagai Pelajar dan daftar menjadi Tutor melalui profil Anda.');
@@ -51,6 +61,8 @@ export default function LoginPage() {
         }
       } else {
         const role = getRoleLabel(loggedUser);
+        sessionStorage.removeItem('konekdin_login_email');
+        sessionStorage.removeItem('konekdin_login_password');
         if (role === 'admin') {
           navigate('/admin', { replace: true });
         } else {

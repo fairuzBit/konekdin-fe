@@ -9,14 +9,22 @@ import { useAuth } from '@/context/AuthContext';
 export default function RegisterPage() {
   const navigate = useNavigate();
   const { register, isAuthenticated, loading } = useAuth();
-  const [name, setName] = useState('');
-  const [nim, setNim] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState(() => sessionStorage.getItem('konekdin_reg_name') || '');
+  const [nim, setNim] = useState(() => sessionStorage.getItem('konekdin_reg_nim') || '');
+  const [phone, setPhone] = useState(() => sessionStorage.getItem('konekdin_reg_phone') || '');
+  const [email, setEmail] = useState(() => sessionStorage.getItem('konekdin_reg_email') || '');
+  const [password, setPassword] = useState(() => sessionStorage.getItem('konekdin_reg_password') || '');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    sessionStorage.setItem('konekdin_reg_name', name);
+    sessionStorage.setItem('konekdin_reg_nim', nim);
+    sessionStorage.setItem('konekdin_reg_phone', phone);
+    sessionStorage.setItem('konekdin_reg_email', email);
+    sessionStorage.setItem('konekdin_reg_password', password);
+  }, [name, nim, phone, email, password]);
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
@@ -30,7 +38,14 @@ export default function RegisterPage() {
     setSubmitting(true);
 
     try {
-      await register({ name, nim, phone, email, password });
+      await register({ fullName: name, nim, phone, email, password });
+      
+      sessionStorage.removeItem('konekdin_reg_name');
+      sessionStorage.removeItem('konekdin_reg_nim');
+      sessionStorage.removeItem('konekdin_reg_phone');
+      sessionStorage.removeItem('konekdin_reg_email');
+      sessionStorage.removeItem('konekdin_reg_password');
+
       navigate('/learner', { replace: true });
     } catch {
       setError('Pendaftaran gagal. Silakan coba lagi.');
