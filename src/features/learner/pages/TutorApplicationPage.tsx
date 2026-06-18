@@ -1,22 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { UploadCloud, CheckCircle2, ChevronRight, GraduationCap, Briefcase, Link as LinkIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { learnerService } from '@/api/services/learnerService';
+import { publicService } from '@/api/services/publicService';
 import { useNavigate } from 'react-router-dom';
-
-// Mock Data for Courses to demonstrate filtering logic
-const MOCK_COURSES = [
-  { id: 1, name: "Algoritma Pemrograman", semester: 1 },
-  { id: 2, name: "Kalkulus Dasar", semester: 1 },
-  { id: 3, name: "Logika Informatika", semester: 1 },
-  { id: 4, name: "Struktur Data", semester: 2 },
-  { id: 5, name: "Basis Data", semester: 2 },
-  { id: 6, name: "Jaringan Komputer", semester: 3 },
-  { id: 7, name: "Sistem Operasi", semester: 3 },
-  { id: 8, name: "Pemrograman Web", semester: 4 },
-  { id: 9, name: "Kecerdasan Buatan", semester: 5 },
-];
+import { normalizeList } from '@/lib/apiData';
 
 export default function TutorApplicationPage() {
   const navigate = useNavigate();
@@ -26,6 +15,20 @@ export default function TutorApplicationPage() {
   const [bio, setBio] = useState<string>('');
   const [portfolioLink, setPortfolioLink] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [courses, setCourses] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await publicService.getCourses();
+        setCourses(normalizeList(response));
+      } catch (err) {
+        console.error("Failed to load courses");
+      }
+    };
+    fetchCourses();
+  }, []);
 
   // Array to hold files based on required count
   const requiredFilesCount = Math.max(1, currentSemester - 1);
@@ -33,8 +36,8 @@ export default function TutorApplicationPage() {
 
   // Filter courses based on current semester (can only teach past semesters)
   const availableCourses = useMemo(() => {
-    return MOCK_COURSES.filter(course => course.semester < currentSemester);
-  }, [currentSemester]);
+    return courses.filter(course => (course.semester || 1) < currentSemester);
+  }, [currentSemester, courses]);
 
   const handleSemesterChange = (val: string) => {
     setSemesterInputValue(val); // Always update what they type
@@ -47,7 +50,7 @@ export default function TutorApplicationPage() {
       setCurrentSemester(newSem);
       
       // Reset course if the currently selected one is no longer valid
-      const isCurrentCourseValid = MOCK_COURSES.find(c => c.id.toString() === courseId && c.semester < newSem);
+      const isCurrentCourseValid = courses.find(c => c.id.toString() === courseId && (c.semester || 1) < newSem);
       if (!isCurrentCourseValid) setCourseId('');
 
       // Adjust transcript files array size
@@ -97,10 +100,10 @@ export default function TutorApplicationPage() {
       formData.append('portfolio_link', portfolioLink);
 
       await learnerService.upgradeToTutor(formData);
-      alert('Aplikasi berhasil dikirim! Menunggu persetujuan admin.');
-      navigate('/learner/profile');
+      setShowSuccess(true);
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Terjadi kesalahan sistem';
+      // Fallback to alert for errors, but we can also use custom UI later if needed
       alert('Gagal: ' + msg);
     } finally {
       setIsSubmitting(false);
@@ -147,151 +150,170 @@ export default function TutorApplicationPage() {
         </div>
       </div>
 
-      {/* Right Column: Application Form */}
+      {/* Right Column: Application Form or Success State */}
       <div className="bg-white dark:bg-bgSecondary rounded-[32px] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-borderColor p-8 lg:p-10">
-        <form onSubmit={handleSubmit} className="space-y-10">
-          
-          {/* Section 1: Akademik */}
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-200 dark:border-borderColor pb-4">
-              1. Informasi Akademik
-            </h3>
-            
-            <div className="space-y-3">
-              <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase ml-1">
-                Semester Berjalan <span className="text-red-500">*</span>
-              </label>
-              <Input 
-                type="number" 
-                min="3" max="5"
-                value={semesterInputValue}
-                onChange={(e) => handleSemesterChange(e.target.value)}
-                onBlur={handleSemesterBlur}
-                className="h-14 rounded-2xl bg-slate-50 dark:bg-bgPrimary border-slate-300 dark:border-borderColor focus-visible:ring-brand-500 text-lg font-bold px-5 text-slate-900 dark:text-white"
-                required
-              />
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium ml-1">Minimal semester 3, maksimal 5. Anda memerlukan {requiredFilesCount} transkrip nilai.</p>
+        {showSuccess ? (
+          <div className="flex flex-col items-center justify-center text-center py-12 space-y-6 h-full">
+            <div className="w-24 h-24 bg-emerald-50 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mb-2">
+              <CheckCircle2 className="w-12 h-12 text-emerald-500" />
             </div>
-
-            {/* Dynamic Transcripts Upload */}
-            <div className="space-y-4 pt-2">
-              <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase ml-1 mb-2">
-                Dokumen Transkrip <span className="text-red-500">*</span>
-              </label>
+            <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Pengajuan Berhasil!</h2>
+            <p className="text-slate-600 dark:text-slate-400 font-medium max-w-sm leading-relaxed">
+              Terima kasih telah mendaftar menjadi tutor KonekDin. Tim admin kami akan meninjau berkas Anda dalam 1x24 jam kerja.
+            </p>
+            <div className="pt-6 w-full">
+              <Button 
+                onClick={() => navigate('/learner/profile')}
+                className="w-full h-14 rounded-2xl text-base font-bold bg-[#0a192f] hover:bg-[#112240] dark:bg-brand-600 dark:hover:bg-brand-700 text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+              >
+                Kembali ke Profil
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-10">
+            
+            {/* Section 1: Akademik */}
+            <div className="space-y-6">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-200 dark:border-borderColor pb-4">
+                1. Informasi Akademik
+              </h3>
               
-              <div className="grid gap-4">
-                {Array.from({ length: requiredFilesCount }).map((_, i) => (
-                  <div key={i} className="relative group">
-                    <input 
-                      type="file" 
-                      accept=".pdf"
-                      onChange={(e) => handleFileChange(i, e.target.files?.[0] || null)}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                      required
-                    />
-                    <div className={`flex items-center gap-4 p-4 rounded-2xl border-2 border-dashed transition-colors
-                      ${transcriptFiles[i] ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-500/10' : 'border-slate-300 dark:border-borderColor bg-slate-50 dark:bg-bgPrimary group-hover:border-brand-400'}`}>
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors
-                        ${transcriptFiles[i] ? 'bg-brand-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-brand-100 group-hover:text-brand-600'}`}>
-                        {transcriptFiles[i] ? <CheckCircle2 className="w-6 h-6" /> : <UploadCloud className="w-6 h-6" />}
-                      </div>
-                      <div className="truncate pr-4">
-                        <p className={`font-bold text-sm truncate ${transcriptFiles[i] ? 'text-brand-700 dark:text-brand-400' : 'text-slate-900 dark:text-white'}`}>
-                          {transcriptFiles[i] ? transcriptFiles[i]?.name : `Transkrip Semester ${i + 1}`}
-                        </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-                          {transcriptFiles[i] ? 'Siap diunggah' : 'Format PDF (Maks. 5MB)'}
-                        </p>
+              <div className="space-y-3">
+                <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase ml-1">
+                  Semester Berjalan <span className="text-red-500">*</span>
+                </label>
+                <Input 
+                  type="number" 
+                  min="3" max="5"
+                  value={semesterInputValue}
+                  onChange={(e) => handleSemesterChange(e.target.value)}
+                  onBlur={handleSemesterBlur}
+                  className="h-14 rounded-2xl bg-slate-50 dark:bg-bgPrimary border-slate-300 dark:border-borderColor focus-visible:ring-brand-500 text-lg font-bold px-5 text-slate-900 dark:text-white"
+                  required
+                />
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium ml-1">Minimal semester 3, maksimal 5. Anda memerlukan {requiredFilesCount} transkrip nilai.</p>
+              </div>
+
+              {/* Dynamic Transcripts Upload */}
+              <div className="space-y-4 pt-2">
+                <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase ml-1 mb-2">
+                  Dokumen Transkrip <span className="text-red-500">*</span>
+                </label>
+                
+                <div className="grid gap-4">
+                  {Array.from({ length: requiredFilesCount }).map((_, i) => (
+                    <div key={i} className="relative group">
+                      <input 
+                        type="file" 
+                        accept=".pdf"
+                        onChange={(e) => handleFileChange(i, e.target.files?.[0] || null)}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        required
+                      />
+                      <div className={`flex items-center gap-4 p-4 rounded-2xl border-2 border-dashed transition-colors
+                        ${transcriptFiles[i] ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-500/10' : 'border-slate-300 dark:border-borderColor bg-slate-50 dark:bg-bgPrimary group-hover:border-brand-400'}`}>
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors
+                          ${transcriptFiles[i] ? 'bg-brand-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-brand-100 group-hover:text-brand-600'}`}>
+                          {transcriptFiles[i] ? <CheckCircle2 className="w-6 h-6" /> : <UploadCloud className="w-6 h-6" />}
+                        </div>
+                        <div className="truncate pr-4">
+                          <p className={`font-bold text-sm truncate ${transcriptFiles[i] ? 'text-brand-700 dark:text-brand-400' : 'text-slate-900 dark:text-white'}`}>
+                            {transcriptFiles[i] ? transcriptFiles[i]?.name : `Transkrip Semester ${i + 1}`}
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                            {transcriptFiles[i] ? 'Siap diunggah' : 'Format PDF (Maks. 5MB)'}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Section 2: Pemilihan Matkul */}
-          <div className="space-y-6 pt-4">
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-200 dark:border-borderColor pb-4">
-              2. Mata Kuliah & Keahlian
-            </h3>
+            {/* Section 2: Pemilihan Matkul */}
+            <div className="space-y-6 pt-4">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-200 dark:border-borderColor pb-4">
+                2. Mata Kuliah & Keahlian
+              </h3>
 
-            <div className="space-y-3">
-              <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase ml-1">
-                Mata Kuliah Diajarkan <span className="text-red-500">*</span>
-              </label>
-              <select 
-                value={courseId} 
-                onChange={(e) => setCourseId(e.target.value)} 
-                className="w-full h-14 rounded-2xl border border-slate-300 dark:border-borderColor bg-slate-50 dark:bg-bgPrimary px-5 text-sm font-semibold text-slate-900 dark:text-white outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 appearance-none cursor-pointer"
-                required
+              <div className="space-y-3">
+                <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase ml-1">
+                  Mata Kuliah Diajarkan <span className="text-red-500">*</span>
+                </label>
+                <select 
+                  value={courseId} 
+                  onChange={(e) => setCourseId(e.target.value)} 
+                  className="w-full h-14 rounded-2xl border border-slate-300 dark:border-borderColor bg-slate-50 dark:bg-bgPrimary px-5 text-sm font-semibold text-slate-900 dark:text-white outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 appearance-none cursor-pointer"
+                  required
+                >
+                  <option value="" className="text-slate-500">Pilih mata kuliah...</option>
+                  {availableCourses.map(c => (
+                    <option key={c.id} value={c.id} className="text-slate-900 dark:text-white">{c.name} {c.semester ? `(Sem ${c.semester})` : ''}</option>
+                  ))}
+                </select>
+                {availableCourses.length === 0 && (
+                  <p className="text-xs text-red-500 font-semibold mt-1">Tidak ada matkul tersedia untuk semester ini.</p>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase ml-1 flex items-center gap-1.5">
+                  Keahlian & Bio Singkat <span className="text-slate-400 font-medium normal-case tracking-normal">(Opsional)</span>
+                </label>
+                <div className="relative">
+                  <Briefcase className="absolute top-4 left-4 w-5 h-5 text-slate-400" />
+                  <textarea 
+                    value={bio} 
+                    onChange={(e) => setBio(e.target.value)} 
+                    rows={4} 
+                    placeholder="Ceritakan keahlian spesifikmu, gaya mengajarmu..." 
+                    className="w-full rounded-2xl border border-slate-300 dark:border-borderColor bg-slate-50 dark:bg-bgPrimary pl-12 pr-5 py-4 text-sm font-medium text-slate-900 dark:text-white outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 resize-none placeholder-slate-400"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase ml-1 flex items-center gap-1.5">
+                  Link Portofolio <span className="text-slate-400 font-medium normal-case tracking-normal">(Opsional)</span>
+                </label>
+                <div className="relative">
+                  <LinkIcon className="absolute top-1/2 -translate-y-1/2 left-4 w-5 h-5 text-slate-400" />
+                  <Input 
+                    type="url"
+                    value={portfolioLink} 
+                    onChange={(e) => setPortfolioLink(e.target.value)} 
+                    placeholder="https://github.com/username" 
+                    className="h-14 rounded-2xl bg-slate-50 dark:bg-bgPrimary border-slate-300 dark:border-borderColor focus-visible:ring-brand-500 text-sm font-medium text-slate-900 dark:text-white pl-12 pr-5 placeholder-slate-400"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-slate-200 dark:border-borderColor">
+              <Button 
+                type="submit" 
+                disabled={isSubmitting || availableCourses.length === 0}
+                className="w-full h-14 rounded-2xl text-base font-bold bg-[#0a192f] hover:bg-[#112240] dark:bg-brand-600 dark:hover:bg-brand-700 text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 group disabled:opacity-70 disabled:hover:translate-y-0"
               >
-                <option value="" className="text-slate-500">Pilih mata kuliah...</option>
-                {availableCourses.map(c => (
-                  <option key={c.id} value={c.id} className="text-slate-900 dark:text-white">{c.name} (Sem {c.semester})</option>
-                ))}
-              </select>
-              {availableCourses.length === 0 && (
-                <p className="text-xs text-red-500 font-semibold mt-1">Tidak ada matkul tersedia untuk semester ini.</p>
-              )}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Sedang Mengirim...
+                  </>
+                ) : (
+                  <>
+                    Kirim Pengajuan Tutor
+                    <ChevronRight className="w-5 h-5 ml-1 transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
+              </Button>
+              <p className="text-center text-xs font-semibold text-slate-500 dark:text-slate-400 mt-4">
+                Dengan mengirim pengajuan, Anda menyetujui syarat & ketentuan KonekDin.
+              </p>
             </div>
-
-            <div className="space-y-3">
-              <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase ml-1 flex items-center gap-1.5">
-                Keahlian & Bio Singkat <span className="text-slate-400 font-medium normal-case tracking-normal">(Opsional)</span>
-              </label>
-              <div className="relative">
-                <Briefcase className="absolute top-4 left-4 w-5 h-5 text-slate-400" />
-                <textarea 
-                  value={bio} 
-                  onChange={(e) => setBio(e.target.value)} 
-                  rows={4} 
-                  placeholder="Ceritakan keahlian spesifikmu, gaya mengajarmu..." 
-                  className="w-full rounded-2xl border border-slate-300 dark:border-borderColor bg-slate-50 dark:bg-bgPrimary pl-12 pr-5 py-4 text-sm font-medium text-slate-900 dark:text-white outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 resize-none placeholder-slate-400"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase ml-1 flex items-center gap-1.5">
-                Link Portofolio <span className="text-slate-400 font-medium normal-case tracking-normal">(Opsional)</span>
-              </label>
-              <div className="relative">
-                <LinkIcon className="absolute top-1/2 -translate-y-1/2 left-4 w-5 h-5 text-slate-400" />
-                <Input 
-                  type="url"
-                  value={portfolioLink} 
-                  onChange={(e) => setPortfolioLink(e.target.value)} 
-                  placeholder="https://github.com/username" 
-                  className="h-14 rounded-2xl bg-slate-50 dark:bg-bgPrimary border-slate-300 dark:border-borderColor focus-visible:ring-brand-500 text-sm font-medium text-slate-900 dark:text-white pl-12 pr-5 placeholder-slate-400"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-6 border-t border-slate-200 dark:border-borderColor">
-            <Button 
-              type="submit" 
-              disabled={isSubmitting || availableCourses.length === 0}
-              className="w-full h-14 rounded-2xl text-base font-bold bg-[#0a192f] hover:bg-[#112240] dark:bg-brand-600 dark:hover:bg-brand-700 text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 group disabled:opacity-70 disabled:hover:translate-y-0"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Sedang Mengirim...
-                </>
-              ) : (
-                <>
-                  Kirim Aplikasi Tutor
-                  <ChevronRight className="w-5 h-5 ml-1 transition-transform group-hover:translate-x-1" />
-                </>
-              )}
-            </Button>
-            <p className="text-center text-xs font-semibold text-slate-500 dark:text-slate-400 mt-4">
-              Dengan mengirim aplikasi, Anda menyetujui syarat & ketentuan KonekDin.
-            </p>
-          </div>
-
-        </form>
+          </form>
+        )}
       </div>
     </div>
   );
