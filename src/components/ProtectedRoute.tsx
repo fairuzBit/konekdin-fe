@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth, getRoleLabel } from '@/context/AuthContext';
+import { useAuth, getRoleLabel, hasRole } from '@/context/AuthContext';
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -22,13 +22,15 @@ export default function ProtectedRoute({ children, allowedRoles = [] }: Protecte
   }
 
   if (allowedRoles.length > 0) {
-    const role = getRoleLabel(user);
-    if (!allowedRoles.includes(role)) {
-      if (role === 'admin') {
+    const hasAllowedRole = allowedRoles.some((role) => hasRole(user, role));
+    
+    if (!hasAllowedRole) {
+      const primaryRole = getRoleLabel(user);
+      if (primaryRole === 'admin') {
         return <Navigate to="/admin" replace />;
       }
 
-      if (role === 'tutor') {
+      if (primaryRole === 'tutor') {
         return <Navigate to="/tutor" replace />;
       }
 

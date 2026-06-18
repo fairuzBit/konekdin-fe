@@ -47,9 +47,9 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,_rgba(0,121,107,0.16),_transparent_35%),linear-gradient(135deg,_#f8fffd_0%,_#ebf8f4_100%)] p-4 md:p-8">
-      <div className="flex min-h-[calc(100vh-2rem)] flex-col overflow-hidden rounded-[32px] border border-brand-100 bg-white/90 shadow-[0_30px_80px_rgba(0,121,107,0.16)] lg:flex-row">
-        <section className="flex flex-1 items-center justify-center p-6 md:p-10">
+    <div className="h-screen w-screen overflow-hidden flex items-center justify-center bg-[radial-gradient(circle_at_top_right,_rgba(0,121,107,0.16),_transparent_35%),linear-gradient(135deg,_#f8fffd_0%,_#ebf8f4_100%)] p-4 sm:p-6 lg:p-8">
+      <div className="flex w-full max-w-6xl max-h-full flex-col-reverse overflow-y-auto lg:overflow-hidden rounded-[32px] border border-brand-100 bg-white/90 shadow-[0_30px_80px_rgba(0,121,107,0.16)] lg:flex-row">
+        <section className="flex flex-1 items-center justify-center p-6 md:p-10 shrink-0">
           <div className="w-full max-w-md rounded-[28px] border border-slate-200 bg-slate-50/80 p-6 md:p-8">
             <div className="inline-flex rounded-2xl bg-brand-50 p-3 text-brand-700">
               <Sparkles className="h-5 w-5" />
@@ -93,7 +93,7 @@ export default function RegisterPage() {
           </div>
         </section>
 
-        <section className="flex flex-1 flex-col justify-between bg-brand-700 p-8 text-white md:p-12">
+        <section className="flex lg:flex-1 shrink-0 flex-col justify-between bg-brand-700 p-8 text-white md:p-12">
           <div>
             <div className="inline-flex rounded-2xl bg-white/15 p-3">
               <GraduationCap className="h-8 w-8" />

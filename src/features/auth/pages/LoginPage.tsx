@@ -72,9 +72,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(0,121,107,0.16),_transparent_35%),linear-gradient(135deg,_#f3fffc_0%,_#e6f6f2_100%)] p-4 md:p-8">
-      <div className="flex min-h-[calc(100vh-2rem)] flex-col overflow-hidden rounded-[32px] border border-brand-100 bg-white/90 shadow-[0_30px_80px_rgba(0,121,107,0.16)] lg:flex-row">
-        <section className="flex flex-1 flex-col justify-between bg-brand-700 p-8 text-white md:p-12">
+    <div className="h-screen w-screen overflow-hidden flex items-center justify-center bg-[radial-gradient(circle_at_top_left,_rgba(0,121,107,0.16),_transparent_35%),linear-gradient(135deg,_#f3fffc_0%,_#e6f6f2_100%)] p-4 sm:p-6 lg:p-8">
+      <div className="flex w-full max-w-6xl max-h-full flex-col overflow-y-auto lg:overflow-hidden rounded-[32px] border border-brand-100 bg-white/90 shadow-[0_30px_80px_rgba(0,121,107,0.16)] lg:flex-row">
+        <section className="flex lg:flex-1 shrink-0 flex-col justify-between bg-brand-700 p-8 text-white md:p-12">
           <div>
             <div className="inline-flex rounded-2xl bg-white/15 p-3">
               <GraduationCap className="h-8 w-8" />

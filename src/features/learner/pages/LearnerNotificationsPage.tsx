@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { BellRing, Wallet, Clock, GraduationCap, CalendarCheck, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { BellRing, Wallet, Clock, GraduationCap, CalendarCheck, Star, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { learnerService } from '@/api/services/learnerService';
 import { normalizeList } from '@/lib/apiData';
@@ -115,6 +116,18 @@ export default function LearnerNotificationsPage() {
                 <p className="mt-3 text-[11px] font-bold uppercase tracking-widest text-slate-400">
                   {(item.time as string) ?? (item.created_at as string) ?? '—'}
                 </p>
+
+                {/* Tombol Akses Cepat Panel Tutor */}
+                {type === 'application' && ((item.title as string)?.toLowerCase().includes('selamat') || (item.title as string)?.toLowerCase().includes('disetujui')) && (
+                  <div className="mt-4">
+                    <Link 
+                      to="/tutor" 
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl transition-colors shadow-sm"
+                    >
+                      Buka Panel Tutor <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           );
