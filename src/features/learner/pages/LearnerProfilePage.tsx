@@ -88,20 +88,26 @@ export default function LearnerProfilePage() {
     
     setSaving(true);
     try {
-      await learnerService.updateProfile({
-        name: profile.name,
-        email: profile.email,
-        nim: profile.nim,
-        phone: profile.phone,
-        avatar: profile.avatar,
-      });
+      const payload = new FormData();
+      payload.append('name', profile.name);
+      payload.append('nim', profile.nim);
+      payload.append('phone', profile.phone);
+      
+      if (fileInputRef.current?.files?.[0]) {
+        payload.append('avatar', fileInputRef.current.files[0]);
+      }
+
+      await learnerService.updateProfile(payload);
+      
       if (avatarPreview) {
         localStorage.setItem('learner_avatar_preview', avatarPreview);
       }
       alert('Profil berhasil diperbarui!');
       setIsEditModalOpen(false);
-    } catch {
-      alert('Gagal memperbarui profil.');
+    } catch (err: any) {
+      console.error('Update Profile Error:', err);
+      const msg = err.response?.data?.message || err.message || 'Error tidak diketahui';
+      alert('Gagal memperbarui profil: ' + msg);
     } finally {
       setSaving(false);
     }

@@ -113,8 +113,10 @@ export default function TutorProfilePage() {
         localStorage.setItem('tutor_avatar_preview', avatarPreview);
       }
       alert('Profil berhasil diperbarui!');
-    } catch (err) {
-      alert('Gagal memperbarui profil.');
+    } catch (err: any) {
+      console.error('Update Profile Error:', err);
+      const msg = err.response?.data?.message || err.message || 'Error tidak diketahui';
+      alert('Gagal memperbarui profil: ' + msg);
     } finally {
       setSaving(false);
     }
