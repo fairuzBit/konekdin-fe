@@ -87,7 +87,11 @@ class TutorService {
   async updateProfile(payload: Record<string, unknown> | FormData) {
     if (payload instanceof FormData) {
       payload.append('_method', 'PATCH');
-      const response = await apiClient.post('/tutor/profile', payload);
+      const response = await apiClient.post('/tutor/profile', payload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       return response.data;
     }
     const response = await apiClient.patch('/tutor/profile', payload);
@@ -102,7 +106,10 @@ class TutorService {
   }
 
   async upgradeSemester(payload: FormData | Record<string, unknown>) {
-    const response = await apiClient.post('/tutor/upgrade-semester', payload);
+    const config = payload instanceof FormData 
+      ? { headers: { 'Content-Type': 'multipart/form-data' } }
+      : {};
+    const response = await apiClient.post('/tutor/upgrade-semester', payload, config);
     return response.data;
   }
 }

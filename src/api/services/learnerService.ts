@@ -23,11 +23,18 @@ class LearnerService {
     });
   }
 
-  async updateProfile(payload: Record<string, unknown>) {
-    return withRequestCache('learner.updateProfile', async () => {
-      const response = await apiClient.patch('/me', payload);
+  async updateProfile(payload: Record<string, unknown> | FormData) {
+    if (payload instanceof FormData) {
+      payload.append('_method', 'PATCH');
+      const response = await apiClient.post('/me', payload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       return response.data;
-    });
+    }
+    const response = await apiClient.patch('/me', payload);
+    return response.data;
   }
 
   async getTutors() {
@@ -111,7 +118,10 @@ class LearnerService {
   }
 
   async upgradeToTutor(payload: FormData | Record<string, unknown>) {
-    const response = await apiClient.post('/register/tutor/upload-document', payload);
+    const config = payload instanceof FormData 
+      ? { headers: { 'Content-Type': 'multipart/form-data' } }
+      : {};
+    const response = await apiClient.post('/register/tutor/upload-document', payload, config);
     return response.data;
   }
 }
