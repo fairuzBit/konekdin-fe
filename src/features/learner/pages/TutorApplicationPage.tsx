@@ -91,10 +91,12 @@ export default function TutorApplicationPage() {
       formData.append('current_semester', currentSemester.toString());
       formData.append('course_id', courseId);
       
-      // Backend currently only accepts one transcript_file
-      if (transcriptFiles[0]) {
-        formData.append('transcript_file', transcriptFiles[0]);
-      }
+      // Append all transcript files as an array
+      transcriptFiles.forEach((file) => {
+        if (file) {
+          formData.append('transcript_files[]', file);
+        }
+      });
       
       formData.append('bio', bio);
       formData.append('portfolio_link', portfolioLink);

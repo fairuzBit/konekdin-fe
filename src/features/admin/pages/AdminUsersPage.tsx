@@ -126,7 +126,7 @@ export default function AdminUsersPage() {
                 
                 <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                   <Link 
-                    to={role === 'learner' ? `/admin/learners/${userId}` : `/admin/tutors/${tutorId}`} 
+                    to={role === 'learner' ? `/admin/learners/${userId}` : `/admin/tutors/${userId}`} 
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
                     title="Lihat Profil"
                   >

@@ -16,6 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { tutorService } from '@/api/services/tutorService';
+import { adminService } from '@/api/services/adminService';
 
 export default function TutorProfilePage() {
   const { id } = useParams();
@@ -46,7 +47,7 @@ export default function TutorProfilePage() {
       try {
         let data;
         if (isAdminView) {
-          const response = await learnerService.getTutorById(id);
+          const response = await adminService.getUserById(id);
           data = response.data || response;
         } else {
           const response = await tutorService.getProfile();
