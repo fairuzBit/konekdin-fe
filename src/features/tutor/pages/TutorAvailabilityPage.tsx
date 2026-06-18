@@ -76,8 +76,21 @@ export default function TutorAvailabilityPage() {
     setSaving(true);
     try {
       // Simulate API call
-      // await tutorService.storeAvailability({ day: formDay, time: formTime, course: formCourse, status: formStatus });
+      // await tutorService.setAvailability({ day: formDay, time: formTime, course: formCourse, status: formStatus });
       await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setSchedules(prev => [
+        ...prev,
+        {
+          id: prev.length + 1,
+          no: String(prev.length + 1).padStart(2, '0'),
+          day: formDay,
+          time: formTime,
+          course: formCourse,
+          status: formStatus as any
+        }
+      ]);
+      
       alert('Jadwal berhasil disimpan!');
       setIsEditModalOpen(false);
     } catch (error) {
