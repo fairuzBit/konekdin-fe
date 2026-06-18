@@ -11,9 +11,9 @@ export default function TutorApplicationPage() {
   const navigate = useNavigate();
   const [currentSemester, setCurrentSemester] = useState<number>(3);
   const [semesterInputValue, setSemesterInputValue] = useState<string>('3'); // Separate state for typing
-  const [courseId, setCourseId] = useState<string>('');
+  const [courseIds, setCourseIds] = useState<string[]>([]);
   const [bio, setBio] = useState<string>('');
-  const [portfolioLink, setPortfolioLink] = useState<string>('');
+  const [portfolioLinks, setPortfolioLinks] = useState<string[]>(['']);
   const [certificateFiles, setCertificateFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -50,9 +50,10 @@ export default function TutorApplicationPage() {
       const newSem = Math.min(5, Math.max(3, parsed));
       setCurrentSemester(newSem);
       
-      // Reset course if the currently selected one is no longer valid
-      const isCurrentCourseValid = courses.find(c => c.id.toString() === courseId && (c.semester || 1) < newSem);
-      if (!isCurrentCourseValid) setCourseId('');
+      // Reset selected courses that are no longer valid
+      setCourseIds(prev => prev.filter(id => {
+        return courses.find(c => c.id.toString() === id && (c.semester || 1) < newSem);
+      }));
 
       // Adjust transcript files array size
       const newRequiredCount = Math.max(1, newSem - 1);
@@ -85,9 +86,27 @@ export default function TutorApplicationPage() {
     }
   };
 
+  const handleAddPortfolioLink = () => {
+    if (portfolioLinks.length < 5) {
+      setPortfolioLinks([...portfolioLinks, '']);
+    }
+  };
+
+  const handleRemovePortfolioLink = (index: number) => {
+    if (portfolioLinks.length > 1) {
+      setPortfolioLinks(portfolioLinks.filter((_, i) => i !== index));
+    }
+  };
+
+  const handlePortfolioChange = (index: number, value: string) => {
+    const newLinks = [...portfolioLinks];
+    newLinks[index] = value;
+    setPortfolioLinks(newLinks);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!courseId || transcriptFiles.some(f => f === null)) {
+    if (courseIds.length === 0 || transcriptFiles.some(f => f === null)) {
       alert("Mohon lengkapi semua field yang wajib!");
       return;
     }
@@ -96,7 +115,9 @@ export default function TutorApplicationPage() {
     try {
       const formData = new FormData();
       formData.append('current_semester', currentSemester.toString());
-      formData.append('course_id', courseId);
+      courseIds.forEach(id => {
+        formData.append('course_ids[]', id);
+      });
       
       // Append all transcript files as an array
       transcriptFiles.forEach((file) => {
@@ -106,9 +127,11 @@ export default function TutorApplicationPage() {
       });
       
       formData.append('bio', bio);
-      if (portfolioLink) {
-        formData.append('portfolio_urls[]', portfolioLink);
-      }
+      portfolioLinks.forEach((link) => {
+        if (link.trim() !== '') {
+          formData.append('portfolio_urls[]', link.trim());
+        }
+      });
       
       certificateFiles.forEach((file) => {
         formData.append('certificate_files[]', file);
@@ -130,7 +153,7 @@ export default function TutorApplicationPage() {
       
       {/* Left Column: Thesis & Information */}
       <div className="flex flex-col pt-8 lg:pt-16 lg:sticky lg:top-8 h-fit">
-        <div className="bg-white/90 dark:bg-bgSecondary/90 backdrop-blur-2xl border border-white/50 dark:border-borderColor rounded-[32px] shadow-xl shadow-slate-200/20 dark:shadow-none p-8 lg:p-10">
+        <div className="bg-white/60 dark:bg-bgSecondary/60 backdrop-blur-xl border border-white/50 dark:border-borderColor rounded-[32px] shadow-xl shadow-slate-200/20 dark:shadow-none p-8 lg:p-10">
           <div className="inline-flex items-center gap-2 text-brand-600 dark:text-brand-400 font-extrabold tracking-widest text-xs uppercase mb-6 bg-brand-50 dark:bg-brand-500/10 px-3 py-1.5 rounded-full w-fit">
             <GraduationCap className="w-4 h-4" />
             KonekDin Tutor
@@ -168,7 +191,7 @@ export default function TutorApplicationPage() {
       </div>
 
       {/* Right Column: Application Form or Success State */}
-      <div className="bg-white dark:bg-bgSecondary rounded-[32px] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-borderColor p-8 lg:p-10">
+      <div className="bg-white/80 dark:bg-bgSecondary rounded-[32px] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-borderColor p-8 lg:p-10">
         {showSuccess ? (
           <div className="flex flex-col items-center justify-center text-center py-12 space-y-6 h-full">
             <div className="w-24 h-24 bg-emerald-50 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mb-2">
@@ -259,20 +282,44 @@ export default function TutorApplicationPage() {
                 <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase ml-1">
                   Mata Kuliah Diajarkan <span className="text-red-500">*</span>
                 </label>
-                <select 
-                  value={courseId} 
-                  onChange={(e) => setCourseId(e.target.value)} 
-                  className="w-full h-14 rounded-2xl border border-slate-300 dark:border-borderColor bg-slate-50 dark:bg-bgPrimary px-5 text-sm font-semibold text-slate-900 dark:text-white outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 appearance-none cursor-pointer"
-                  required
-                >
-                  <option value="" className="text-slate-500">Pilih mata kuliah...</option>
-                  {availableCourses.map(c => (
-                    <option key={c.id} value={c.id} className="text-slate-900 dark:text-white">{c.name} {c.semester ? `(Sem ${c.semester})` : ''}</option>
-                  ))}
-                </select>
-                {availableCourses.length === 0 && (
-                  <p className="text-xs text-red-500 font-semibold mt-1">Tidak ada matkul tersedia untuk semester ini.</p>
-                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                  {availableCourses.length > 0 ? availableCourses.map(c => (
+                    <label 
+                      key={c.id} 
+                      className={`flex items-start gap-3 p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
+                        courseIds.includes(c.id.toString()) 
+                          ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-500/10' 
+                          : 'border-slate-200 dark:border-borderColor hover:border-brand-300 dark:hover:border-brand-600 bg-slate-50 dark:bg-bgPrimary'
+                      }`}
+                    >
+                      <input 
+                        type="checkbox" 
+                        value={c.id}
+                        checked={courseIds.includes(c.id.toString())}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setCourseIds([...courseIds, c.id.toString()]);
+                          } else {
+                            setCourseIds(courseIds.filter(id => id !== c.id.toString()));
+                          }
+                        }}
+                        className="mt-0.5 w-4 h-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
+                          {c.name}
+                        </span>
+                        {c.semester && (
+                          <span className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
+                            Semester {c.semester}
+                          </span>
+                        )}
+                      </div>
+                    </label>
+                  )) : (
+                    <p className="text-xs text-red-500 font-semibold mt-1 col-span-full">Tidak ada matkul tersedia untuk semester ini.</p>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-3">
@@ -292,18 +339,48 @@ export default function TutorApplicationPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase ml-1 flex items-center gap-1.5">
-                  Link Portofolio <span className="text-slate-400 font-medium normal-case tracking-normal">(Opsional)</span>
-                </label>
-                <div className="relative">
-                  <LinkIcon className="absolute top-1/2 -translate-y-1/2 left-4 w-5 h-5 text-slate-400" />
-                  <Input 
-                    type="url"
-                    value={portfolioLink} 
-                    onChange={(e) => setPortfolioLink(e.target.value)} 
-                    placeholder="https://github.com/username" 
-                    className="h-14 rounded-2xl bg-slate-50 dark:bg-bgPrimary border-slate-300 dark:border-borderColor focus-visible:ring-brand-500 text-sm font-medium text-slate-900 dark:text-white pl-12 pr-5 placeholder-slate-400"
-                  />
+                <div className="flex items-center justify-between ml-1">
+                  <label className="block text-[11px] font-extrabold tracking-widest text-slate-600 dark:text-slate-400 uppercase flex items-center gap-1.5">
+                    Link Portofolio <span className="text-slate-400 font-medium normal-case tracking-normal">(Opsional)</span>
+                  </label>
+                  {portfolioLinks.length < 5 && (
+                    <button 
+                      type="button" 
+                      onClick={handleAddPortfolioLink}
+                      className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300"
+                    >
+                      + Tambah Link
+                    </button>
+                  )}
+                </div>
+                
+                <div className="space-y-3">
+                  {portfolioLinks.map((link, index) => (
+                    <div key={index} className="relative flex items-center gap-2">
+                      <div className="relative flex-1">
+                        <LinkIcon className="absolute top-1/2 -translate-y-1/2 left-4 w-5 h-5 text-slate-400" />
+                        <Input 
+                          type="url"
+                          value={link} 
+                          onChange={(e) => handlePortfolioChange(index, e.target.value)} 
+                          placeholder="https://github.com/username" 
+                          className="h-14 rounded-2xl bg-slate-50 dark:bg-bgPrimary border-slate-300 dark:border-borderColor focus-visible:ring-brand-500 text-sm font-medium text-slate-900 dark:text-white pl-12 pr-5 placeholder-slate-400"
+                        />
+                      </div>
+                      {portfolioLinks.length > 1 && (
+                        <button 
+                          type="button"
+                          onClick={() => handleRemovePortfolioLink(index)}
+                          className="w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center border border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/10 text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors"
+                          title="Hapus Link"
+                        >
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
 
