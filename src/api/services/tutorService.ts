@@ -77,7 +77,19 @@ class TutorService {
     return response.data;
   }
 
-  async updateProfile(payload: Record<string, unknown>) {
+  async getProfile() {
+    return withRequestCache('tutor.profile', async () => {
+      const response = await apiClient.get('/tutor/profile');
+      return response.data;
+    });
+  }
+
+  async updateProfile(payload: Record<string, unknown> | FormData) {
+    if (payload instanceof FormData) {
+      payload.append('_method', 'PATCH');
+      const response = await apiClient.post('/tutor/profile', payload);
+      return response.data;
+    }
     const response = await apiClient.patch('/tutor/profile', payload);
     return response.data;
   }

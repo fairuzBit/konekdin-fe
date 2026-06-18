@@ -15,7 +15,7 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { learnerService } from '@/api/services/learnerService';
+import { tutorService } from '@/api/services/tutorService';
 
 export default function TutorProfilePage() {
   const { id } = useParams();
@@ -49,7 +49,7 @@ export default function TutorProfilePage() {
           const response = await learnerService.getTutorById(id);
           data = response.data || response;
         } else {
-          const response = await learnerService.getProfile();
+          const response = await tutorService.getProfile();
           data = response.data || response;
         }
         setTutor(data);
@@ -97,10 +97,18 @@ export default function TutorProfilePage() {
   const handleSaveProfile = async () => {
     setSaving(true);
     try {
-      // If we had a real avatar upload endpoint we'd use FormData here
-      // const payload = new FormData();
-      // payload.append('name', formData.name); ...
-      await learnerService.updateProfile(formData);
+      const payload = new FormData();
+      payload.append('name', formData.name);
+      payload.append('nim', formData.nim);
+      payload.append('phone', formData.phone);
+      payload.append('price_per_session', String(formData.price_per_session));
+      
+      if (fileInputRef.current?.files?.[0]) {
+        payload.append('avatar', fileInputRef.current.files[0]);
+      }
+
+      await tutorService.updateProfile(payload);
+      
       if (avatarPreview) {
         localStorage.setItem('tutor_avatar_preview', avatarPreview);
       }
