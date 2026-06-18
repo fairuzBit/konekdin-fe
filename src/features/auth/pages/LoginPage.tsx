@@ -1,31 +1,37 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { ArrowRight, GraduationCap, ShieldCheck } from 'lucide-react';
+import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { ArrowRight, GraduationCap, ShieldCheck, UserCircle, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth, getRoleLabel } from '@/context/AuthContext';
+import { useAuth, getRoleLabel, hasRole } from '@/context/AuthContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { login, isAuthenticated, loading, user } = useAuth();
+  const location = useLocation();
+  const { login, isAuthenticated, loading, logout, user } = useAuth();
+  
+  const [loginMode, setLoginMode] = useState<'learner' | 'tutor'>('learner');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  const from = location.state?.from?.pathname;
+
   useEffect(() => {
-    if (!loading && isAuthenticated) {
+    // Auto-redirect if already authenticated and just visiting the page
+    if (!loading && isAuthenticated && !submitting) {
       const role = getRoleLabel(user);
       if (role === 'admin') {
         navigate('/admin', { replace: true });
-      } else if (role === 'tutor') {
+      } else if (hasRole(user, 'tutor') && loginMode === 'tutor') {
         navigate('/tutor', { replace: true });
       } else {
-        navigate('/learner', { replace: true });
+        navigate(from || '/learner', { replace: true });
       }
     }
-  }, [isAuthenticated, loading, navigate, user]);
+  }, [isAuthenticated, loading, navigate, user, submitting, from, loginMode]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -33,8 +39,23 @@ export default function LoginPage() {
     setSubmitting(true);
 
     try {
-      await login({ email, password });
-      navigate('/learner', { replace: true });
+      const loggedUser = await login({ email, password });
+      
+      if (loginMode === 'tutor') {
+        if (hasRole(loggedUser, 'tutor') || getRoleLabel(loggedUser) === 'admin') {
+          navigate('/tutor', { replace: true });
+        } else {
+          setError('Akun Anda belum terdaftar sebagai Pengajar. Silakan masuk sebagai Pelajar dan daftar menjadi Tutor melalui profil Anda.');
+          await logout();
+        }
+      } else {
+        const role = getRoleLabel(loggedUser);
+        if (role === 'admin') {
+          navigate('/admin', { replace: true });
+        } else {
+          navigate('/learner', { replace: true });
+        }
+      }
     } catch (err) {
       setError('Login gagal. Periksa email dan password Anda.');
     } finally {
@@ -46,8 +67,8 @@ export default function LoginPage() {
     return <div className="flex min-h-screen items-center justify-center text-sm font-medium text-slate-600">Memuat sesi...</div>;
   }
 
-  if (isAuthenticated) {
-    return <Navigate to="/learner" replace />;
+  if (isAuthenticated && !submitting) {
+    return null; // Will be redirected by useEffect
   }
 
   return (
@@ -65,14 +86,39 @@ export default function LoginPage() {
           </div>
 
           <div className="rounded-[24px] border border-white/20 bg-white/10 p-4 backdrop-blur">
-            <div className="flex items-center gap-2 text-sm font-medium"><ShieldCheck className="h-4 w-4" /> JWT auth terintegrasi siap pakai</div>
+            <div className="flex items-center gap-2 text-sm font-medium"><ShieldCheck className="h-4 w-4" /> Akses aman dan terenkripsi</div>
           </div>
         </section>
 
         <section className="flex flex-1 items-center justify-center p-6 md:p-10">
           <div className="w-full max-w-md rounded-[28px] border border-slate-200 bg-slate-50/80 p-6 md:p-8">
             <h2 className="text-2xl font-semibold text-slate-900">Selamat datang kembali</h2>
-            <p className="mt-2 text-sm text-slate-500">Masukkan kredensial Anda untuk melanjutkan.</p>
+            <p className="mt-2 text-sm text-slate-500">Pilih mode masuk dan masukkan kredensial Anda.</p>
+
+            <div className="mt-6 flex rounded-xl bg-slate-200/50 p-1">
+              <button
+                type="button"
+                onClick={() => setLoginMode('learner')}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-bold transition-all ${
+                  loginMode === 'learner' 
+                    ? 'bg-white text-slate-900 shadow-sm' 
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                <UserCircle className="h-4 w-4" /> Pelajar
+              </button>
+              <button
+                type="button"
+                onClick={() => setLoginMode('tutor')}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-bold transition-all ${
+                  loginMode === 'tutor' 
+                    ? 'bg-brand-600 text-white shadow-sm' 
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                <Briefcase className="h-4 w-4" /> Pengajar
+              </button>
+            </div>
 
             <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
               <div className="space-y-2">
@@ -83,15 +129,19 @@ export default function LoginPage() {
                 <Label htmlFor="password" className="text-slate-900">Password</Label>
                 <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(event) => setPassword(event.target.value)} className="bg-white text-slate-900 placeholder:text-slate-400" required />
               </div>
-              {error ? <p className="text-sm text-rose-500">{error}</p> : null}
-              <Button className="w-full" type="submit" disabled={submitting}>
-                {submitting ? 'Memproses...' : 'Masuk'} <ArrowRight className="ml-2 h-4 w-4" />
+              {error ? (
+                <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-600 font-medium">
+                  {error}
+                </div>
+              ) : null}
+              <Button className={`w-full ${loginMode === 'tutor' ? 'bg-brand-600 hover:bg-brand-700' : ''}`} type="submit" disabled={submitting}>
+                {submitting ? 'Memproses...' : `Masuk sebagai ${loginMode === 'learner' ? 'Pelajar' : 'Pengajar'}`} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </form>
 
             <p className="mt-6 text-center text-sm text-slate-500">
               Belum punya akun?{' '}
-              <Link to="/register" className="font-semibold text-brand-600">Daftar sekarang</Link>
+              <Link to="/register" className="font-semibold text-brand-600 hover:text-brand-700">Daftar sekarang</Link>
             </p>
           </div>
         </section>

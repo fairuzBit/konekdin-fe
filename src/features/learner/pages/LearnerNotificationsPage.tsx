@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BellRing } from 'lucide-react';
+import { BellRing, Wallet, Clock, GraduationCap, CalendarCheck, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { learnerService } from '@/api/services/learnerService';
 import { normalizeList } from '@/lib/apiData';
@@ -24,28 +24,102 @@ export default function LearnerNotificationsPage() {
     fetchNotifications();
   }, []);
 
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'payment':
+        return { icon: Wallet, style: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 dark:text-emerald-400' };
+      case 'session_reminder':
+        return { icon: Clock, style: 'text-amber-600 bg-amber-50 dark:bg-amber-500/10 dark:text-amber-400' };
+      case 'application':
+        return { icon: GraduationCap, style: 'text-brand-600 bg-brand-50 dark:bg-brand-500/10 dark:text-brand-400' };
+      case 'booking':
+        return { icon: CalendarCheck, style: 'text-blue-600 bg-blue-50 dark:bg-blue-500/10 dark:text-blue-400' };
+      case 'system':
+        return { icon: Star, style: 'text-purple-600 bg-purple-50 dark:bg-purple-500/10 dark:text-purple-400' };
+      default:
+        return { icon: BellRing, style: 'text-slate-600 bg-slate-100 dark:bg-slate-800 dark:text-slate-400' };
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Notifikasi</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? <p className="text-sm text-slate-500">Memuat notifikasi...</p> : null}
-          {error ? <p className="text-sm text-rose-500">{error}</p> : null}
-          {!loading && !error && notifications.length === 0 ? <p className="text-sm text-slate-500">Belum ada notifikasi dari backend.</p> : null}
-          {notifications.map((item, index) => (
-            <div key={index} className="mt-3 flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 first:mt-0">
-              <div className="rounded-2xl bg-brand-50 p-3 text-brand-700"><BellRing className="h-5 w-5" /></div>
-              <div>
-                <p className="font-semibold text-slate-900">{(item.title as string) ?? 'Notifikasi'}</p>
-                <p className="text-sm text-slate-500">{(item.body as string) ?? (item.message as string) ?? '—'}</p>
-                <p className="mt-2 text-xs font-medium uppercase tracking-[0.2em] text-slate-400">{(item.time as string) ?? (item.created_at as string) ?? '—'}</p>
+    <div className="space-y-6 max-w-4xl mx-auto pb-12">
+      <div className="mb-8">
+        <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-2">Notifikasi</h1>
+        <p className="text-slate-500 dark:text-slate-400 font-medium">Pantau semua aktivitas dan pengingat kelas Anda di sini.</p>
+      </div>
+
+      <div className="space-y-4">
+        {loading ? (
+          <div className="p-8 text-center bg-white dark:bg-bgSecondary rounded-3xl border border-slate-200 dark:border-borderColor shadow-sm">
+            <div className="animate-pulse flex flex-col items-center gap-3">
+              <div className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+              <div className="w-32 h-4 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
+              <div className="w-48 h-3 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
+            </div>
+          </div>
+        ) : null}
+        
+        {error ? (
+          <div className="p-6 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 rounded-2xl text-rose-600 dark:text-rose-400 font-medium text-center">
+            {error}
+          </div>
+        ) : null}
+        
+        {!loading && !error && notifications.length === 0 ? (
+          <div className="p-12 text-center bg-white dark:bg-bgSecondary rounded-3xl border border-slate-200 dark:border-borderColor shadow-sm flex flex-col items-center">
+            <div className="w-16 h-16 bg-slate-50 dark:bg-bgPrimary rounded-full flex items-center justify-center mb-4">
+              <BellRing className="w-8 h-8 text-slate-400" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Belum ada notifikasi</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Anda akan mendapatkan pemberitahuan di sini saat ada aktivitas baru.</p>
+          </div>
+        ) : null}
+
+        {!loading && !error && notifications.map((item, index) => {
+          const type = (item.type as string) || 'default';
+          const { icon: Icon, style } = getNotificationIcon(type);
+          const isRead = item.is_read === true || item.is_read === 1;
+
+          return (
+            <div 
+              key={index} 
+              className={`relative flex items-start gap-4 p-5 sm:p-6 rounded-3xl border transition-all duration-300 hover:shadow-md ${
+                isRead 
+                  ? 'bg-white dark:bg-bgSecondary border-slate-200 dark:border-borderColor opacity-80 hover:opacity-100' 
+                  : 'bg-brand-50/50 dark:bg-brand-500/5 border-brand-200 dark:border-brand-500/20 shadow-sm'
+              }`}
+            >
+              {!isRead && (
+                <div className="absolute top-6 right-6 w-2.5 h-2.5 rounded-full bg-brand-500 ring-4 ring-brand-100 dark:ring-brand-500/20"></div>
+              )}
+              
+              <div className={`shrink-0 rounded-2xl p-3.5 ${style}`}>
+                <Icon className="h-6 w-6" strokeWidth={2.5} />
+              </div>
+              
+              <div className="flex-1 pr-6">
+                <p className={`text-base ${
+                  isRead 
+                    ? 'font-bold text-slate-700 dark:text-slate-300' 
+                    : 'font-black text-slate-900 dark:text-white'
+                }`}>
+                  {(item.title as string) ?? 'Notifikasi'}
+                </p>
+                <p className={`text-sm mt-1.5 leading-relaxed ${
+                  isRead 
+                    ? 'text-slate-500 dark:text-slate-400 font-medium' 
+                    : 'text-slate-600 dark:text-slate-300 font-medium'
+                }`}>
+                  {(item.body as string) ?? (item.message as string) ?? '—'}
+                </p>
+                <p className="mt-3 text-[11px] font-bold uppercase tracking-widest text-slate-400">
+                  {(item.time as string) ?? (item.created_at as string) ?? '—'}
+                </p>
               </div>
             </div>
-          ))}
-        </CardContent>
-      </Card>
+          );
+        })}
+      </div>
     </div>
   );
 }

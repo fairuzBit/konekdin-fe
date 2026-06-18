@@ -17,8 +17,8 @@ type AuthContextType = {
   token: string | null;
   loading: boolean;
   isAuthenticated: boolean;
-  login: (payload: Record<string, unknown>) => Promise<void>;
-  register: (payload: Record<string, unknown>) => Promise<void>;
+  login: (payload: Record<string, unknown>) => Promise<User | null>;
+  register: (payload: Record<string, unknown>) => Promise<User | null>;
   logout: () => Promise<void>;
 };
 
@@ -131,7 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     bootstrap();
   }, []);
 
-  const login = async (payload: Record<string, unknown>) => {
+  const login = async (payload: Record<string, unknown>): Promise<User | null> => {
     const response = await publicService.login(payload);
     const payloadData = response?.data ?? response;
     const authToken = extractToken(payloadData);
@@ -144,13 +144,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (currentUser) {
       setUser(currentUser);
-      return;
+      return currentUser;
     }
 
-    await fetchCurrentUser(authToken);
+    return await fetchCurrentUser(authToken);
   };
 
-  const register = async (payload: Record<string, unknown>) => {
+  const register = async (payload: Record<string, unknown>): Promise<User | null> => {
     const response = await publicService.register(payload);
     const payloadData = response?.data ?? response;
     const authToken = extractToken(payloadData);
@@ -163,10 +163,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (currentUser) {
       setUser(currentUser);
-      return;
+      return currentUser;
     }
 
-    await fetchCurrentUser(authToken);
+    return await fetchCurrentUser(authToken);
   };
 
   const logout = async () => {
@@ -210,4 +210,12 @@ export function useAuth() {
 export function getRoleLabel(user: User | null) {
   const rawRole = user?.role ?? user?.roles?.[0];
   return normalizeRole(rawRole);
+}
+
+export function hasRole(user: User | null, roleName: string): boolean {
+  if (!user) return false;
+  if (Array.isArray(user.roles)) {
+    return user.roles.some((r) => normalizeRole(r) === roleName);
+  }
+  return normalizeRole(user.role) === roleName;
 }
