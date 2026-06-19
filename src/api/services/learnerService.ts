@@ -61,18 +61,14 @@ class LearnerService {
     });
   }
 
-  async payBooking(id: string | number) {
-    return withRequestCache(`learner.payBooking.${id}`, async () => {
-      const response = await apiClient.patch(`/learner/bookings/${id}/pay`);
-      return response.data;
-    });
+  async payBooking(id: string | number, payment_method: string) {
+    const response = await apiClient.patch(`/learner/bookings/${id}/pay`, { payment_method });
+    return response.data;
   }
 
   async simulatePayment(id: string | number) {
-    return withRequestCache(`learner.simulatePayment.${id}`, async () => {
-      const response = await apiClient.patch(`/learner/bookings/${id}/simulate-payment`);
-      return response.data;
-    });
+    const response = await apiClient.patch(`/learner/bookings/${id}/simulate-payment`);
+    return response.data;
   }
 
   async getSchedules() {

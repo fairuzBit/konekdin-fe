@@ -4,10 +4,18 @@ import { Input } from '@/components/ui/input';
 import { useEffect, useState } from 'react';
 import { learnerService } from '@/api/services/learnerService';
 import { Link } from 'react-router-dom';
+import { BookingModal } from '../components/BookingModal';
 
 export default function TutorListPage() {
   const [tutors, setTutors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTutor, setSelectedTutor] = useState<any>(null);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
+  const handleOpenBookingModal = (tutor: any) => {
+    setSelectedTutor(tutor);
+    setIsBookingModalOpen(true);
+  };
 
   useEffect(() => {
     const fetchTutors = async () => {
@@ -119,14 +127,14 @@ export default function TutorListPage() {
                 {/* Bottom Action Buttons */}
                 <div className="mt-auto grid grid-cols-2 gap-2 pt-2">
                   <button 
-                    onClick={() => alert('Fitur Pemesanan Sesi belum diimplementasikan.')}
+                    onClick={() => handleOpenBookingModal(tutor)}
                     className="bg-emerald-500 hover:bg-emerald-600 text-white text-[13px] font-bold py-2.5 rounded-xl transition-colors shadow-sm"
                   >
                     Pesan Sesi
                   </button>
                   <Link 
                     to={`/tutors/${tutor.id}`}
-                    className="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100 text-[13px] font-bold py-2.5 rounded-xl text-center transition-colors"
+                    className="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100 text-[13px] font-bold py-2.5 rounded-xl text-center transition-colors flex justify-center items-center"
                   >
                     Lihat Profil
                   </Link>
@@ -141,6 +149,12 @@ export default function TutorListPage() {
           )}
         </div>
       )}
+
+      <BookingModal 
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        tutor={selectedTutor}
+      />
     </div>
   );
 }
