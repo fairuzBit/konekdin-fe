@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plus, Info, Clock, ChevronDown, Loader2 } from 'lucide-react';
+import { Plus, Info, Clock, ChevronDown, Loader2, Trash2 } from 'lucide-react';
 import { tutorService } from '@/api/services/tutorService';
 import { publicService } from '@/api/services/publicService';
 
@@ -136,6 +136,46 @@ export default function TutorAvailabilityPage() {
     }
   };
 
+  const handleDeleteSchedule = async (scheduleToDelete: ScheduleRow) => {
+    if (!confirm(`Apakah Anda yakin ingin menghapus jadwal pada hari ${scheduleToDelete.day} pukul ${scheduleToDelete.time}?`)) {
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const newSchedules = schedules.filter(s => !(s.day === scheduleToDelete.day && s.time === scheduleToDelete.time));
+      
+      const dayMapRev: Record<string, string> = {
+        'Senin': 'Monday',
+        'Selasa': 'Tuesday',
+        'Rabu': 'Wednesday',
+        'Kamis': 'Thursday',
+        'Jumat': 'Friday',
+        'Sabtu': 'Saturday',
+        'Minggu': 'Sunday'
+      };
+
+      const payloadSlots = newSchedules.map(s => {
+        const slotMatch = masterSlots.find(m => `${m.start_time.slice(0, 5)} - ${m.end_time.slice(0, 5)}` === s.time);
+        return {
+          day_of_week: dayMapRev[s.day] || s.day,
+          master_slot_id: slotMatch?.id,
+          is_active: s.status.toUpperCase() !== 'NON AVAILABLE'
+        };
+      }).filter(s => s.master_slot_id);
+
+      await tutorService.setAvailability({ slots: payloadSlots });
+      
+      setSchedules(newSchedules);
+      alert('Jadwal berhasil dihapus!');
+    } catch (error: any) {
+      console.error('Delete error:', error.response?.data || error);
+      alert('Gagal menghapus jadwal: ' + (error.response?.data?.message || 'Kesalahan server.'));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const upperStatus = status.toUpperCase();
     switch (upperStatus) {
@@ -218,7 +258,8 @@ export default function TutorAvailabilityPage() {
                 <th className="py-5 px-6 text-[10px] font-extrabold tracking-widest text-slate-400 uppercase w-20">NO</th>
                 <th className="py-5 px-6 text-[10px] font-extrabold tracking-widest text-slate-400 uppercase w-32">HARI</th>
                 <th className="py-5 px-6 text-[10px] font-extrabold tracking-widest text-slate-400 uppercase">WAKTU OPERASIONAL</th>
-                <th className="py-5 px-6 text-[10px] font-extrabold tracking-widest text-slate-400 uppercase text-right">STATUS</th>
+                <th className="py-5 px-6 text-[10px] font-extrabold tracking-widest text-slate-400 uppercase text-center w-32">STATUS</th>
+                <th className="py-5 px-6 text-[10px] font-extrabold tracking-widest text-slate-400 uppercase text-right w-20">AKSI</th>
               </tr>
             </thead>
             <tbody>
@@ -232,8 +273,18 @@ export default function TutorAvailabilityPage() {
                       {row.time}
                     </div>
                   </td>
-                  <td className="py-4 px-6 text-right">
+                  <td className="py-4 px-6 text-center">
                     {getStatusBadge(row.status)}
+                  </td>
+                  <td className="py-4 px-6 text-right">
+                    <button 
+                      onClick={() => handleDeleteSchedule(row)}
+                      disabled={saving}
+                      className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                      title="Hapus Jadwal"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
                   </td>
                 </tr>
               ))}
