@@ -101,7 +101,6 @@ export default function TutorAvailabilityPage() {
       if (existingIndex >= 0) {
         newSchedules[existingIndex] = {
           ...newSchedules[existingIndex],
-          course: formCourse,
           status: formStatus as any
         };
       } else {
@@ -110,7 +109,6 @@ export default function TutorAvailabilityPage() {
           no: String(schedules.length + 1).padStart(2, '0'),
           day: formDay,
           time: formTime,
-          course: formCourse,
           status: formStatus as any
         });
       }
