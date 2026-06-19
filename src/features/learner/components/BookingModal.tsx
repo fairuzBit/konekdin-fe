@@ -22,7 +22,7 @@ export function BookingModal({ isOpen, onClose, tutor }: BookingModalProps) {
   const [error, setError] = useState<string | null>(null);
 
   // Constants
-  const platformFee = 15000;
+  const platformFee = 1000;
   const pricePerSession = tutor?.price || tutor?.price_per_session || 0;
   const totalSessions = selectedSlotIds.length;
   const sessionsCost = totalSessions * pricePerSession;

@@ -166,6 +166,19 @@ class AdminService {
     const response = await apiClient.delete(`/admin/master-slots/${id}`);
     return response.data;
   }
+
+  async getPayments(status?: string) {
+    return withRequestCache(`admin.payments.${status || 'all'}`, async () => {
+      const url = status ? `/admin/payments?status=${status}` : '/admin/payments';
+      const response = await apiClient.get(url);
+      return response.data;
+    });
+  }
+
+  async approvePayment(id: string | number) {
+    const response = await apiClient.patch(`/admin/payments/${id}/approve`);
+    return response.data;
+  }
 }
 
 export const adminService = new AdminService();

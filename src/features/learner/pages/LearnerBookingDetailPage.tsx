@@ -79,6 +79,7 @@ export default function LearnerBookingDetailPage() {
 
   const tutorName = booking.tutor?.user?.name || booking.tutor?.name || 'Tutor KonekDin';
   const isPaid = booking.payment_status === 'paid';
+  const isPending = booking.payment_status === 'unpaid' && booking.payment_method !== null;
   
   // Format Date
   const dateObj = new Date(booking.booking_date);
@@ -151,8 +152,8 @@ export default function LearnerBookingDetailPage() {
             </div>
           </div>
 
-          {/* Metode Pembayaran (Only show if UNPAID) */}
-          {!isPaid ? (
+          {/* Metode Pembayaran (Only show if UNPAID and NOT PENDING) */}
+          {!isPaid && !isPending ? (
             <div>
               <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-4">
                 <CreditCard className="w-4 h-4 text-emerald-500" /> Metode Pembayaran
@@ -255,8 +256,25 @@ export default function LearnerBookingDetailPage() {
                 </div>
               </div>
             </div>
+          ) : isPending ? (
+            <div className="p-8 border border-amber-200 bg-amber-50 rounded-2xl flex flex-col items-center justify-center text-center mt-6">
+              <Clock className="w-16 h-16 text-amber-500 mb-4" />
+              <h3 className="text-xl font-bold text-amber-900 mb-2">Menunggu Verifikasi Admin</h3>
+              <p className="text-amber-700 text-sm mb-4">
+                Silakan transfer ke rekening berikut dan tunggu konfirmasi Admin:
+              </p>
+              <div className="bg-white px-5 py-4 rounded-xl border border-amber-100 shadow-sm w-full max-w-sm mb-2 text-left">
+                <p className="text-xs text-amber-600 font-bold uppercase tracking-wider mb-1">Bank Tujuan</p>
+                <p className="text-lg font-black text-slate-800">Bank KonekDin</p>
+                <p className="text-base font-mono font-medium text-slate-600 mt-1">123-456-7890</p>
+                <p className="text-xs text-slate-400 mt-1">a.n. PT KonekDin Edukasi</p>
+              </div>
+              <p className="text-[11px] text-amber-600 font-medium italic mt-2">
+                *Pesanan Anda akan disetujui setelah pembayaran dikonfirmasi.
+              </p>
+            </div>
           ) : (
-            <div className="p-8 border border-emerald-200 bg-emerald-50/50 rounded-2xl flex flex-col items-center justify-center text-center">
+            <div className="p-8 border border-emerald-200 bg-emerald-50/50 rounded-2xl flex flex-col items-center justify-center text-center mt-6">
               <CheckCircle2 className="w-16 h-16 text-emerald-500 mb-4" />
               <h3 className="text-xl font-bold text-emerald-900 mb-2">Pembayaran Berhasil!</h3>
               <p className="text-emerald-700 text-sm">Sesi belajar Anda bersama {tutorName} sudah dikonfirmasi.</p>
@@ -286,7 +304,7 @@ export default function LearnerBookingDetailPage() {
                 <span className="text-slate-400 font-medium">Biaya Layanan</span>
                 <span className="font-bold">Rp {booking.service_fee?.toLocaleString('id-ID')}</span>
               </div>
-              {isPaid && (
+              {(isPaid || isPending) && (
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-emerald-400 font-medium">Metode Pembayaran</span>
                   <span className="font-bold uppercase">{booking.payment_method?.replace('_', ' ') || '-'}</span>
@@ -308,7 +326,7 @@ export default function LearnerBookingDetailPage() {
           </div>
 
           <div className="mt-10 relative z-10">
-            {!isPaid ? (
+            {!isPaid && !isPending ? (
               <>
                 <button
                   onClick={handleConfirm}
@@ -321,12 +339,19 @@ export default function LearnerBookingDetailPage() {
                   Dengan membayar, Anda menyetujui <a href="#" className="underline hover:text-white transition-colors">Ketentuan Layanan</a> & <a href="#" className="underline hover:text-white transition-colors">Kebijakan Privasi</a> KonekDin.
                 </p>
               </>
-            ) : (
+            ) : isPaid ? (
               <button
                 onClick={() => navigate('/learner/history')}
                 className="w-full py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all border border-white/10"
               >
                 Lihat Jadwal Belajar Anda
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate('/learner/bookings')}
+                className="w-full py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all border border-white/10"
+              >
+                Kembali ke Daftar Pesanan
               </button>
             )}
           </div>
