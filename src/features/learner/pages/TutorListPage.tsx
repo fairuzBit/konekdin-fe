@@ -1,4 +1,4 @@
-import { Search, Loader2, Star, Award, UserCircle } from 'lucide-react';
+import { Search, Loader2, Star, Award, UserCircle, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useEffect, useState } from 'react';
@@ -108,18 +108,48 @@ export default function TutorListPage() {
                   )}
                 </div>
                 
-                {/* Available Hours */}
+                {/* Available Schedule */}
                 <div className="mb-5">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Jam Tersedia</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Jadwal Tersedia</p>
+                  
+                  {/* Hari */}
+                  <div className="flex gap-1 mb-2.5">
+                    {[
+                      { id: 'monday', label: 'Sn', full: 'Senin' },
+                      { id: 'tuesday', label: 'Sl', full: 'Selasa' },
+                      { id: 'wednesday', label: 'Rb', full: 'Rabu' },
+                      { id: 'thursday', label: 'Km', full: 'Kamis' },
+                      { id: 'friday', label: 'Jm', full: 'Jumat' },
+                      { id: 'saturday', label: 'Sb', full: 'Sabtu' },
+                      { id: 'sunday', label: 'Mg', full: 'Minggu' }
+                    ].map(day => {
+                      const isAvailable = new Set(tutor.available_slots?.map((s: any) => (s.day_of_week || '').toLowerCase())).has(day.id);
+                      return (
+                        <div 
+                          key={day.id} 
+                          title={day.full}
+                          className={`flex-1 aspect-square rounded-[8px] flex items-center justify-center text-[10px] font-bold transition-all cursor-default ${
+                            isAvailable 
+                              ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/20' 
+                              : 'bg-slate-50 border border-slate-100 text-slate-300'
+                          }`}
+                        >
+                          {day.label}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Jam (Preview) */}
                   <div className="flex flex-wrap gap-1.5">
                     {tutor.available_slots && tutor.available_slots.length > 0 ? (
-                      tutor.available_slots.slice(0, 5).map((slot: any, idx: number) => (
-                        <span key={idx} className="bg-slate-100 border border-slate-200 text-slate-600 text-[11px] px-2.5 py-1 rounded-full font-medium">
-                          {slot.start_time}
+                      Array.from(new Set(tutor.available_slots.map((s: any) => s.start_time))).slice(0, 4).map((time: any, idx: number) => (
+                        <span key={idx} className="bg-slate-100 border border-slate-200 text-slate-500 text-[10px] px-2 py-1 rounded-md font-bold flex items-center gap-1">
+                          <Clock className="w-2.5 h-2.5 text-slate-400" /> {time}
                         </span>
                       ))
                     ) : (
-                      <span className="text-[11px] italic text-slate-400">Belum ada jadwal.</span>
+                      <span className="text-[11px] italic text-slate-400">Belum ada jam operasional.</span>
                     )}
                   </div>
                 </div>
