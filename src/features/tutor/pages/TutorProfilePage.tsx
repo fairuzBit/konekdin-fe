@@ -190,7 +190,7 @@ export default function TutorProfilePage() {
           {/* Switch to Learner Panel Button */}
           {!isAdminView && (
             <Link 
-              to="/learner/dashboard"
+              to="/learner"
               className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-bgPrimary border border-borderColor text-textPrimary hover:border-brand-500 hover:text-brand-500 transition-colors shadow-sm text-sm font-semibold mt-4 md:mt-0 w-full md:w-auto shrink-0"
             >
               <GraduationCap className="w-4 h-4" />

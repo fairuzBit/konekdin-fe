@@ -1,14 +1,44 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { BellRing, Wallet, Clock, GraduationCap, CalendarCheck, Star, ArrowRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { BellRing, Wallet, Clock, GraduationCap, CalendarCheck, Star, ArrowRight, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { learnerService } from '@/api/services/learnerService';
 import { normalizeList } from '@/lib/apiData';
+import { useAuth, hasRole } from '@/context/AuthContext';
 
 export default function LearnerNotificationsPage() {
   const [notifications, setNotifications] = useState<Array<Record<string, unknown>>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  const { user, refreshUser } = useAuth();
+  const navigate = useNavigate();
+  const [checkingRole, setCheckingRole] = useState(false);
+
+  const handleOpenTutorPanel = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setCheckingRole(true);
+    
+    try {
+      if (hasRole(user, 'tutor')) {
+        navigate('/tutor');
+        return;
+      }
+      
+      const updatedUser = await refreshUser();
+      
+      if (hasRole(updatedUser, 'tutor')) {
+        navigate('/tutor');
+      } else {
+        alert('Peran Tutor belum aktif atau proses masih tertunda. Silakan hubungi Admin.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Terjadi kesalahan saat memverifikasi akses Tutor.');
+    } finally {
+      setCheckingRole(false);
+    }
+  };
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -133,12 +163,17 @@ export default function LearnerNotificationsPage() {
                     {/* Tombol Akses Cepat Panel Tutor */}
                     {type === 'application' && ((item.title as string)?.toLowerCase().includes('selamat') || (item.title as string)?.toLowerCase().includes('disetujui')) && (
                       <div className="mt-4">
-                        <Link 
-                          to="/tutor" 
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl transition-colors shadow-sm"
+                        <button 
+                          onClick={handleOpenTutorPanel}
+                          disabled={checkingRole}
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 disabled:bg-brand-400 text-white text-xs font-bold rounded-xl transition-colors shadow-sm"
                         >
-                          Buka Panel Tutor <ArrowRight className="w-3.5 h-3.5" />
-                        </Link>
+                          {checkingRole ? (
+                            <>Memverifikasi... <Loader2 className="w-3.5 h-3.5 animate-spin" /></>
+                          ) : (
+                            <>Buka Panel Tutor <ArrowRight className="w-3.5 h-3.5" /></>
+                          )}
+                        </button>
                       </div>
                     )}
                   </div>

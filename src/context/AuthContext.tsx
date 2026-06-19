@@ -20,6 +20,7 @@ type AuthContextType = {
   login: (payload: Record<string, unknown>) => Promise<User | null>;
   register: (payload: Record<string, unknown>) => Promise<User | null>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<User | null>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -181,6 +182,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const refreshUser = async (): Promise<User | null> => {
+    if (token) {
+      return await fetchCurrentUser(token);
+    }
+    return null;
+  };
+
   const value = useMemo(
     () => ({
       user,
@@ -190,6 +198,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       register,
       logout,
+      refreshUser,
     }),
     [user, token, loading],
   );
