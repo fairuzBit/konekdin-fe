@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, type FormEvent } from 'react';
-import { Building2, FileText, Pencil, CalendarDays, History, ArrowLeft, GraduationCap } from 'lucide-react';
+import { Building2, FileText, Pencil, CalendarDays, History, ArrowLeft, GraduationCap, Check, X } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { learnerService } from '@/api/services/learnerService';
 import { adminService } from '@/api/services/adminService';
@@ -37,6 +37,14 @@ export default function LearnerProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -104,12 +112,12 @@ export default function LearnerProfilePage() {
       }));
       setAvatarPreview(null);
       
-      alert('Profil berhasil diperbarui!');
+      setToast({ message: 'Profil berhasil diperbarui!', type: 'success' });
       setIsEditModalOpen(false);
     } catch (err: any) {
       console.error('Update Profile Error:', err);
       const msg = err.response?.data?.message || err.message || 'Error tidak diketahui';
-      alert('Gagal memperbarui profil: ' + msg);
+      setToast({ message: 'Gagal memperbarui profil: ' + msg, type: 'error' });
     } finally {
       setSaving(false);
     }
@@ -135,6 +143,26 @@ export default function LearnerProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-12 relative z-10">
+      
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-[100] animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] border bg-white ${
+            toast.type === 'success' ? 'border-brand-200' : 'border-rose-200'
+          }`}>
+            {toast.type === 'success' ? (
+              <div className="bg-brand-100 text-brand-600 rounded-full p-1.5">
+                <Check className="w-4 h-4 stroke-[3]" />
+              </div>
+            ) : (
+              <div className="bg-rose-100 text-rose-600 rounded-full p-1.5">
+                <X className="w-4 h-4 stroke-[3]" />
+              </div>
+            )}
+            <p className="text-sm font-bold text-slate-800">{toast.message}</p>
+          </div>
+        </div>
+      )}
       
       {/* Top Profile Header */}
       <div className="bg-bgSecondary/90 backdrop-blur-xl border border-borderColor rounded-[36px] p-6 md:p-8 shadow-sm flex flex-col md:flex-row gap-6 items-start justify-between">

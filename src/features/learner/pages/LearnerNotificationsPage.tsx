@@ -76,62 +76,77 @@ export default function LearnerNotificationsPage() {
           </div>
         ) : null}
 
-        {!loading && !error && notifications.map((item, index) => {
-          const type = (item.type as string) || 'default';
-          const { icon: Icon, style } = getNotificationIcon(type);
-          const isRead = item.is_read === true || item.is_read === 1;
+        {!loading && !error && Object.entries(
+          notifications.reduce((acc, item) => {
+            const group = (item.group as string) || 'TERBARU';
+            if (!acc[group]) acc[group] = [];
+            acc[group].push(item);
+            return acc;
+          }, {} as Record<string, typeof notifications>)
+        ).map(([group, groupNotifications]) => (
+          <div key={group} className="mb-8 space-y-4">
+            <h3 className="text-xs font-black text-slate-400 dark:text-slate-500 tracking-widest uppercase pl-4 mb-4">
+              {group}
+            </h3>
+            
+            {groupNotifications.map((item, index) => {
+              const type = (item.type as string) || 'default';
+              const { icon: Icon, style } = getNotificationIcon(type);
+              const isRead = item.is_read === true || item.is_read === 1;
 
-          return (
-            <div 
-              key={index} 
-              className={`relative flex items-start gap-4 p-5 sm:p-6 rounded-3xl border transition-all duration-300 hover:shadow-md ${
-                isRead 
-                  ? 'bg-white dark:bg-bgSecondary border-slate-200 dark:border-borderColor opacity-80 hover:opacity-100' 
-                  : 'bg-brand-50/50 dark:bg-brand-500/5 border-brand-200 dark:border-brand-500/20 shadow-sm'
-              }`}
-            >
-              {!isRead && (
-                <div className="absolute top-6 right-6 w-2.5 h-2.5 rounded-full bg-brand-500 ring-4 ring-brand-100 dark:ring-brand-500/20"></div>
-              )}
-              
-              <div className={`shrink-0 rounded-2xl p-3.5 ${style}`}>
-                <Icon className="h-6 w-6" strokeWidth={2.5} />
-              </div>
-              
-              <div className="flex-1 pr-6">
-                <p className={`text-base ${
-                  isRead 
-                    ? 'font-bold text-slate-700 dark:text-slate-300' 
-                    : 'font-black text-slate-900 dark:text-white'
-                }`}>
-                  {(item.title as string) ?? 'Notifikasi'}
-                </p>
-                <p className={`text-sm mt-1.5 leading-relaxed ${
-                  isRead 
-                    ? 'text-slate-500 dark:text-slate-400 font-medium' 
-                    : 'text-slate-600 dark:text-slate-300 font-medium'
-                }`}>
-                  {(item.body as string) ?? (item.message as string) ?? '—'}
-                </p>
-                <p className="mt-3 text-[11px] font-bold uppercase tracking-widest text-slate-400">
-                  {(item.time as string) ?? (item.created_at as string) ?? '—'}
-                </p>
-
-                {/* Tombol Akses Cepat Panel Tutor */}
-                {type === 'application' && ((item.title as string)?.toLowerCase().includes('selamat') || (item.title as string)?.toLowerCase().includes('disetujui')) && (
-                  <div className="mt-4">
-                    <Link 
-                      to="/tutor" 
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl transition-colors shadow-sm"
-                    >
-                      Buka Panel Tutor <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
+              return (
+                <div 
+                  key={item.id as string || index} 
+                  className={`relative flex items-start gap-4 p-5 sm:p-6 rounded-3xl border transition-all duration-300 hover:shadow-md ${
+                    isRead 
+                      ? 'bg-white dark:bg-bgSecondary border-slate-200 dark:border-borderColor opacity-80 hover:opacity-100' 
+                      : 'bg-brand-50/50 dark:bg-brand-500/5 border-brand-200 dark:border-brand-500/20 shadow-sm'
+                  }`}
+                >
+                  {!isRead && (
+                    <div className="absolute top-6 right-6 w-2.5 h-2.5 rounded-full bg-brand-500 ring-4 ring-brand-100 dark:ring-brand-500/20"></div>
+                  )}
+                  
+                  <div className={`shrink-0 rounded-2xl p-3.5 ${style}`}>
+                    <Icon className="h-6 w-6" strokeWidth={2.5} />
                   </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+                  
+                  <div className="flex-1 pr-6">
+                    <p className={`text-base ${
+                      isRead 
+                        ? 'font-bold text-slate-700 dark:text-slate-300' 
+                        : 'font-black text-slate-900 dark:text-white'
+                    }`}>
+                      {(item.title as string) ?? 'Notifikasi'}
+                    </p>
+                    <p className={`text-sm mt-1.5 leading-relaxed ${
+                      isRead 
+                        ? 'text-slate-500 dark:text-slate-400 font-medium' 
+                        : 'text-slate-600 dark:text-slate-300 font-medium'
+                    }`}>
+                      {(item.message as string) ?? (item.body as string) ?? '—'}
+                    </p>
+                    <p className="mt-3 text-[11px] font-bold uppercase tracking-widest text-slate-400">
+                      {(item.time_ago as string) ?? (item.time as string) ?? (item.created_at as string) ?? '—'}
+                    </p>
+
+                    {/* Tombol Akses Cepat Panel Tutor */}
+                    {type === 'application' && ((item.title as string)?.toLowerCase().includes('selamat') || (item.title as string)?.toLowerCase().includes('disetujui')) && (
+                      <div className="mt-4">
+                        <Link 
+                          to="/tutor" 
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl transition-colors shadow-sm"
+                        >
+                          Buka Panel Tutor <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );
