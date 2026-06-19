@@ -103,8 +103,12 @@ export default function AppLayout({ children, navigation }: AppLayoutProps) {
           {/* User Profile in Sidebar */}
           <div className="px-6 pb-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-700 shadow-sm">
-                {(user?.name ?? 'U').slice(0, 2).toUpperCase()}
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-700 shadow-sm overflow-hidden border-2 border-brand-100">
+                {user?.avatar ? (
+                  <img src={user.avatar as string} alt="Avatar" className="h-full w-full object-cover" />
+                ) : (
+                  (user?.name ?? 'U').slice(0, 2).toUpperCase()
+                )}
               </div>
               <div className="flex flex-col overflow-hidden">
                 <span className="truncate text-sm font-bold text-textPrimary">{user?.name ?? 'Budi Santoso'}</span>
@@ -128,7 +132,7 @@ export default function AppLayout({ children, navigation }: AppLayoutProps) {
                   }}
                   className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-colors ${
                     active 
-                      ? 'bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400' 
+                      ? 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400' 
                       : 'text-textSecondary hover:bg-bgPrimary hover:text-textPrimary'
                   }`}
                 >

@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { learnerService } from '@/api/services/learnerService';
 import { adminService } from '@/api/services/adminService';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useAuth, hasRole } from '@/context/AuthContext';
 
 type ProfileFormState = {
   name: string;
@@ -30,6 +31,7 @@ const emptyProfile: ProfileFormState = {
 export default function LearnerProfilePage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const isAdminView = !!id;
   const [profile, setProfile] = useState<ProfileFormState>(emptyProfile);
   const [loading, setLoading] = useState(true);
@@ -216,6 +218,14 @@ export default function LearnerProfilePage() {
             >
               <History className="w-4 h-4" /> Lihat Riwayat Belajar
             </Link>
+            {hasRole(user, 'tutor') && (
+              <Link 
+                to="/tutor"
+                className="flex items-center justify-center gap-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/20 px-5 py-3 rounded-2xl text-sm font-bold transition-colors shadow-sm mt-1"
+              >
+                <GraduationCap className="w-4 h-4" /> Beralih ke Panel Tutor
+              </Link>
+            )}
           </div>
         )}
       </div>

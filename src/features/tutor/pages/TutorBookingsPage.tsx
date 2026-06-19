@@ -38,7 +38,8 @@ export default function TutorBookingsPage() {
             <div key={index} className="mt-3 flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 first:mt-0">
               <div>
                 <p className="font-semibold text-slate-900">{(request.learner as string) ?? 'Learner'}</p>
-                <p className="text-sm text-slate-500">{(request.subject as string) ?? (request.title as string) ?? '—'}</p>
+                <p className="text-sm text-slate-500 font-medium">Mata Kuliah: <span className="text-brand-600">{(request.course as string) ?? (request.subject as string) ?? '—'}</span></p>
+                <p className="text-xs text-slate-400 mt-0.5">Jadwal: {(Array.isArray(request.slots) ? request.slots.join(', ') : request.date as string) ?? '—'}</p>
               </div>
               <div className="flex items-center gap-2 text-sm text-brand-700"><Sparkles className="h-4 w-4" /> {(request.status as string) ?? 'Menunggu'}</div>
             </div>
