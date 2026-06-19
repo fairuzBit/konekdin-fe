@@ -14,14 +14,20 @@ import {
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { tutorService } from '@/api/services/tutorService';
 import { adminService } from '@/api/services/adminService';
+import { learnerService } from '@/api/services/learnerService';
 
 export default function TutorProfilePage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const isAdminView = !!id;
+  const location = useLocation();
+  
+  const isLearnerView = location.pathname.includes('/tutors/') && !location.pathname.includes('/admin/');
+  const isAdminView = location.pathname.includes('/admin/') && !!id;
+  const isReadOnly = isAdminView || isLearnerView;
+
   const [isAvailable, setIsAvailable] = useState(true);
   const [tutor, setTutor] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -49,6 +55,9 @@ export default function TutorProfilePage() {
         if (isAdminView) {
           const response = await adminService.getUserById(id);
           data = response.data || response;
+        } else if (isLearnerView) {
+          const response = await learnerService.getTutorById(id!);
+          data = response.data || response;
         } else {
           const response = await tutorService.getProfile();
           data = response.data || response;
@@ -65,7 +74,7 @@ export default function TutorProfilePage() {
             major: data.major || '',
             faculty: data.faculty || '',
             phone: data.phone || '',
-            price_per_session: data.price_per_session || 0
+            price_per_session: data.price_per_session || data.price || 0
           });
         }
       } catch (err) {
@@ -76,7 +85,7 @@ export default function TutorProfilePage() {
     };
 
     fetchTutorData();
-  }, [id, isAdminView]);
+  }, [id, isAdminView, isLearnerView]);
 
   const handleInputChange = (field: string, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -156,7 +165,7 @@ export default function TutorProfilePage() {
               <div className="w-32 h-32 md:w-40 md:h-40 rounded-[32px] overflow-hidden bg-bgSecondary border-4 border-bgSecondary shadow-lg">
                 {renderAvatar('w-32 h-32 md:w-40 md:h-40', 'text-4xl md:text-5xl')}
               </div>
-              {!isAdminView && (
+              {!isReadOnly && (
                 <>
                   <button 
                     onClick={() => setIsEditModalOpen(true)}
@@ -188,7 +197,7 @@ export default function TutorProfilePage() {
           </div>
 
           {/* Switch to Learner Panel Button */}
-          {!isAdminView && (
+          {!isReadOnly && (
             <Link 
               to="/learner"
               className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-bgPrimary border border-borderColor text-textPrimary hover:border-brand-500 hover:text-brand-500 transition-colors shadow-sm text-sm font-semibold mt-4 md:mt-0 w-full md:w-auto shrink-0"
@@ -207,12 +216,12 @@ export default function TutorProfilePage() {
             </div>
             <h3 className="text-xl font-bold text-textPrimary mb-1">Status Ketersediaan</h3>
             <p className="text-sm text-textSecondary">
-              {isAdminView 
+              {isReadOnly 
                 ? 'Status ketersediaan tutor untuk menerima sesi baru.' 
                 : 'Nonaktifkan jika Anda tidak ingin muncul di pencarian learner atau menerima permintaan sesi baru untuk sementara waktu.'}
             </p>
           </div>
-          {!isAdminView && (
+          {!isReadOnly && (
             <div className="shrink-0 ml-4">
               <button 
                 onClick={() => setIsAvailable(!isAvailable)}
@@ -230,7 +239,7 @@ export default function TutorProfilePage() {
         <div className="p-8">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-4">
             <h3 className="text-2xl font-bold text-textPrimary">Informasi Pribadi</h3>
-            {!isAdminView && (
+            {!isReadOnly && (
               <button 
                 onClick={() => setIsEditModalOpen(true)}
                 className="text-sm font-bold text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 flex items-center gap-1.5 self-start sm:self-auto"
@@ -268,7 +277,7 @@ export default function TutorProfilePage() {
       </Card>
 
       {/* Edit Profile Modal */}
-      {isEditModalOpen && !isAdminView && (
+      {isEditModalOpen && !isReadOnly && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-bgSecondary w-full max-w-xl rounded-[32px] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="p-6 md:p-8">
@@ -379,7 +388,7 @@ export default function TutorProfilePage() {
           </div>
           <p className="text-[10px] font-extrabold tracking-wider text-textSecondary uppercase mb-1">Per Sesi</p>
           
-          {!isAdminView ? (
+          {!isReadOnly ? (
             <div className="mb-6 flex items-center">
               <span className="text-4xl font-extrabold text-textPrimary mr-4">Rp</span>
               <input 
@@ -390,10 +399,10 @@ export default function TutorProfilePage() {
               />
             </div>
           ) : (
-            <div className="text-4xl font-extrabold text-textPrimary mb-6">Rp {tutor?.price_per_session ? tutor.price_per_session.toLocaleString('id-ID') : '0'}</div>
+            <div className="text-4xl font-extrabold text-textPrimary mb-6">Rp {tutor?.price_per_session ? tutor.price_per_session.toLocaleString('id-ID') : tutor?.price ? tutor.price.toLocaleString('id-ID') : '0'}</div>
           )}
           
-          {!isAdminView && (
+          {!isReadOnly && (
             <Button onClick={handleSaveProfile} disabled={saving} className="w-full bg-brand-500 hover:bg-brand-600 text-white rounded-xl py-6 font-bold text-base shadow-sm">
               {saving ? 'Menyimpan...' : 'Perbarui Tarif Mengajar'}
             </Button>

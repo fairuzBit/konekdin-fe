@@ -92,10 +92,10 @@ export default function TutorDetailPage() {
                 <CalendarDays className="h-4 w-4" /> Slot tersedia
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
-                {tutor.availability && tutor.availability.length > 0 ? (
-                  tutor.availability.map((slot: any, idx: number) => (
+                {tutor.available_slots && tutor.available_slots.length > 0 ? (
+                  tutor.available_slots.map((slot: any, idx: number) => (
                     <span key={idx} className="bg-brand-50 text-brand-700 text-xs px-2.5 py-1 rounded-full font-medium">
-                      {slot.master_slot?.start_time} - {slot.master_slot?.end_time}
+                      {slot.day_of_week.substring(0, 3)}, {slot.start_time} - {slot.end_time}
                     </span>
                   ))
                 ) : (
@@ -108,10 +108,10 @@ export default function TutorDetailPage() {
                 <MessageSquareText className="h-4 w-4" /> Mata Kuliah
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
-                {tutor.courses && tutor.courses.length > 0 ? (
-                  tutor.courses.map((course: any, idx: number) => (
+                {tutor.taught_courses && tutor.taught_courses.length > 0 ? (
+                  tutor.taught_courses.map((course: any, idx: number) => (
                     <span key={idx} className="bg-slate-100 text-slate-700 text-xs px-2.5 py-1 rounded-md font-medium border border-slate-200">
-                      {course.name} ({course.code})
+                      {course.course_name} ({course.course_code})
                     </span>
                   ))
                 ) : (
