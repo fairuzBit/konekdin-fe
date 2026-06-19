@@ -96,8 +96,9 @@ export function BookingModal({ isOpen, onClose, tutor }: BookingModalProps) {
       const res = await learnerService.createBooking(payload);
       
       if (res.success) {
-        // Redirect to detail pesanan page /learner/bookings
-        navigate('/learner/bookings');
+        // Redirect to specific detail pesanan page
+        const newBookingId = res.data?.id || res.id;
+        navigate(`/learner/bookings/${newBookingId}`);
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Terjadi kesalahan saat membuat pesanan.');
@@ -255,7 +256,7 @@ export function BookingModal({ isOpen, onClose, tutor }: BookingModalProps) {
                       : '-'}
                   </p>
                   <p className="text-xs text-emerald-400 font-medium mt-0.5">
-                    {totalSessions > 0 ? `${totalSessions} Sesi Dipilih` : 'Belum pilih jam'}
+                    {totalSessions > 0 ? `${totalSessions} Sesi Dipilih` : 'Silakan klik kotak jam sesi'}
                   </p>
                 </div>
               </div>
@@ -265,7 +266,7 @@ export function BookingModal({ isOpen, onClose, tutor }: BookingModalProps) {
           <div>
             <div className="border-t border-white/10 pt-6 space-y-3 mb-6">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-slate-400 font-medium">Biaya Sesi ({totalSessions} Sesi)</span>
+                <span className="text-slate-400 font-medium">Biaya Sesi (Rp {pricePerSession.toLocaleString('id-ID')} × {totalSessions} Sesi)</span>
                 <span className="font-bold">Rp {sessionsCost.toLocaleString('id-ID')}</span>
               </div>
               <div className="flex justify-between items-center text-sm">

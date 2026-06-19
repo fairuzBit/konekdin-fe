@@ -87,12 +87,20 @@ export default function TutorListPage() {
                   )}
                 </div>
 
-                {/* Name & Bio/Info */}
-                <div className="mb-3">
-                  <h3 className="text-[17px] font-bold text-slate-800 mb-0.5 line-clamp-1">{tutor.name}</h3>
-                  <p className="text-[13px] text-slate-500 line-clamp-1">
-                    {tutor.bio || `Semester ${tutor.current_semester || '?'}`}
-                  </p>
+                {/* Name, Bio, & Price */}
+                <div className="mb-3 flex justify-between items-start gap-2">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-[17px] font-bold text-slate-800 mb-0.5 truncate">{tutor.name}</h3>
+                    <p className="text-[13px] text-slate-500 truncate">
+                      {tutor.bio || `Semester ${tutor.current_semester || '?'}`}
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0 pl-2">
+                    <p className="text-[15px] font-black text-emerald-600">
+                      Rp {tutor.price ? tutor.price.toLocaleString('id-ID') : tutor.price_per_session ? tutor.price_per_session.toLocaleString('id-ID') : '0'}
+                    </p>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">/ Sesi</p>
+                  </div>
                 </div>
 
                 {/* Subjects Badges */}

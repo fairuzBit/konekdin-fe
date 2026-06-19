@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar, Clock, Star, AlertCircle, Banknote, Eye } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { learnerService } from '@/api/services/learnerService';
 import { normalizeList } from '@/lib/apiData';
-import { PaymentInvoiceModal } from '../components/PaymentInvoiceModal';
 
 export default function LearnerBookingsPage() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const [selectedBookingForPayment, setSelectedBookingForPayment] = useState<any>(null);
 
   const fetchBookings = async () => {
     try {
@@ -27,11 +25,7 @@ export default function LearnerBookingsPage() {
     fetchBookings();
   }, []);
 
-  const handlePaymentSuccess = () => {
-    // Refresh the bookings list after successful payment
-    fetchBookings();
-    setSelectedBookingForPayment(null);
-  };
+
 
   if (loading) {
     return (
@@ -154,12 +148,12 @@ export default function LearnerBookingsPage() {
                       Lihat Jadwal
                     </button>
                   ) : (
-                    <button 
-                      onClick={() => setSelectedBookingForPayment(booking)}
+                    <Link 
+                      to={`/learner/bookings/${booking.id}`}
                       className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl shadow-sm transition-colors"
                     >
                       Bayar Sekarang <Banknote className="w-3.5 h-3.5" />
-                    </button>
+                    </Link>
                   )}
                 </div>
               </div>
@@ -168,12 +162,6 @@ export default function LearnerBookingsPage() {
         )}
       </div>
 
-      <PaymentInvoiceModal 
-        isOpen={!!selectedBookingForPayment}
-        onClose={() => setSelectedBookingForPayment(null)}
-        booking={selectedBookingForPayment}
-        onSuccess={handlePaymentSuccess}
-      />
     </div>
   );
 }
