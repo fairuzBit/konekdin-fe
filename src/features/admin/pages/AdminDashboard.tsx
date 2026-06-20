@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BarChart3, ShieldCheck, Users, Activity, AlertTriangle, ChevronRight } from 'lucide-react';
+import { BarChart3, ShieldCheck, Users, Activity, AlertTriangle, ChevronRight, Star, Award } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { adminService } from '@/api/services/adminService';
 import { normalizeRecord, pickValue } from '@/lib/apiData';
@@ -51,6 +51,22 @@ export default function AdminDashboard() {
   const tutorVerified = formatNumber(pickValue(stats, ['verified_tutors', 'total_tutors', 'tutors_count']));
   const complaints = formatNumber(activeComplaintsCount);
   const pendingApplications = formatNumber(pickValue(stats, ['pending_applications', 'tutor_applications', 'applications_count']));
+
+  const aktivitasTerbaru = (stats.aktivitas_terbaru as any[]) || [];
+  const topTutors = (stats.top_tutors as any[]) || [];
+  const popularCourses = (stats.mata_kuliah_populer as any[]) || [];
+
+  // Calculate total bookings for top 3 courses
+  const totalPopularBookings = popularCourses.reduce((sum, course) => sum + (course.bookings || 0), 0);
+
+  const getStatusBadge = (type: string, status: string) => {
+    switch(type) {
+      case 'application': return <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-md">{status}</span>;
+      case 'review': return <span className="px-2 py-1 bg-rose-100 text-rose-700 text-xs font-bold rounded-md">{status}</span>;
+      case 'booking': return <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md">{status}</span>;
+      default: return <span className="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-md">{status}</span>;
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -104,9 +120,9 @@ export default function AdminDashboard() {
       {/* Bottom Section - 2 Columns */}
       <div className="grid gap-6 lg:grid-cols-3">
         
-        {/* Left Col - Activity (Mocked since no API yet) */}
-        <div className="lg:col-span-2">
-          <Card className="h-full border-slate-200 shadow-sm rounded-3xl">
+        {/* Left Col - Activity & Widgets */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="border-slate-200 shadow-sm rounded-3xl">
             <CardContent className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold text-slate-900">Aktivitas Terbaru</h3>
@@ -122,15 +138,113 @@ export default function AdminDashboard() {
                 
                 {loading ? (
                    <p className="text-sm text-slate-500 py-4">Memuat aktivitas...</p>
-                ) : (
+                ) : aktivitasTerbaru.length === 0 ? (
                   <div className="py-8 text-center text-slate-500">
                     <Activity className="w-8 h-8 mx-auto mb-2 text-slate-300" />
                     <p className="text-sm">Belum ada aktivitas baru hari ini.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {aktivitasTerbaru.map((activity, idx) => (
+                      <div key={idx} className="grid grid-cols-4 items-center text-sm py-2 border-b border-slate-50 last:border-0">
+                        <div className="font-semibold text-slate-900 truncate pr-4">{activity.user_name}</div>
+                        <div className="col-span-2">
+                          <p className="text-slate-800 font-medium truncate">{activity.activity}</p>
+                          <p className="text-xs text-slate-400">{activity.time_formatted}</p>
+                        </div>
+                        <div className="text-right">
+                          {getStatusBadge(activity.type, activity.status)}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
             </CardContent>
           </Card>
+
+          {/* Top Tutors & Popular Courses Grid */}
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card className="border-slate-200 shadow-sm rounded-3xl">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-bold text-slate-900 mb-6">Performa Tutor Terbaik</h3>
+                {loading ? (
+                   <p className="text-sm text-slate-500">Memuat data...</p>
+                ) : topTutors.length === 0 ? (
+                   <p className="text-sm text-slate-500">Belum ada data tutor.</p>
+                ) : (
+                  <div className="space-y-5">
+                    {topTutors.map((tutor, idx) => {
+                      const names = tutor.name?.split(' ') || ['N', 'A'];
+                      const initials = names.length > 1 
+                        ? `${names[0][0]}${names[names.length-1][0]}`.toUpperCase()
+                        : names[0].substring(0, 2).toUpperCase();
+
+                      return (
+                        <div key={idx} className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="relative">
+                              <div className="w-12 h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-sm">
+                                {initials}
+                              </div>
+                              <div className="absolute -top-2 -right-2 bg-white rounded-full p-0.5 shadow-sm">
+                                <div className="bg-amber-100 text-amber-600 rounded-full flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold border border-white">
+                                  <Star className="w-3 h-3 mr-0.5 fill-amber-500 text-amber-500" />
+                                  {tutor.rating}
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <p className="font-bold text-slate-900 text-sm truncate max-w-[120px]">{tutor.name}</p>
+                              <p className="text-xs text-slate-500 font-medium">({tutor.sessions} Sesi Selesai)</p>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-center">
+                            <Award className="w-6 h-6 text-amber-400 mb-1" />
+                            <span className="text-[9px] font-bold text-amber-500 uppercase tracking-wider">Top Tutor</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="border-slate-200 shadow-sm rounded-3xl">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-bold text-slate-900 mb-6">Mata Kuliah Populer</h3>
+                {loading ? (
+                   <p className="text-sm text-slate-500">Memuat data...</p>
+                ) : popularCourses.length === 0 ? (
+                   <p className="text-sm text-slate-500">Belum ada pesanan.</p>
+                ) : (
+                  <div className="space-y-6">
+                    {popularCourses.map((course, idx) => {
+                      const percentage = totalPopularBookings > 0 
+                        ? Math.round((course.bookings / totalPopularBookings) * 100) 
+                        : 0;
+                      
+                      const barColors = ['bg-brand-800', 'bg-emerald-500', 'bg-amber-500'];
+                      const barColor = barColors[idx % barColors.length];
+
+                      return (
+                        <div key={idx}>
+                          <div className="flex justify-between items-end mb-2">
+                            <p className="font-bold text-slate-900 text-sm truncate max-w-[160px]">{course.name}</p>
+                            <p className="text-xs font-bold text-brand-600">{percentage}% Peminat</p>
+                          </div>
+                          <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <div className={`h-full ${barColor} rounded-full`} style={{ width: `${percentage}%` }}></div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Right Col - Quick Actions & Alerts */}
@@ -138,7 +252,7 @@ export default function AdminDashboard() {
           <Card className="border-brand-200 shadow-sm rounded-3xl overflow-hidden border-l-4 border-l-brand-600">
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-bold text-slate-900">Manajemen Tutor</h3>
+                <h3 className="text-lg font-bold text-slate-900">Verifikasi Tutor</h3>
                 <span className="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded-md">{loading ? '-' : pendingApplications}</span>
               </div>
               <p className="text-sm text-slate-500 mb-5">Pengajuan verifikasi dokumen tutor tertunda.</p>
@@ -155,8 +269,8 @@ export default function AdminDashboard() {
                 <span className="bg-rose-100 text-rose-600 text-xs font-bold px-2 py-1 rounded-md">{loading ? '-' : complaints}</span>
               </div>
               <p className="text-sm text-slate-500 mb-5">Butuh tanggapan admin segera.</p>
-              <Link to="/admin/complaints" className="flex items-center text-rose-600 font-semibold text-sm hover:text-rose-700 group">
-                Tinjau Komplain <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              <Link to="/admin/complaints" className="block text-center w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold py-2.5 rounded-xl transition-colors">
+                Lihat Detail
               </Link>
             </CardContent>
           </Card>

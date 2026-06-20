@@ -425,32 +425,56 @@ export default function TutorProfilePage() {
         </div>
       </div>
 
-      {/* Portofolio / Transkrip */}
-      {(tutor?.transcript_path || tutor?.application?.transcript_path) && (
+      {/* Keahlian (Skills) */}
+      {tutor?.skills && tutor.skills.length > 0 && (
+        <div className="pt-4">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-bold text-textPrimary">Keahlian</h3>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {tutor.skills.map((skill: string, index: number) => (
+              <span 
+                key={index} 
+                className="px-4 py-2 bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-400 rounded-xl text-sm font-semibold border border-brand-100 dark:border-brand-500/20 shadow-sm"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Dokumen: Portofolio, Transkrip, Sertifikat */}
+      {tutor?.documents && tutor.documents.length > 0 && (
         <div className="pt-8">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-2xl font-bold text-textPrimary">Dokumen Transkrip</h3>
+            <h3 className="text-2xl font-bold text-textPrimary">Dokumen & Portofolio</h3>
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="group cursor-pointer">
-              <a 
-                href={tutor?.transcript_path || tutor?.application?.transcript_path} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="block aspect-[16/9] bg-slate-900 rounded-[32px] overflow-hidden mb-4 relative shadow-sm border border-borderColor"
-              >
-                <div className="absolute inset-0 flex items-center justify-center bg-slate-900 transition-transform duration-500 group-hover:scale-105">
-                  <FileText className="w-16 h-16 text-brand-400 opacity-80" />
-                </div>
-                <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                  Dokumen
-                </div>
-              </a>
-              <h4 className="text-lg font-bold text-textPrimary mb-1.5 group-hover:text-brand-500 transition-colors">Transkrip Nilai</h4>
-              <p className="text-sm text-textSecondary font-medium leading-relaxed">
-                Dokumen transkrip nilai yang diunggah saat pendaftaran tutor.
-              </p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {tutor.documents.map((doc: any, index: number) => (
+              <div key={index} className="group cursor-pointer">
+                <a 
+                  href={doc.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block aspect-[16/9] bg-slate-900 rounded-[32px] overflow-hidden mb-4 relative shadow-sm border border-borderColor"
+                >
+                  <div className="absolute inset-0 flex items-center justify-center bg-slate-900 transition-transform duration-500 group-hover:scale-105">
+                    {doc.type === 'link' ? (
+                      <ExternalLink className="w-16 h-16 text-brand-400 opacity-80" />
+                    ) : doc.type === 'certificate' ? (
+                      <Award className="w-16 h-16 text-brand-400 opacity-80" />
+                    ) : (
+                      <FileText className="w-16 h-16 text-brand-400 opacity-80" />
+                    )}
+                  </div>
+                  <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                    {doc.label}
+                  </div>
+                </a>
+                <h4 className="text-lg font-bold text-textPrimary mb-1.5 group-hover:text-brand-500 transition-colors truncate px-2">{doc.name}</h4>
+              </div>
+            ))}
           </div>
         </div>
       )}

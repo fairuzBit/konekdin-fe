@@ -13,6 +13,7 @@ export default function AdminApplicationsPage() {
   // Modal State
   const [selectedDocs, setSelectedDocs] = useState<Array<{name?: string, label?: string, url?: string}> | null>(null);
   const [selectedLearnerName, setSelectedLearnerName] = useState<string>('');
+  const [selectedKeahlian, setSelectedKeahlian] = useState<string[]>([]);
 
   const fetchApplications = async () => {
     setLoading(true);
@@ -181,6 +182,7 @@ export default function AdminApplicationsPage() {
                           onClick={() => {
                             setSelectedDocs(docs);
                             setSelectedLearnerName(name);
+                            setSelectedKeahlian((item.keahlian as string[]) || []);
                           }}
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-textPrimary bg-bgPrimary hover:bg-borderColor transition-colors"
                         >
@@ -247,6 +249,16 @@ export default function AdminApplicationsPage() {
             </div>
             
             <div className="p-6">
+              {selectedKeahlian && selectedKeahlian.length > 0 && selectedKeahlian[0] && (
+                <div className="mb-6 p-4 rounded-2xl bg-brand-50/50 dark:bg-brand-500/10 border border-brand-100 dark:border-brand-500/20">
+                  <h4 className="text-sm font-bold text-brand-700 dark:text-brand-400 mb-2">Keahlian & Bio</h4>
+                  <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                    {selectedKeahlian[0]}
+                  </p>
+                </div>
+              )}
+
+              <h4 className="text-sm font-bold text-textPrimary mb-3">Dokumen Terlampir</h4>
               {selectedDocs && selectedDocs.length > 0 ? (
                 <div className="space-y-3">
                   {selectedDocs.map((doc, i) => (
