@@ -13,5 +13,5 @@ const navigation = [
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  return <AppLayout navigation={navigation}>{children}</AppLayout>;
+  return <AppLayout navigation={navigation} panelRole="Admin Panel">{children}</AppLayout>;
 }

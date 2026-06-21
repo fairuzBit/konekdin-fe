@@ -478,6 +478,70 @@ export default function TutorProfilePage() {
           </div>
         </div>
       )}
+
+      {/* Jadwal Ketersediaan (Learner View) */}
+      {isLearnerView && tutor?.available_slots && tutor.available_slots.length > 0 && (
+        <div className="pt-8">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-bold text-textPrimary">Jadwal Ketersediaan</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {tutor.available_slots.map((slot: any, index: number) => (
+              <div key={index} className="bg-bgSecondary border border-borderColor rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm">
+                <span className="text-xs font-bold text-textSecondary uppercase tracking-widest mb-1">{slot.day_of_week}</span>
+                <span className="text-lg font-extrabold text-brand-600 dark:text-brand-400">{slot.start_time} - {slot.end_time}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Ulasan (Learner View) */}
+      {isLearnerView && (
+        <div className="pt-8">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-bold text-textPrimary">Ulasan</h3>
+            <div className="flex items-center gap-1.5 bg-amber-50 dark:bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-100 dark:border-amber-500/20">
+              <span className="text-sm font-bold text-amber-700 dark:text-amber-400">★ {Number(tutor?.rating_avg || 0).toFixed(1)}</span>
+              <span className="text-xs font-medium text-amber-600/70 dark:text-amber-400/70">({tutor?.total_reviews || 0} ulasan)</span>
+            </div>
+          </div>
+          
+          {tutor?.reviews && tutor.reviews.length > 0 ? (
+            <div className="space-y-4">
+              {tutor.reviews.map((review: any, index: number) => (
+                <div key={index} className="bg-bgSecondary border border-borderColor rounded-3xl p-6 shadow-sm">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold overflow-hidden shrink-0">
+                        {review.learner?.avatar ? (
+                          <img src={review.learner.avatar} alt={review.learner.name} className="w-full h-full object-cover" />
+                        ) : (
+                          (review.learner?.name || 'L').substring(0, 2).toUpperCase()
+                        )}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-textPrimary">{review.learner?.name || 'Learner'}</h4>
+                        <p className="text-xs text-textSecondary">{new Date(review.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span key={star} className={`text-lg ${star <= review.rating ? 'text-amber-400' : 'text-slate-200 dark:text-slate-700'}`}>★</span>
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-sm text-textPrimary leading-relaxed">"{review.comment}"</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-bgSecondary border border-borderColor rounded-3xl p-8 text-center shadow-sm">
+              <p className="text-textSecondary text-sm font-medium">Belum ada ulasan untuk tutor ini.</p>
+            </div>
+          )}
+        </div>
+      )}
       
     </div>
   );

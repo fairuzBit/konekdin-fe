@@ -14,5 +14,5 @@ const navigation = [
 ];
 
 export default function TutorLayout({ children }: { children: ReactNode }) {
-  return <AppLayout navigation={navigation}>{children}</AppLayout>;
+  return <AppLayout navigation={navigation} panelRole="Tutor">{children}</AppLayout>;
 }

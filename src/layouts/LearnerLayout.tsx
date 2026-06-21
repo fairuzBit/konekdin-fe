@@ -13,5 +13,5 @@ const navigation = [
 ];
 
 export default function LearnerLayout({ children }: { children: ReactNode }) {
-  return <AppLayout navigation={navigation} panelRole="Learner Panel">{children}</AppLayout>;
+  return <AppLayout navigation={navigation} panelRole="Learner">{children}</AppLayout>;
 }

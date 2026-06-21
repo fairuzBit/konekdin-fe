@@ -3,14 +3,39 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useEffect, useState } from 'react';
 import { learnerService } from '@/api/services/learnerService';
+import { publicService } from '@/api/services/publicService';
 import { Link } from 'react-router-dom';
 import { BookingModal } from '../components/BookingModal';
 
 export default function TutorListPage() {
   const [tutors, setTutors] = useState<any[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [masterSlots, setMasterSlots] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTutor, setSelectedTutor] = useState<any>(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  
+  // Filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCourse, setSelectedCourse] = useState('');
+  const [selectedDay, setSelectedDay] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
+
+  const filteredTutors = tutors.filter((tutor) => {
+    const matchesSearch = searchQuery === '' || 
+      tutor.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesCourse = selectedCourse === '' ||
+      (tutor.taught_courses && tutor.taught_courses.some((c: any) => c.course_id?.toString() === selectedCourse || c.course_name === selectedCourse));
+
+    const matchesDay = selectedDay === '' || 
+      (tutor.available_slots && tutor.available_slots.some((s: any) => (s.day_of_week || '').toLowerCase() === selectedDay));
+
+    const matchesTime = selectedTime === '' ||
+      (tutor.available_slots && tutor.available_slots.some((s: any) => (s.start_time || '').startsWith(selectedTime)));
+
+    return matchesSearch && matchesCourse && matchesDay && matchesTime;
+  });
 
   const handleOpenBookingModal = (tutor: any) => {
     setSelectedTutor(tutor);
@@ -18,18 +43,24 @@ export default function TutorListPage() {
   };
 
   useEffect(() => {
-    const fetchTutors = async () => {
+    const fetchData = async () => {
       try {
-        const response = await learnerService.getTutors();
-        setTutors(response.data || []);
+        const [tutorsRes, coursesRes, slotsRes] = await Promise.all([
+          learnerService.getTutors(),
+          publicService.getCourses(),
+          publicService.getMasterSlots()
+        ]);
+        setTutors(tutorsRes.data || []);
+        setCourses(coursesRes.data || []);
+        setMasterSlots(slotsRes.data || []);
       } catch (error) {
-        console.error('Failed to fetch tutors', error);
+        console.error('Failed to fetch data', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTutors();
+    fetchData();
   }, []);
 
   return (
@@ -42,11 +73,61 @@ export default function TutorListPage() {
           <div className="flex flex-col gap-3 md:flex-row">
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-              <Input className="pl-10 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-emerald-500 h-11" placeholder="Cari mata kuliah atau nama tutor..." />
+              <Input 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-emerald-500 h-11" 
+                placeholder="Cari nama tutor..." 
+              />
             </div>
-            <button className="rounded-xl bg-emerald-500 hover:bg-emerald-600 px-6 py-2 text-sm font-bold text-white transition-colors shadow-sm">
-              Cari
-            </button>
+            <select 
+              value={selectedCourse}
+              onChange={(e) => setSelectedCourse(e.target.value)}
+              className="rounded-xl bg-slate-50 border border-slate-200 focus:ring-emerald-500 h-11 px-4 text-sm text-slate-700 outline-none max-w-[200px]"
+            >
+              <option value="">Semua Mata Kuliah</option>
+              {courses.map((course: any) => (
+                <option key={course.id} value={course.name}>{course.name}</option>
+              ))}
+            </select>
+            <select 
+              value={selectedDay}
+              onChange={(e) => setSelectedDay(e.target.value)}
+              className="rounded-xl bg-slate-50 border border-slate-200 focus:ring-emerald-500 h-11 px-4 text-sm text-slate-700 outline-none"
+            >
+              <option value="">Semua Hari</option>
+              <option value="monday">Senin</option>
+              <option value="tuesday">Selasa</option>
+              <option value="wednesday">Rabu</option>
+              <option value="thursday">Kamis</option>
+              <option value="friday">Jumat</option>
+              <option value="saturday">Sabtu</option>
+              <option value="sunday">Minggu</option>
+            </select>
+            <select 
+              value={selectedTime}
+              onChange={(e) => setSelectedTime(e.target.value)}
+              className="rounded-xl bg-slate-50 border border-slate-200 focus:ring-emerald-500 h-11 px-4 text-sm text-slate-700 outline-none"
+            >
+              <option value="">Semua Jam</option>
+              {masterSlots.map((slot: any) => {
+                const timeStr = slot.start_time ? slot.start_time.substring(0, 5) : '';
+                return timeStr ? <option key={slot.id} value={timeStr}>{timeStr}</option> : null;
+              })}
+            </select>
+            {(searchQuery || selectedCourse || selectedDay || selectedTime) && (
+              <button 
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedCourse('');
+                  setSelectedDay('');
+                  setSelectedTime('');
+                }}
+                className="rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 px-6 py-2 text-sm font-bold transition-colors shadow-sm"
+              >
+                Reset
+              </button>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -57,7 +138,7 @@ export default function TutorListPage() {
         </div>
       ) : (
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {tutors.map((tutor) => (
+          {filteredTutors.map((tutor) => (
             <Card key={tutor.id} className="flex flex-col hover:border-emerald-200 transition-all shadow-sm hover:shadow-md rounded-[24px] overflow-hidden border-slate-100">
               <CardContent className="p-5 flex flex-col flex-1">
                 {/* Header: Avatar + Rating + Top Tutor Badge */}
@@ -180,9 +261,9 @@ export default function TutorListPage() {
               </CardContent>
             </Card>
           ))}
-          {tutors.length === 0 && (
+          {filteredTutors.length === 0 && (
             <div className="col-span-full py-12 text-center text-slate-500 bg-white rounded-3xl border border-slate-100">
-              Belum ada tutor yang tersedia saat ini.
+              Belum ada tutor yang cocok dengan kriteria pencarian Anda.
             </div>
           )}
         </div>

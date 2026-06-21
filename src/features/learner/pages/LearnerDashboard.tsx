@@ -132,8 +132,14 @@ export default function LearnerDashboard() {
           ) : (
             <div className="bg-white rounded-[24px] p-6 shadow-sm border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 hover:border-emerald-200 transition-colors">
               <div className="flex items-center gap-4 w-full sm:w-auto">
-                <div className="relative">
-                  <img src={(nextClass.tutor as any)?.user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${(nextClass.tutor as any)?.user?.name || 'Tutor'}`} className="w-16 h-16 bg-slate-100 rounded-2xl object-cover border border-slate-100" alt="Tutor" />
+                <div className="relative shrink-0">
+                  <div className="w-16 h-16 bg-emerald-50 text-emerald-700 rounded-2xl border border-emerald-100 flex items-center justify-center overflow-hidden font-bold text-xl">
+                    {(nextClass.tutor as any)?.avatar ? (
+                      <img src={(nextClass.tutor as any).avatar} className="w-full h-full object-cover" alt="Tutor" />
+                    ) : (
+                      ((nextClass.tutor as any)?.name || 'T').substring(0, 2).toUpperCase()
+                    )}
+                  </div>
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -218,10 +224,16 @@ export default function LearnerDashboard() {
               recommendedTutors.map((tutor, i) => (
                 <div key={i} className="bg-white rounded-[24px] p-4 shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer hover:border-emerald-200 hover:shadow-md transition-all group" onClick={() => navigate(`/tutors/${tutor.id}`)}>
                   <div className="flex items-center gap-3">
-                    <img src={(tutor.user as any)?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${(tutor.user as any)?.name || 'Tutor'}`} className="w-12 h-12 bg-slate-100 rounded-xl object-cover border border-slate-100" alt="Tutor" />
-                    <div>
-                      <h4 className="font-bold text-[#0B132B] text-sm group-hover:text-emerald-700 transition-colors">{(tutor.user as any)?.name || 'Tutor'}</h4>
-                      <p className="text-xs text-slate-500 truncate max-w-[120px]">{(tutor.major as string) || 'Tutor'}</p>
+                    <div className="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-100 flex items-center justify-center overflow-hidden font-bold text-sm shrink-0">
+                      {tutor.avatar ? (
+                        <img src={tutor.avatar as string} className="w-full h-full object-cover" alt="Tutor" />
+                      ) : (
+                        ((tutor.name as string) || 'T').substring(0, 2).toUpperCase()
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-[#0B132B] text-sm group-hover:text-emerald-700 transition-colors truncate">{(tutor.name as string) || 'Tutor'}</h4>
+                      <p className="text-xs text-slate-500 truncate">{(tutor.major as string) || (tutor.taught_courses as any[])?.[0]?.course_name || 'Tutor Umum'}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg border border-amber-100">
