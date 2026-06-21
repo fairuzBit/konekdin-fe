@@ -56,13 +56,19 @@ export default function AdminComplaintsPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    const reason = prompt('Masukkan alasan penghapusan (misal: "Spam/Troll"):');
-    if (reason === null) return; // User cancelled
+  const handleDelete = async (id: number, status: string | null) => {
+    let reason = 'Penghapusan oleh Admin';
+    
+    // Jika status belum SELESAI, admin wajib memberi alasan.
+    if (status !== 'SELESAI') {
+      const inputReason = prompt('Masukkan alasan penghapusan (misal: "Spam/Troll"):');
+      if (inputReason === null) return; // User cancelled
+      reason = inputReason || reason;
+    }
     
     if (confirm('Yakin ingin menghapus ulasan buruk ini secara permanen?')) {
       try {
-        await adminService.deleteReview(id, reason || 'Penghapusan oleh Admin');
+        await adminService.deleteReview(id, reason);
         fetchComplaints();
       } catch {
         alert('Gagal menghapus ulasan');
@@ -181,7 +187,7 @@ export default function AdminComplaintsPage() {
                               <CheckCircle className="w-3.5 h-3.5 mr-1.5" /> Selesaikan
                             </Button>
                           )}
-                          <Button size="sm" variant="outline" className="w-32 text-slate-600 border-slate-200 hover:bg-slate-50 text-xs font-bold" onClick={() => handleDelete(item.id)}>
+                          <Button size="sm" variant="outline" className="w-32 text-slate-600 border-slate-200 hover:bg-slate-50 text-xs font-bold" onClick={() => handleDelete(item.id, item.moderation_status)}>
                             <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Hapus
                           </Button>
                         </div>
