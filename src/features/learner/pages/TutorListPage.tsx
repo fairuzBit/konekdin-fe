@@ -4,10 +4,12 @@ import { Input } from '@/components/ui/input';
 import { useEffect, useState } from 'react';
 import { learnerService } from '@/api/services/learnerService';
 import { publicService } from '@/api/services/publicService';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { BookingModal } from '../components/BookingModal';
 
 export default function TutorListPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [tutors, setTutors] = useState<any[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
   const [masterSlots, setMasterSlots] = useState<any[]>([]);
@@ -62,6 +64,17 @@ export default function TutorListPage() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (location.state?.autoBook && location.state?.prefilledBooking && tutors.length > 0) {
+      const bookingData = location.state.prefilledBooking;
+      const targetTutor = tutors.find(t => t.id === bookingData.tutor?.id || t.id === bookingData.tutor_id);
+      if (targetTutor) {
+        setSelectedTutor(targetTutor);
+        setIsBookingModalOpen(true);
+      }
+    }
+  }, [location.state, tutors]);
 
   return (
     <div className="space-y-6">
@@ -271,8 +284,14 @@ export default function TutorListPage() {
 
       <BookingModal 
         isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
+        onClose={() => {
+          setIsBookingModalOpen(false);
+          if (location.state?.autoBook) {
+            navigate(location.pathname, { replace: true, state: {} });
+          }
+        }}
         tutor={selectedTutor}
+        prefilledBooking={location.state?.prefilledBooking}
       />
     </div>
   );

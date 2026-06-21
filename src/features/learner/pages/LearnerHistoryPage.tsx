@@ -144,7 +144,12 @@ export default function LearnerHistoryPage() {
                     </div>
                   )}
                   <button 
-                    onClick={() => navigate(`/tutors/${item.tutor?.id}`)}
+                    onClick={() => navigate('/tutors', { 
+                      state: { 
+                        autoBook: true, 
+                        prefilledBooking: item 
+                      } 
+                    })}
                     className="flex items-center gap-2 px-5 py-2.5 btn-glass-primary text-sm font-bold rounded-xl shadow-md"
                   >
                     <RotateCcw className="w-4 h-4" /> Belajar Lagi

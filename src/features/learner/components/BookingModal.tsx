@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { X, Calendar, BookOpen, Clock, AlertCircle } from 'lucide-react';
 import { learnerService } from '@/api/services/learnerService';
 import { useNavigate } from 'react-router-dom';
@@ -7,9 +7,10 @@ interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   tutor: any;
+  prefilledBooking?: any;
 }
 
-export function BookingModal({ isOpen, onClose, tutor }: BookingModalProps) {
+export function BookingModal({ isOpen, onClose, tutor, prefilledBooking }: BookingModalProps) {
   const navigate = useNavigate();
   
   // Form State
@@ -20,6 +21,26 @@ export function BookingModal({ isOpen, onClose, tutor }: BookingModalProps) {
   // UI State
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isOpen && prefilledBooking) {
+      if (prefilledBooking.course?.id) {
+        setSelectedCourseId(prefilledBooking.course.id.toString());
+      }
+      if (prefilledBooking.booking_date) {
+        const dateStr = prefilledBooking.booking_date.substring(0, 10);
+        setSelectedDate(dateStr);
+      }
+      if (prefilledBooking.slots) {
+        const slotIds = prefilledBooking.slots.map((s: any) => s.slot_id).filter(Boolean);
+        setSelectedSlotIds(slotIds);
+      }
+    } else if (!isOpen) {
+      setSelectedCourseId('');
+      setSelectedDate('');
+      setSelectedSlotIds([]);
+    }
+  }, [isOpen, prefilledBooking]);
 
   // Constants
   const platformFee = 1000;
@@ -171,7 +192,7 @@ export function BookingModal({ isOpen, onClose, tutor }: BookingModalProps) {
                 <input
                   type="date"
                   value={selectedDate}
-                  min={new Date().toISOString().split('T')[0]} // prevent past dates
+                  min={prefilledBooking ? undefined : new Date().toISOString().split('T')[0]} // prevent past dates
                   onChange={(e) => {
                     setSelectedDate(e.target.value);
                     setSelectedSlotIds([]); // reset slots when date changes
