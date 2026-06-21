@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Plus, Info, Clock, ChevronDown, Loader2, Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { tutorService } from '@/api/services/tutorService';
 import { publicService } from '@/api/services/publicService';
 
@@ -16,6 +17,7 @@ export default function TutorAvailabilityPage() {
   const [schedules, setSchedules] = useState<ScheduleRow[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [hasPhone, setHasPhone] = useState(true);
 
   // Form dropdown options
   const [masterSlots, setMasterSlots] = useState<any[]>([]);
@@ -70,6 +72,10 @@ export default function TutorAvailabilityPage() {
         const profileData = profileRes?.data || profileRes || {};
         const taughtCourses = profileData.taught_courses || [];
         setApprovedCourses(taughtCourses);
+        
+        if (!profileData.phone) {
+          setHasPhone(false);
+        }
       } catch (error) {
         console.error('Failed to fetch dropdown data', error);
       } finally {
@@ -203,12 +209,29 @@ export default function TutorAvailabilityPage() {
       </div>
 
       {/* Edit Jadwal Button */}
-      <button 
-        onClick={() => setIsEditModalOpen(true)}
-        className="bg-[#0a192f] hover:bg-[#112240] text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 mb-8 shadow-md transition-colors"
-      >
-        <Plus className="w-5 h-5" /> Edit Jadwal
-      </button>
+      {!hasPhone ? (
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-5 mb-8 flex flex-col sm:flex-row items-center gap-4 justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 shrink-0">
+              <Info className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-red-900 font-bold text-sm mb-0.5">Nomor Telepon Belum Diisi</h3>
+              <p className="text-red-700 text-xs">Anda wajib melengkapi nomor telepon di profil Anda sebelum dapat mengatur jadwal.</p>
+            </div>
+          </div>
+          <Link to="/tutor/profile" className="shrink-0 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl transition-colors text-center w-full sm:w-auto">
+            Lengkapi Profil
+          </Link>
+        </div>
+      ) : (
+        <button 
+          onClick={() => setIsEditModalOpen(true)}
+          className="bg-[#0a192f] hover:bg-[#112240] text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 mb-8 shadow-md transition-colors"
+        >
+          <Plus className="w-5 h-5" /> Edit Jadwal
+        </button>
+      )}
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row items-center gap-6 mb-6">
@@ -279,9 +302,9 @@ export default function TutorAvailabilityPage() {
                   <td className="py-4 px-6 text-right">
                     <button 
                       onClick={() => handleDeleteSchedule(row)}
-                      disabled={saving}
+                      disabled={saving || !hasPhone}
                       className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-                      title="Hapus Jadwal"
+                      title={!hasPhone ? "Lengkapi nomor telepon di profil untuk menghapus jadwal" : "Hapus Jadwal"}
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>

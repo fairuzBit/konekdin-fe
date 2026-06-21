@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Calendar, Clock, Star, AlertCircle, Banknote, Eye } from 'lucide-react';
+import { Calendar, Clock, Star, AlertCircle, Banknote, Eye, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { learnerService } from '@/api/services/learnerService';
 import { normalizeList } from '@/lib/apiData';
+
+const formatWhatsAppLink = (phone?: string) => {
+  if (!phone) return '#';
+  let formatted = phone.replace(/\D/g, '');
+  if (formatted.startsWith('0')) {
+    formatted = '62' + formatted.substring(1);
+  }
+  return `https://wa.me/${formatted}`;
+};
 
 export default function LearnerSchedulesPage() {
   const [schedules, setSchedules] = useState<any[]>([]);
@@ -86,7 +95,7 @@ export default function LearnerSchedulesPage() {
             // Tutor info fallback
             const tutorName = schedule.tutor?.user?.name || schedule.tutor?.name || 'Tutor KonekDin';
             const tutorRating = schedule.tutor?.rating || 'Baru';
-            const tutorAvatar = schedule.tutor?.user?.avatar_path;
+            const tutorAvatar = schedule.tutor?.avatar || schedule.tutor?.user?.avatar;
 
             return (
               <div key={schedule.id} className="bg-white border border-slate-200 rounded-[28px] p-5 flex flex-col md:flex-row md:items-center justify-between gap-5 transition-all hover:shadow-lg hover:shadow-slate-200/50 hover:border-emerald-200">
@@ -133,12 +142,26 @@ export default function LearnerSchedulesPage() {
                     Sesi Aktif
                   </div>
                   
-                  <Link 
-                    to={`/learner/bookings/${schedule.id}`}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
-                  >
-                    Detail Sesi
-                  </Link>
+                  <div className="flex gap-2">
+                    {(schedule.tutor?.phone || schedule.tutor?.user?.phone) && (
+                      <a 
+                        href={formatWhatsAppLink(schedule.tutor?.phone || schedule.tutor?.user?.phone)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-4 py-2.5 bg-green-50 hover:bg-green-100 text-green-700 text-xs font-bold rounded-xl transition-colors border border-green-200"
+                        title="Hubungi Tutor via WhatsApp"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        Chat
+                      </a>
+                    )}
+                    <Link 
+                      to={`/learner/bookings/${schedule.id}`}
+                      className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
+                    >
+                      Detail Sesi
+                    </Link>
+                  </div>
                 </div>
               </div>
             );

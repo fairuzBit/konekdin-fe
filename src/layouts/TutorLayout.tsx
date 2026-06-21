@@ -6,7 +6,6 @@ const navigation = [
   { label: 'Dashboard', to: '/tutor', icon: LayoutGrid },
   { label: 'Availability', to: '/tutor/availability', icon: CalendarDays },
   { label: 'Booking', to: '/tutor/bookings', icon: Sparkles },
-  { label: 'Jadwal', to: '/tutor/schedules', icon: Clock3 },
   { label: 'Riwayat', to: '/tutor/history', icon: History },
   { label: 'Review', to: '/tutor/reviews', icon: MessageSquareText },
   { label: 'Notifikasi', to: '/tutor/notifications', icon: Bell },

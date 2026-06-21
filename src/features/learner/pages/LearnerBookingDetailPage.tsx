@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar, Clock, Star, Banknote, CreditCard, Smartphone, ShieldCheck, ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react';
+import { Calendar, Clock, Star, Banknote, CreditCard, Smartphone, ShieldCheck, ArrowLeft, Loader2, CheckCircle2, MessageCircle } from 'lucide-react';
 import { learnerService } from '@/api/services/learnerService';
+
+const formatWhatsAppLink = (phone?: string) => {
+  if (!phone) return '#';
+  let formatted = phone.replace(/\D/g, '');
+  if (formatted.startsWith('0')) {
+    formatted = '62' + formatted.substring(1);
+  }
+  return `https://wa.me/${formatted}`;
+};
 
 export default function LearnerBookingDetailPage() {
   const { id } = useParams();
@@ -131,7 +140,20 @@ export default function LearnerBookingDetailPage() {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tutor</p>
-                <p className="text-sm font-bold text-slate-800">{tutorName}</p>
+                <div className="flex items-center gap-2">
+                  {booking.tutor?.user?.avatar || booking.tutor?.avatar ? (
+                    <img 
+                      src={booking.tutor?.user?.avatar || booking.tutor?.avatar} 
+                      alt="Tutor Avatar" 
+                      className="w-6 h-6 rounded-full object-cover border border-slate-200 shadow-sm" 
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center border border-emerald-200 shrink-0">
+                      <span className="text-[10px] font-bold text-emerald-700">{tutorName.charAt(0).toUpperCase()}</span>
+                    </div>
+                  )}
+                  <p className="text-sm font-bold text-slate-800 truncate">{tutorName}</p>
+                </div>
               </div>
               <div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Mata Pelajaran</p>
@@ -340,12 +362,24 @@ export default function LearnerBookingDetailPage() {
                 </p>
               </>
             ) : isPaid ? (
-              <button
-                onClick={() => navigate('/learner/history')}
-                className="w-full py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all border border-white/10"
-              >
-                Lihat Jadwal Belajar Anda
-              </button>
+              <>
+                {(booking.tutor?.phone || booking.tutor?.user?.phone) && (
+                  <a
+                    href={formatWhatsAppLink(booking.tutor?.phone || booking.tutor?.user?.phone)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 mb-4"
+                  >
+                    <MessageCircle className="w-5 h-5" /> Hubungi Tutor via WhatsApp
+                  </a>
+                )}
+                <button
+                  onClick={() => navigate('/learner/history')}
+                  className="w-full py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all border border-white/10"
+                >
+                  Lihat Jadwal Belajar Anda
+                </button>
+              </>
             ) : (
               <button
                 onClick={() => navigate('/learner/bookings')}

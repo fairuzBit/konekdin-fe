@@ -44,9 +44,10 @@ class TutorService {
     });
   }
 
-  async getReviews() {
-    return withRequestCache('tutor.reviews', async () => {
-      const response = await apiClient.get('/tutor/reviews');
+  async getReviews(params?: Record<string, string | number>) {
+    const queryString = params ? '?' + new URLSearchParams(params as Record<string, string>).toString() : '';
+    return withRequestCache(`tutor.reviews.${queryString}`, async () => {
+      const response = await apiClient.get(`/tutor/reviews${queryString}`);
       return response.data;
     });
   }

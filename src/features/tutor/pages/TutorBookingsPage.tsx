@@ -1,8 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, MessageCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { tutorService } from '@/api/services/tutorService';
 import { normalizeList } from '@/lib/apiData';
+
+// Helper to format phone number to international WhatsApp format
+const formatWhatsAppLink = (phone: string | undefined) => {
+  if (!phone) return null;
+  let clean = phone.replace(/\D/g, '');
+  if (clean.startsWith('0')) {
+    clean = '62' + clean.substring(1);
+  }
+  return `https://wa.me/${clean}`;
+};
 
 export default function TutorBookingsPage() {
   const [requests, setRequests] = useState<Array<Record<string, unknown>>>([]);
@@ -15,7 +25,7 @@ export default function TutorBookingsPage() {
         const response = await tutorService.getBookings();
         setRequests(normalizeList(response));
       } catch {
-        setError('Gagal memuat booking dari backend.');
+        setError('Gagal memuat jadwal dari backend.');
       } finally {
         setLoading(false);
       }
@@ -28,22 +38,38 @@ export default function TutorBookingsPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Booking Masuk</CardTitle>
+          <CardTitle>Jadwal Sesi Aktif</CardTitle>
         </CardHeader>
         <CardContent>
-          {loading ? <p className="text-sm text-slate-500">Memuat booking...</p> : null}
+          {loading ? <p className="text-sm text-slate-500">Memuat jadwal...</p> : null}
           {error ? <p className="text-sm text-rose-500">{error}</p> : null}
-          {!loading && !error && requests.length === 0 ? <p className="text-sm text-slate-500">Belum ada booking dari backend.</p> : null}
-          {requests.map((request, index) => (
-            <div key={index} className="mt-3 flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 first:mt-0">
-              <div>
-                <p className="font-semibold text-slate-900">{(request.learner as string) ?? 'Learner'}</p>
-                <p className="text-sm text-slate-500 font-medium">Mata Kuliah: <span className="text-brand-600">{(request.course as string) ?? (request.subject as string) ?? '—'}</span></p>
-                <p className="text-xs text-slate-400 mt-0.5">Jadwal: {(Array.isArray(request.slots) ? request.slots.join(', ') : request.date as string) ?? '—'}</p>
+          {!loading && !error && requests.length === 0 ? <p className="text-sm text-slate-500">Belum ada jadwal aktif.</p> : null}
+          {requests.map((request, index) => {
+            const waLink = formatWhatsAppLink(request.learner_phone as string | undefined);
+            
+            return (
+              <div key={index} className="mt-3 flex flex-col md:flex-row md:items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 first:mt-0">
+                <div>
+                  <p className="font-bold text-slate-900 text-lg">{(request.learner as string) ?? 'Learner'}</p>
+                  <p className="text-sm text-slate-500 font-medium mt-1">Mata Kuliah: <span className="text-emerald-600 font-bold">{(request.course as string) ?? '—'}</span></p>
+                  <p className="text-sm text-slate-600 mt-1 font-medium bg-white inline-block px-2 py-1 rounded-md border border-slate-100">Jadwal: {(Array.isArray(request.slots) ? request.slots.join(', ') : request.date as string) ?? '—'}</p>
+                </div>
+                <div className="flex flex-col md:items-end gap-3 shrink-0">
+                  <div className="flex items-center gap-2 text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full"><Sparkles className="h-4 w-4" /> Disetujui</div>
+                  {waLink && (
+                    <a 
+                      href={waLink} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-xl transition-colors w-full md:w-auto justify-center shadow-sm"
+                    >
+                      <MessageCircle className="w-4 h-4" /> Hubungi Learner
+                    </a>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-sm text-brand-700"><Sparkles className="h-4 w-4" /> {(request.status as string) ?? 'Menunggu'}</div>
-            </div>
-          ))}
+            );
+          })}
         </CardContent>
       </Card>
     </div>
