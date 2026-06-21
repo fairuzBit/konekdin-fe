@@ -425,22 +425,39 @@ export default function TutorProfilePage() {
         </div>
       </div>
 
-      {/* Keahlian (Skills) */}
-      {tutor?.skills && tutor.skills.length > 0 && (
+      {/* Keahlian (Skills) & Bio */}
+      {(tutor?.bio || (tutor?.skills && tutor.skills.length > 0)) && (
         <div className="pt-4">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-2xl font-bold text-textPrimary">Keahlian</h3>
+            <h3 className="text-2xl font-bold text-textPrimary">Keahlian & Bio</h3>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {tutor.skills.map((skill: string, index: number) => (
-              <span 
-                key={index} 
-                className="px-4 py-2 bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-400 rounded-xl text-sm font-semibold border border-brand-100 dark:border-brand-500/20 shadow-sm"
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
+          <Card className="border-borderColor bg-bgSecondary shadow-sm rounded-[32px] overflow-hidden">
+            <CardContent className="p-8 space-y-6">
+              {tutor?.bio && (
+                <div className="space-y-2">
+                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-textSecondary">Tentang Tutor & Keahlian</h4>
+                  <p className="text-textPrimary text-sm font-medium leading-relaxed whitespace-pre-line bg-bgPrimary/50 p-5 rounded-2xl border border-borderColor/30">
+                    {tutor.bio}
+                  </p>
+                </div>
+              )}
+              {tutor?.skills && tutor.skills.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-textSecondary font-semibold">Tag Keahlian</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {tutor.skills.map((skill: string, index: number) => (
+                      <span 
+                        key={index} 
+                        className="px-4 py-2 bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-400 rounded-xl text-sm font-semibold border border-brand-100 dark:border-brand-500/20 shadow-sm"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       )}
 

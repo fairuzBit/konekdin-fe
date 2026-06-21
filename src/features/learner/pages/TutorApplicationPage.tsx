@@ -82,7 +82,10 @@ export default function TutorApplicationPage() {
 
   const handleCertificateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setCertificateFiles(Array.from(e.target.files));
+      const newFiles = Array.from(e.target.files);
+      setCertificateFiles(prev => [...prev, ...newFiles]);
+      // Reset input value to allow selecting same file again
+      e.target.value = '';
     }
   };
 
@@ -404,8 +407,18 @@ export default function TutorApplicationPage() {
                   {certificateFiles.length > 0 && (
                     <ul className="mt-3 space-y-2">
                       {certificateFiles.map((f, i) => (
-                        <li key={i} className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-500" /> {f.name}
+                        <li key={i} className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between gap-2 p-2.5 bg-slate-50 dark:bg-bgPrimary rounded-2xl border border-slate-200 dark:border-borderColor">
+                          <span className="flex items-center gap-2 truncate">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span className="truncate">{f.name}</span>
+                          </span>
+                          <button 
+                            type="button" 
+                            onClick={() => setCertificateFiles(prev => prev.filter((_, idx) => idx !== i))}
+                            className="text-xs text-red-500 font-bold hover:text-red-700 px-2.5 py-1 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 shrink-0 transition-colors"
+                          >
+                            Hapus
+                          </button>
                         </li>
                       ))}
                     </ul>
