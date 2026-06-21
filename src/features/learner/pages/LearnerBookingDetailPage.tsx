@@ -79,7 +79,7 @@ export default function LearnerBookingDetailPage() {
 
   const tutorName = booking.tutor?.user?.name || booking.tutor?.name || 'Tutor KonekDin';
   const isPaid = booking.payment_status === 'paid';
-  const isPending = booking.payment_status === 'unpaid' && booking.payment_method !== null;
+  const isPending = booking.payment_status === 'pending' || (booking.payment_status === 'unpaid' && booking.payment_method !== null);
   
   // Format Date
   const dateObj = new Date(booking.booking_date);

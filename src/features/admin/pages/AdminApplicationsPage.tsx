@@ -96,7 +96,7 @@ export default function AdminApplicationsPage() {
           <ShieldCheck className="w-4 h-4" /> Verifikasi Tutor
         </Link>
         <Link
-          to="#"
+          to="/admin/payments"
           className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-t-xl transition-colors text-textSecondary hover:bg-bgSecondary hover:text-textPrimary"
         >
           <Wallet className="w-4 h-4" /> Manajemen Keuangan

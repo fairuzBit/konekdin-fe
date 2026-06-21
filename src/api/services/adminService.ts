@@ -89,9 +89,18 @@ class AdminService {
     });
   }
 
-  async deleteReview(id: string | number) {
+  async deleteReview(id: string | number, reason?: string) {
     return withRequestCache(`admin.deleteReview.${id}`, async () => {
-      const response = await apiClient.delete(`/admin/moderation/reviews/${id}`);
+      const response = await apiClient.delete(`/admin/moderation/reviews/${id}`, {
+        data: { reason }
+      });
+      return response.data;
+    });
+  }
+
+  async getModerationLogs() {
+    return withRequestCache('admin.moderation.logs', async () => {
+      const response = await apiClient.get('/admin/moderation/logs');
       return response.data;
     });
   }

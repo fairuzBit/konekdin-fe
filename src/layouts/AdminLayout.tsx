@@ -7,7 +7,7 @@ const navigation = [
   { label: 'Manajemen Tutor', to: '/admin/applications', icon: Users },
   { label: 'Pengguna', to: '/admin/users', icon: UserCircle2 },
   { label: 'Komplain & Moderasi', to: '/admin/complaints', icon: MessageSquareText },
-  { label: 'Pembayaran', to: '/admin/payments', icon: Banknote },
+
   { label: 'Mata Kuliah', to: '/admin/courses', icon: BookOpen },
   { label: 'Master Slots', to: '/admin/master-slots', icon: CalendarDays },
 ];

@@ -69,8 +69,9 @@ export default function LoginPage() {
           navigate('/learner', { replace: true });
         }
       }
-    } catch (err) {
-      setError('Login gagal. Periksa email dan password Anda.');
+    } catch (err: any) {
+      const msg = err.response?.data?.message || 'Login gagal. Periksa email dan password Anda.';
+      setError(msg);
     } finally {
       setSubmitting(false);
     }

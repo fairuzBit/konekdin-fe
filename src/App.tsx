@@ -10,6 +10,7 @@ import AdminMasterSlotsPage from '@/features/admin/pages/AdminMasterSlotsPage';
 import AdminUsersPage from '@/features/admin/pages/AdminUsersPage';
 import AdminPaymentsPage from '@/features/admin/pages/AdminPaymentsPage';
 import LearnerBookingsPage from '@/features/learner/pages/LearnerBookingsPage';
+import LearnerSchedulesPage from '@/features/learner/pages/LearnerSchedulesPage';
 import LearnerBookingDetailPage from '@/features/learner/pages/LearnerBookingDetailPage';
 import LearnerDashboard from '@/features/learner/pages/LearnerDashboard';
 import LearnerHistoryPage from '@/features/learner/pages/LearnerHistoryPage';
@@ -25,6 +26,7 @@ import TutorHistoryPage from '@/features/tutor/pages/TutorHistoryPage';
 import TutorReviewsPage from '@/features/tutor/pages/TutorReviewsPage';
 import TutorSchedulesPage from '@/features/tutor/pages/TutorSchedulesPage';
 import TutorProfilePage from '@/features/tutor/pages/TutorProfilePage';
+import TutorNotificationsPage from '@/features/tutor/pages/TutorNotificationsPage';
 import AdminLayout from '@/layouts/AdminLayout';
 import LearnerLayout from '@/layouts/LearnerLayout';
 import TutorLayout from '@/layouts/TutorLayout';
@@ -63,6 +65,7 @@ function App() {
 
       <Route path="/learner" element={<ProtectedRoute allowedRoles={['learner']}><LearnerLayout><LearnerDashboard /></LearnerLayout></ProtectedRoute>} />
       <Route path="/learner/bookings" element={<ProtectedRoute allowedRoles={['learner']}><LearnerLayout><LearnerBookingsPage /></LearnerLayout></ProtectedRoute>} />
+      <Route path="/learner/schedules" element={<ProtectedRoute allowedRoles={['learner']}><LearnerLayout><LearnerSchedulesPage /></LearnerLayout></ProtectedRoute>} />
       <Route path="/learner/bookings/:id" element={<ProtectedRoute allowedRoles={['learner']}><LearnerLayout><LearnerBookingDetailPage /></LearnerLayout></ProtectedRoute>} />
       <Route path="/learner/history" element={<ProtectedRoute allowedRoles={['learner']}><LearnerLayout><LearnerHistoryPage /></LearnerLayout></ProtectedRoute>} />
       <Route path="/learner/notifications" element={<ProtectedRoute allowedRoles={['learner']}><LearnerLayout><LearnerNotificationsPage /></LearnerLayout></ProtectedRoute>} />
@@ -76,6 +79,7 @@ function App() {
       <Route path="/tutor/schedules" element={<ProtectedRoute allowedRoles={['tutor']}><TutorLayout><TutorSchedulesPage /></TutorLayout></ProtectedRoute>} />
       <Route path="/tutor/history" element={<ProtectedRoute allowedRoles={['tutor']}><TutorLayout><TutorHistoryPage /></TutorLayout></ProtectedRoute>} />
       <Route path="/tutor/reviews" element={<ProtectedRoute allowedRoles={['tutor']}><TutorLayout><TutorReviewsPage /></TutorLayout></ProtectedRoute>} />
+      <Route path="/tutor/notifications" element={<ProtectedRoute allowedRoles={['tutor']}><TutorLayout><TutorNotificationsPage /></TutorLayout></ProtectedRoute>} />
       <Route path="/tutor/profile" element={<ProtectedRoute allowedRoles={['tutor']}><TutorLayout><TutorProfilePage /></TutorLayout></ProtectedRoute>} />
 
       <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout><AdminDashboard /></AdminLayout></ProtectedRoute>} />

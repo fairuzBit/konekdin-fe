@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { UserCircle2, Eye, Ban, Trash2, CheckCircle2, Clock, Search, Filter, X, AlertTriangle } from 'lucide-react';
+import { UserCircle2, Eye, Ban, Trash2, CheckCircle2, Clock, Search, Filter, X, AlertTriangle, Users, ShieldCheck, Wallet } from 'lucide-react';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { adminService } from '@/api/services/adminService';
 import { normalizeList } from '@/lib/apiData';
@@ -40,6 +40,7 @@ export default function AdminUsersPage() {
 
   const [searchName, setSearchName] = useState(searchParams.get('name') || '');
   const [filterRole, setFilterRole] = useState(searchParams.get('role') || 'all');
+  const [filterStatus, setFilterStatus] = useState(searchParams.get('status') || 'all');
 
   const [suspendModal, setSuspendModal] = useState<{
     open: boolean;
@@ -52,8 +53,9 @@ export default function AdminUsersPage() {
     const params = new URLSearchParams();
     if (searchName) params.set('name', searchName);
     if (filterRole !== 'all') params.set('role', filterRole);
+    if (filterStatus !== 'all') params.set('status', filterStatus);
     setSearchParams(params, { replace: true });
-  }, [searchName, filterRole, setSearchParams]);
+  }, [searchName, filterRole, filterStatus, setSearchParams]);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -120,12 +122,47 @@ export default function AdminUsersPage() {
 
     const matchesName = name.toLowerCase().includes(searchName.toLowerCase());
     const matchesRole = filterRole === 'all' || role.toLowerCase() === filterRole.toLowerCase();
+    
+    const suspended = isUserSuspended(user);
+    const matchesStatus = filterStatus === 'all' 
+      ? true 
+      : filterStatus === 'suspended' 
+        ? suspended 
+        : !suspended;
 
-    return matchesName && matchesRole;
+    return matchesName && matchesRole && matchesStatus;
   });
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-6xl mx-auto space-y-8 pb-12 relative z-10">
+      {/* Header Section */}
+      <div>
+        <h1 className="text-3xl font-bold text-slate-800 mb-2">Manajemen Platform</h1>
+        <p className="text-slate-500">Kelola pengguna, verifikasi tutor baru, dan pantau pembayaran dalam satu tempat.</p>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-px">
+        <Link
+          to="/admin/users"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-t-xl transition-colors bg-brand-500 text-white shadow-sm border-x border-t border-brand-500 relative top-px"
+        >
+          <Users className="w-4 h-4" /> Manajemen Pengguna
+        </Link>
+        <Link
+          to="/admin/applications"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-t-xl transition-colors text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+        >
+          <ShieldCheck className="w-4 h-4" /> Verifikasi Tutor
+        </Link>
+        <Link
+          to="/admin/payments"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-t-xl transition-colors text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+        >
+          <Wallet className="w-4 h-4" /> Manajemen Keuangan
+        </Link>
+      </div>
+
       <Card className="border-0 shadow-sm rounded-3xl overflow-hidden bg-white">
         <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <CardTitle className="text-xl font-bold text-slate-800">Manajemen Pengguna</CardTitle>
@@ -133,9 +170,21 @@ export default function AdminUsersPage() {
             <div className="relative flex-1 sm:flex-initial">
               <Filter className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="pl-9 pr-8 py-2 text-sm text-slate-700 font-medium border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 w-full appearance-none bg-white"
+              >
+                <option value="all">Semua Status</option>
+                <option value="active">Aktif</option>
+                <option value="suspended">Suspended</option>
+              </select>
+            </div>
+            <div className="relative flex-1 sm:flex-initial">
+              <Filter className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <select
                 value={filterRole}
                 onChange={(e) => setFilterRole(e.target.value)}
-                className="pl-9 pr-8 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 w-full appearance-none bg-white"
+                className="pl-9 pr-8 py-2 text-sm text-slate-700 font-medium border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 w-full appearance-none bg-white"
               >
                 <option value="all">Semua Role</option>
                 <option value="learner">Learner</option>
@@ -149,7 +198,7 @@ export default function AdminUsersPage() {
                 placeholder="Cari pengguna..."
                 value={searchName}
                 onChange={(e) => setSearchName(e.target.value)}
-                className="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 w-full sm:w-64"
+                className="pl-9 pr-4 py-2 text-sm text-slate-700 font-medium placeholder:text-slate-400 placeholder:font-normal border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 w-full sm:w-64"
               />
             </div>
           </div>

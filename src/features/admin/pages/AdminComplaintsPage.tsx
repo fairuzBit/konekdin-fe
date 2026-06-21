@@ -9,6 +9,8 @@ import { useNavigate } from 'react-router-dom';
 export default function AdminComplaintsPage() {
   const navigate = useNavigate();
   const [complaints, setComplaints] = useState<Array<any>>([]);
+  const [stats, setStats] = useState<any>({ total_negative: 0, pending: 0, processing: 0, resolved: 0 });
+  const [logs, setLogs] = useState<Array<any>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,7 +18,11 @@ export default function AdminComplaintsPage() {
     setLoading(true);
     try {
       const response = await adminService.getModerationReviews();
-      setComplaints(normalizeList(response));
+      setComplaints(response.data?.reviews || []);
+      setStats(response.data?.stats || { total_negative: 0, pending: 0, processing: 0, resolved: 0 });
+      
+      const logsResponse = await adminService.getModerationLogs();
+      setLogs(logsResponse.data || []);
     } catch {
       setError('Gagal memuat komplain dari backend.');
     } finally {
@@ -51,9 +57,12 @@ export default function AdminComplaintsPage() {
   };
 
   const handleDelete = async (id: number) => {
+    const reason = prompt('Masukkan alasan penghapusan (misal: "Spam/Troll"):');
+    if (reason === null) return; // User cancelled
+    
     if (confirm('Yakin ingin menghapus ulasan buruk ini secara permanen?')) {
       try {
-        await adminService.deleteReview(id);
+        await adminService.deleteReview(id, reason || 'Penghapusan oleh Admin');
         fetchComplaints();
       } catch {
         alert('Gagal menghapus ulasan');
@@ -63,53 +72,170 @@ export default function AdminComplaintsPage() {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Moderasi Ulasan (Komplain)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? <p className="text-sm text-slate-500">Memuat komplain...</p> : null}
-          {error ? <p className="text-sm text-rose-500">{error}</p> : null}
-          {!loading && !error && complaints.length === 0 ? <p className="text-sm text-slate-500">Belum ada komplain dari backend. Semua ulasan terlihat baik.</p> : null}
-          {complaints.map((item, index) => (
-            <div key={index} className="mt-4 flex flex-col sm:flex-row gap-4 justify-between items-start rounded-2xl border border-slate-200 bg-slate-50 p-5 first:mt-0">
-              <div className="flex-1">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1 text-rose-600 font-semibold bg-rose-100 px-2 py-1 rounded-md text-xs">
-                    <Star className="h-3 w-3 fill-rose-600" /> {item.rating} Bintang
-                  </div>
-                  <span className="text-sm font-medium text-slate-700">Learner: {item.learner_name}</span>
-                  <span className="text-xs text-slate-400">→</span>
-                  <span className="text-sm font-medium text-slate-700">Tutor: {item.tutor_name}</span>
-                </div>
-                <div className="mt-3 flex items-start gap-2 text-slate-600">
-                  <MessageSquareText className="h-4 w-4 mt-0.5 shrink-0" />
-                  <p className="text-sm italic">"{item.comment || 'Tidak ada komentar'}"</p>
-                </div>
-                <div className="mt-3 flex items-center gap-2">
-                  <span className="text-xs text-slate-400">{item.tanggal}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${item.moderation_status === 'MENUNGGU TINJAUAN' ? 'bg-amber-100 text-amber-700' : item.moderation_status === 'DIPROSES' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
-                    {item.moderation_status}
-                  </span>
-                </div>
-              </div>
-              <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto">
-                {item.moderation_status === 'MENUNGGU TINJAUAN' && (
-                  <Button size="sm" variant="outline" className="w-full text-blue-600 border-blue-200 hover:bg-blue-50" onClick={() => handleProcess(item.id, item.tutor_name)}>
-                    <AlertCircle className="w-4 h-4 mr-2" /> Proses
-                  </Button>
-                )}
-                {(item.moderation_status === 'MENUNGGU TINJAUAN' || item.moderation_status === 'DIPROSES') && (
-                  <Button size="sm" variant="outline" className="w-full text-green-600 border-green-200 hover:bg-green-50" onClick={() => handleResolve(item.id)}>
-                    <CheckCircle className="w-4 h-4 mr-2" /> Selesai
-                  </Button>
-                )}
-                <Button size="sm" variant="outline" className="w-full text-rose-600 border-rose-200 hover:bg-rose-50" onClick={() => handleDelete(item.id)}>
-                  <Trash2 className="w-4 h-4 mr-2" /> Hapus
-                </Button>
+      <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-[#0B132B] dark:text-white mb-2 tracking-tight">Komplain & Moderasi</h1>
+        <p className="text-slate-500 dark:text-slate-400 font-medium">Tinjau ulasan ber-rating rendah (⭐ 1 & 2) untuk menjaga kualitas layanan KonekDin.</p>
+      </div>
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <Card className="flex-1 border-rose-100 shadow-sm">
+          <CardContent className="p-5 flex flex-col justify-center h-full">
+            <span className="text-sm font-medium text-slate-500 mb-2 block">Total Ulasan Negatif</span>
+            <div className="flex items-center justify-between">
+              <span className="text-3xl font-extrabold text-slate-900">{stats.total_negative}</span>
+              <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center border border-rose-100">
+                <MessageSquareText className="w-4 h-4 text-rose-500" />
               </div>
             </div>
-          ))}
+          </CardContent>
+        </Card>
+        
+        <Card className="flex-1 border-amber-100 shadow-sm">
+          <CardContent className="p-5 flex flex-col justify-center h-full">
+            <span className="text-sm font-medium text-slate-500 mb-2 block">Menunggu Tinjauan</span>
+            <div className="flex items-center justify-between">
+              <span className="text-3xl font-extrabold text-slate-900">{stats.pending}</span>
+              <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-full border border-amber-100 uppercase">Action Req.</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="flex-1 border-blue-100 shadow-sm">
+          <CardContent className="p-5 flex flex-col justify-center h-full">
+            <span className="text-sm font-medium text-slate-500 mb-2 block">Sedang Diproses</span>
+            <div className="flex items-center justify-between">
+              <span className="text-3xl font-extrabold text-slate-900">{stats.processing}</span>
+              <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full border border-blue-100 uppercase">Follow-up</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="flex-1 border-emerald-100 shadow-sm">
+          <CardContent className="p-5 flex flex-col justify-center h-full">
+            <span className="text-sm font-medium text-slate-500 mb-2 block">Selesai</span>
+            <div className="flex items-center justify-between">
+              <span className="text-3xl font-extrabold text-slate-900">{stats.resolved}</span>
+              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100 uppercase">Aman</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Daftar Ulasan Rating Rendah (1-2 Bintang)</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          {loading ? <div className="p-6 text-center text-sm text-slate-500">Memuat komplain...</div> : null}
+          {error ? <div className="p-6 text-center text-sm text-rose-500">{error}</div> : null}
+          {!loading && !error && complaints.length === 0 ? <div className="p-6 text-center text-sm text-slate-500">Belum ada komplain dari backend. Semua ulasan terlihat baik.</div> : null}
+          
+          {!loading && !error && complaints.length > 0 && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <th className="p-5 font-bold">ID Sesi</th>
+                    <th className="p-5 font-bold">Learner / Tutor</th>
+                    <th className="p-5 font-bold text-center">Rating</th>
+                    <th className="p-5 font-bold">Ulasan / Alasan Learner</th>
+                    <th className="p-5 font-bold text-center">Aksi Moderasi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {complaints.map((item, index) => (
+                    <tr key={index} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="p-5 align-top">
+                        <div className="font-bold text-slate-900 text-sm">#BK-800{item.id}</div>
+                        <div className="text-xs text-slate-400 mt-1">{item.tanggal}</div>
+                        <div className="mt-2">
+                          <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${item.moderation_status === 'MENUNGGU TINJAUAN' ? 'bg-amber-100 text-amber-700' : item.moderation_status === 'DIPROSES' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                            {item.moderation_status === 'MENUNGGU TINJAUAN' ? 'Pending' : item.moderation_status}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="p-5 align-top">
+                        <div className="font-bold text-slate-900 text-sm">{item.learner_name}</div>
+                        <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                          <span className="text-slate-300">→</span> {item.tutor_name}
+                        </div>
+                      </td>
+                      <td className="p-5 align-top text-center">
+                        <div className="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 px-2.5 py-1 rounded-md font-bold text-sm">
+                          <Star className="h-3.5 w-3.5 fill-rose-500 text-rose-500" /> {Number(item.rating).toFixed(1)}
+                        </div>
+                      </td>
+                      <td className="p-5 align-top">
+                        <div className="bg-rose-50/50 rounded-xl p-3 text-sm italic text-slate-600 border border-rose-100/50">
+                          "{item.comment || 'Tidak ada komentar'}"
+                        </div>
+                      </td>
+                      <td className="p-5 align-top text-center">
+                        <div className="flex flex-col items-center gap-2">
+                          {item.moderation_status === 'MENUNGGU TINJAUAN' && (
+                            <Button size="sm" variant="outline" className="w-32 text-amber-600 border-amber-200 hover:bg-amber-50 text-xs font-bold" onClick={() => handleProcess(item.id, item.tutor_name)}>
+                              <AlertCircle className="w-3.5 h-3.5 mr-1.5" /> Tindak Lanjut
+                            </Button>
+                          )}
+                          {item.moderation_status === 'DIPROSES' && (
+                            <Button size="sm" variant="outline" className="w-32 text-emerald-600 border-emerald-200 hover:bg-emerald-50 text-xs font-bold" onClick={() => handleResolve(item.id)}>
+                              <CheckCircle className="w-3.5 h-3.5 mr-1.5" /> Selesaikan
+                            </Button>
+                          )}
+                          <Button size="sm" variant="outline" className="w-32 text-slate-600 border-slate-200 hover:bg-slate-50 text-xs font-bold" onClick={() => handleDelete(item.id)}>
+                            <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Hapus
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Aktifitas Moderasi Terbaru</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          {logs.length === 0 ? (
+            <div className="p-6 text-center text-sm text-slate-500">Belum ada aktifitas moderasi.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
+                    <th className="p-4 font-bold">Waktu</th>
+                    <th className="p-4 font-bold">Admin</th>
+                    <th className="p-4 font-bold">Aksi</th>
+                    <th className="p-4 font-bold">Keterangan</th>
+                    <th className="p-4 font-bold">Ulasan Asli</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {logs.map((log, i) => (
+                    <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="p-4 text-xs text-slate-500">{log.tanggal}</td>
+                      <td className="p-4 text-sm font-medium text-slate-700">{log.admin_name}</td>
+                      <td className="p-4">
+                        <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${log.action === 'DIHAPUS' ? 'bg-rose-100 text-rose-700' : log.action === 'DIPROSES' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                          {log.action}
+                        </span>
+                      </td>
+                      <td className="p-4 text-sm text-slate-600 italic">
+                        "{log.reason}"
+                      </td>
+                      <td className="p-4 text-xs text-slate-500 max-w-xs truncate" title={log.details?.comment}>
+                        ⭐ {log.details?.rating} - {log.details?.comment || '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

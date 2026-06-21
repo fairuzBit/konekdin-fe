@@ -4,35 +4,33 @@ import { Link } from 'react-router-dom';
 import { learnerService } from '@/api/services/learnerService';
 import { normalizeList } from '@/lib/apiData';
 
-export default function LearnerBookingsPage() {
-  const [bookings, setBookings] = useState<any[]>([]);
+export default function LearnerSchedulesPage() {
+  const [schedules, setSchedules] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchBookings = async () => {
+  const fetchSchedules = async () => {
     try {
       setLoading(true);
-      const response = await learnerService.getBookings();
-      setBookings(normalizeList(response));
+      const response = await learnerService.getSchedules();
+      setSchedules(normalizeList(response));
     } catch (err) {
-      setError('Gagal memuat data pesanan dari server.');
+      setError('Gagal memuat jadwal Anda dari server.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchBookings();
+    fetchSchedules();
   }, []);
-
-
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
-          <p className="text-slate-500 font-medium animate-pulse">Memuat pesanan Anda...</p>
+          <p className="text-slate-500 font-medium animate-pulse">Memuat jadwal Anda...</p>
         </div>
       </div>
     );
@@ -45,7 +43,7 @@ export default function LearnerBookingsPage() {
         <h3 className="font-bold text-red-900 mb-2">Gagal Memuat Data</h3>
         <p className="text-red-600 text-sm">{error}</p>
         <button 
-          onClick={fetchBookings}
+          onClick={fetchSchedules}
           className="mt-4 px-5 py-2 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 transition-colors"
         >
           Coba Lagi
@@ -57,25 +55,23 @@ export default function LearnerBookingsPage() {
   return (
     <div className="max-w-4xl space-y-8 animate-in fade-in duration-500">
       <div>
-        <h1 className="text-2xl md:text-3xl font-extrabold text-[#0B132B] mb-2 tracking-tight">Detail Pesanan</h1>
-        <p className="text-slate-500 font-medium">Lihat detail pesanan dan selesaikan pembayaran.</p>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-[#0B132B] mb-2 tracking-tight">Jadwal Belajar</h1>
+        <p className="text-slate-500 font-medium">Lihat sesi belajar Anda yang sudah terkonfirmasi.</p>
       </div>
 
       <div className="space-y-4">
-        {bookings.length === 0 ? (
+        {schedules.length === 0 ? (
           <div className="text-center py-16 bg-white border border-slate-200 border-dashed rounded-[32px]">
             <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-slate-700 mb-1">Belum ada pesanan</h3>
-            <p className="text-sm text-slate-500 mb-6">Anda belum pernah memesan sesi tutor.</p>
+            <h3 className="text-lg font-bold text-slate-700 mb-1">Belum ada jadwal</h3>
+            <p className="text-sm text-slate-500 mb-6">Anda belum memiliki sesi belajar yang terkonfirmasi.</p>
           </div>
         ) : (
-          bookings.map((booking) => {
-            const isPaid = booking.payment_status === 'paid';
-            const isPending = booking.payment_status === 'pending' || (booking.payment_status === 'unpaid' && booking.payment_method !== null);
-            const slots = booking.slots || [];
+          schedules.map((schedule) => {
+            const slots = schedule.slots || [];
             
             // Format schedule text (e.g. "Senin, 14 Okt 2026")
-            const dateObj = new Date(booking.booking_date);
+            const dateObj = new Date(schedule.booking_date);
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const dateText = `${days[dateObj.getDay()]}, ${dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`;
             
@@ -88,12 +84,12 @@ export default function LearnerBookingsPage() {
             }
 
             // Tutor info fallback
-            const tutorName = booking.tutor?.user?.name || booking.tutor?.name || 'Tutor KonekDin';
-            const tutorRating = booking.tutor?.rating || 'Baru';
-            const tutorAvatar = booking.tutor?.user?.avatar_path;
+            const tutorName = schedule.tutor?.user?.name || schedule.tutor?.name || 'Tutor KonekDin';
+            const tutorRating = schedule.tutor?.rating || 'Baru';
+            const tutorAvatar = schedule.tutor?.user?.avatar_path;
 
             return (
-              <div key={booking.id} className="bg-white border border-slate-200 rounded-[28px] p-5 flex flex-col md:flex-row md:items-center justify-between gap-5 transition-all hover:shadow-lg hover:shadow-slate-200/50 hover:border-emerald-200">
+              <div key={schedule.id} className="bg-white border border-slate-200 rounded-[28px] p-5 flex flex-col md:flex-row md:items-center justify-between gap-5 transition-all hover:shadow-lg hover:shadow-slate-200/50 hover:border-emerald-200">
                 <div className="flex items-start md:items-center gap-5">
                   <div className="relative">
                     <div className="w-20 h-20 md:w-16 md:h-16 rounded-2xl bg-slate-100 overflow-hidden shrink-0 border border-slate-200 shadow-sm">
@@ -116,7 +112,7 @@ export default function LearnerBookingsPage() {
                     <div className="flex items-center gap-2 mb-1.5">
                       <h3 className="font-bold text-slate-800 text-lg">{tutorName}</h3>
                       <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider rounded-md">
-                        {booking.course?.name || 'Mata Kuliah'}
+                        {schedule.course?.name || 'Mata Kuliah'}
                       </span>
                     </div>
                     <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500">
@@ -133,37 +129,16 @@ export default function LearnerBookingsPage() {
                 </div>
 
                 <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-3 w-full md:w-auto pt-4 md:pt-0 border-t border-slate-100 md:border-0">
-                  {/* Status Badge */}
-                  <div className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase ${
-                    isPaid 
-                      ? 'bg-[#0B132B] text-white' 
-                      : isPending
-                        ? 'bg-amber-50 text-amber-600 border border-amber-200'
-                        : 'bg-red-50 text-red-600 border border-red-100'
-                  }`}>
-                    {isPaid ? 'Lunas' : isPending ? 'Pending' : 'Belum Bayar'}
+                  <div className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-emerald-50 text-emerald-600 border border-emerald-200">
+                    Sesi Aktif
                   </div>
                   
-                  {/* Action Button */}
-                  {isPaid ? (
-                    <Link to="/learner/schedules" className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors">
-                      Lihat Jadwal
-                    </Link>
-                  ) : isPending ? (
-                    <Link 
-                      to={`/learner/bookings/${booking.id}`}
-                      className="flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-sm transition-colors"
-                    >
-                      Menunggu Verifikasi <Clock className="w-3.5 h-3.5" />
-                    </Link>
-                  ) : (
-                    <Link 
-                      to={`/learner/bookings/${booking.id}`}
-                      className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl shadow-sm transition-colors"
-                    >
-                      Bayar Sekarang <Banknote className="w-3.5 h-3.5" />
-                    </Link>
-                  )}
+                  <Link 
+                    to={`/learner/bookings/${schedule.id}`}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
+                  >
+                    Detail Sesi
+                  </Link>
                 </div>
               </div>
             );
