@@ -160,8 +160,8 @@ export default function LearnerBookingsPage() {
                     isPaid 
                       ? 'bg-[#0B132B] text-white' 
                       : isPending
-                        ? 'bg-amber-50 text-amber-600 border border-amber-200'
-                        : 'bg-red-50 text-red-600 border border-red-100'
+                        ? 'bg-blue-50 text-blue-600 border border-blue-200'
+                        : 'bg-amber-50 text-amber-600 border border-amber-200'
                   }`}>
                     {isPaid ? 'Lunas' : isPending ? 'Pending' : 'Belum Bayar'}
                   </div>
