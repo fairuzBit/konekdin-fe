@@ -37,11 +37,13 @@ export default function LearnerDashboard() {
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-[#0B132B] to-[#115E59] rounded-[24px] p-8 md:p-10 text-white shadow-lg">
-        <div className="absolute right-0 top-0 opacity-10 pointer-events-none">
-          <svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="200" cy="200" r="100" stroke="white" strokeWidth="40"/>
-            <circle cx="200" cy="200" r="160" stroke="white" strokeWidth="20"/>
+      <div className="relative overflow-hidden bg-gradient-to-r from-[#8A79F6] to-[#48DEB2] dark:from-[#0c1611] dark:to-[#060b08] border border-white/10 dark:border-brand-500/10 rounded-[24px] p-8 md:p-10 text-white shadow-lg transition-all duration-300">
+        <div className="absolute -right-10 -top-10 opacity-30 dark:opacity-40 pointer-events-none">
+          <svg width="450" height="450" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="250" cy="150" r="80" className="stroke-white dark:stroke-brand-500" strokeWidth="30" strokeOpacity="0.2"/>
+            <circle cx="250" cy="150" r="140" className="stroke-white dark:stroke-brand-500" strokeWidth="20" strokeOpacity="0.15"/>
+            <circle cx="250" cy="150" r="200" className="stroke-white dark:stroke-brand-500" strokeWidth="15" strokeOpacity="0.1"/>
+            <circle cx="250" cy="150" r="260" className="stroke-white dark:stroke-brand-500" strokeWidth="10" strokeOpacity="0.05"/>
           </svg>
         </div>
         
@@ -50,14 +52,14 @@ export default function LearnerDashboard() {
             <h1 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight">
               Selamat Datang Kembali, {user?.name?.split(' ')[0] || 'Nina'}! 👋
             </h1>
-            <p className="text-emerald-50 text-sm md:text-base opacity-90 max-w-xl">
+            <p className="text-white/90 dark:text-textSecondary text-sm md:text-base max-w-xl">
               Siap untuk melanjutkan petualangan belajarmu hari ini?
             </p>
           </div>
           
           <Link 
             to="/learner/bookings/new"
-            className="shrink-0 inline-flex items-center gap-2 bg-white text-[#003E39] font-bold px-5 py-2.5 rounded-2xl hover:bg-slate-50 transition-colors shadow-sm"
+            className="shrink-0 inline-flex items-center gap-2 bg-white text-[#8A79F6] dark:text-[#0c1611] dark:hover:bg-brand-400 dark:hover:text-brand-950 font-bold px-5 py-2.5 rounded-2xl hover:bg-slate-50 transition-all shadow-sm"
           >
             <Plus className="w-4 h-4" /> Sesi Baru
           </Link>
