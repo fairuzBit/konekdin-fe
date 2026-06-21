@@ -71,6 +71,11 @@ class LearnerService {
     return response.data;
   }
 
+  async cancelBooking(id: string | number) {
+    const response = await apiClient.patch(`/learner/bookings/${id}/cancel`);
+    return response.data;
+  }
+
   async getSchedules() {
     return withRequestCache('learner.schedules', async () => {
       const response = await apiClient.get('/schedules');

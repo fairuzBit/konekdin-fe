@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar, Clock, Star, Banknote, CreditCard, Smartphone, ShieldCheck, ArrowLeft, Loader2, CheckCircle2, MessageCircle } from 'lucide-react';
+import { Calendar, Clock, Star, Banknote, CreditCard, Smartphone, ShieldCheck, ArrowLeft, Loader2, CheckCircle2, MessageCircle, AlertCircle } from 'lucide-react';
 import { learnerService } from '@/api/services/learnerService';
 
 const formatWhatsAppLink = (phone?: string) => {
@@ -25,6 +25,10 @@ export default function LearnerBookingDetailPage() {
   const [selectedProvider, setSelectedProvider] = useState<string>('bri');
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
+
+  // Cancellation State
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const fetchBookingDetail = async () => {
     try {
@@ -67,6 +71,25 @@ export default function LearnerBookingDetailPage() {
     }
   };
 
+  const handleCancelBooking = async () => {
+    try {
+      setIsCancelling(true);
+      setPaymentError(null);
+      
+      const res = await learnerService.cancelBooking(booking.id);
+      
+      if (res.success || res) {
+        setIsCancelModalOpen(false);
+        await fetchBookingDetail();
+      }
+    } catch (err: any) {
+      setPaymentError(err.response?.data?.message || 'Gagal membatalkan pesanan. Coba lagi.');
+      setIsCancelModalOpen(false);
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
@@ -88,7 +111,8 @@ export default function LearnerBookingDetailPage() {
 
   const tutorName = booking.tutor?.user?.name || booking.tutor?.name || 'Tutor KonekDin';
   const isPaid = booking.payment_status === 'paid';
-  const isPending = booking.payment_status === 'pending' || (booking.payment_status === 'unpaid' && booking.payment_method !== null);
+  const isCancelled = booking.status === 'cancelled';
+  const isPending = !isCancelled && (booking.payment_status === 'pending' || (booking.payment_status === 'unpaid' && booking.payment_method !== null));
   
   // Format Date
   const dateObj = new Date(booking.booking_date);
@@ -295,6 +319,14 @@ export default function LearnerBookingDetailPage() {
                 *Pesanan Anda akan disetujui setelah pembayaran dikonfirmasi.
               </p>
             </div>
+          ) : isCancelled ? (
+            <div className="p-8 border border-red-200 bg-red-50 rounded-2xl flex flex-col items-center justify-center text-center mt-6">
+              <AlertCircle className="w-16 h-16 text-red-500 mb-4 animate-pulse" />
+              <h3 className="text-xl font-bold text-red-900 mb-2">Pesanan Telah Dibatalkan</h3>
+              <p className="text-red-700 text-sm">
+                Pesanan ini telah dibatalkan dan slot belajar Anda telah dilepaskan. Silakan buat pesanan baru jika ingin memesan sesi lagi.
+              </p>
+            </div>
           ) : (
             <div className="p-8 border border-emerald-200 bg-emerald-50/50 rounded-2xl flex flex-col items-center justify-center text-center mt-6">
               <CheckCircle2 className="w-16 h-16 text-emerald-500 mb-4" />
@@ -348,14 +380,29 @@ export default function LearnerBookingDetailPage() {
           </div>
 
           <div className="mt-10 relative z-10">
-            {!isPaid && !isPending ? (
+            {isCancelled ? (
+              <button
+                onClick={() => navigate('/learner/bookings')}
+                className="w-full py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all border border-white/10"
+              >
+                Kembali ke Daftar Pesanan
+              </button>
+            ) : !isPaid && !isPending ? (
               <>
                 <button
                   onClick={handleConfirm}
                   disabled={isProcessing}
-                  className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 mb-4"
+                  className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 mb-3"
                 >
                   {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Selesaikan Pembayaran'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsCancelModalOpen(true)}
+                  disabled={isProcessing || isCancelling}
+                  className="w-full py-4 bg-transparent border border-red-500/50 hover:bg-red-500/10 text-red-400 disabled:opacity-50 disabled:hover:bg-transparent font-bold rounded-xl transition-all flex items-center justify-center gap-2 mb-4"
+                >
+                  Batalkan Pesanan
                 </button>
                 <p className="text-[10px] text-center text-slate-500">
                   Dengan membayar, Anda menyetujui <a href="#" className="underline hover:text-white transition-colors">Ketentuan Layanan</a> & <a href="#" className="underline hover:text-white transition-colors">Kebijakan Privasi</a> KonekDin.
@@ -391,6 +438,37 @@ export default function LearnerBookingDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Cancellation Confirmation Modal */}
+      {isCancelModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-bgSecondary border border-slate-200 dark:border-borderColor/20 rounded-[28px] max-w-md w-full p-6 md:p-8 shadow-2xl relative animate-in zoom-in-95 duration-200">
+            <h3 className="text-xl font-extrabold text-[#0B132B] dark:text-white mb-2">
+              Batalkan Pesanan?
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-textSecondary leading-relaxed mb-6">
+              Apakah Anda yakin ingin membatalkan pesanan ini? <span className="text-red-500 font-medium">Tindakan ini tidak dapat dibatalkan</span> dan slot belajar Anda akan dilepaskan untuk learner lain.
+            </p>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsCancelModalOpen(false)}
+                disabled={isCancelling}
+                className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/20 text-slate-700 dark:text-white font-bold rounded-xl transition-all text-sm"
+              >
+                Kembali
+              </button>
+              <button
+                onClick={handleCancelBooking}
+                disabled={isCancelling}
+                className="flex-1 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-500/10 text-sm flex items-center justify-center gap-1.5"
+              >
+                {isCancelling ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Ya, Batalkan'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
