@@ -1,9 +1,36 @@
 import { useEffect, useState } from 'react';
-import { UserCircle2, Eye, Ban, Trash2, CheckCircle2, Search, Filter } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { UserCircle2, Eye, Ban, Trash2, CheckCircle2, Clock, Search, Filter, X, AlertTriangle } from 'lucide-react';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { adminService } from '@/api/services/adminService';
 import { normalizeList } from '@/lib/apiData';
 import { Link, useSearchParams } from 'react-router-dom';
+
+const SUSPEND_DURATIONS = [
+  { value: '1 Hari', label: '1 Hari', description: 'Kembali aktif besok' },
+  { value: '1 Minggu', label: '1 Minggu', description: 'Kembali aktif 7 hari lagi' },
+  { value: '1 Bulan', label: '1 Bulan', description: 'Kembali aktif 30 hari lagi' },
+];
+
+function formatSuspensionInfo(
+  suspendedUntil: string | null,
+  suspendedEnd?: string | null
+): { endDate: string; remaining: string } | null {
+  if (!suspendedUntil) return null;
+  const now = new Date();
+  const until = new Date(suspendedUntil);
+  const diffMs = until.getTime() - now.getTime();
+  if (diffMs <= 0) return null;
+
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+  const remaining = days > 0 ? `Tersisa ${days} hari ${hours} jam` : `Tersisa ${hours} jam`;
+  const endDate = suspendedEnd ?? until.toLocaleDateString('id-ID', {
+    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
+  });
+
+  return { endDate, remaining };
+}
 
 export default function AdminUsersPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -14,7 +41,13 @@ export default function AdminUsersPage() {
   const [searchName, setSearchName] = useState(searchParams.get('name') || '');
   const [filterRole, setFilterRole] = useState(searchParams.get('role') || 'all');
 
-  // Update URL params when filters change
+  const [suspendModal, setSuspendModal] = useState<{
+    open: boolean;
+    user: Record<string, unknown> | null;
+  }>({ open: false, user: null });
+
+  const [suspendLoading, setSuspendLoading] = useState(false);
+
   useEffect(() => {
     const params = new URLSearchParams();
     if (searchName) params.set('name', searchName);
@@ -38,16 +71,29 @@ export default function AdminUsersPage() {
     fetchUsers();
   }, []);
 
-  const handleSuspendToggle = async (userId: string | number, isSuspended: boolean) => {
+  const handleSuspend = async (duration: string) => {
+    if (!suspendModal.user) return;
+    setSuspendLoading(true);
     try {
-      if (isSuspended) {
-        await adminService.unsuspendUser(userId);
-      } else {
-        await adminService.suspendUser(userId);
-      }
+      await adminService.suspendUser(
+        suspendModal.user.id as string | number,
+        duration
+      );
+      setSuspendModal({ open: false, user: null });
       fetchUsers();
     } catch {
-      alert('Gagal mengubah status suspend pengguna');
+      alert('Gagal menyuspend pengguna');
+    } finally {
+      setSuspendLoading(false);
+    }
+  };
+
+  const handleUnsuspend = async (userId: string | number) => {
+    try {
+      await adminService.unsuspendUser(userId);
+      fetchUsers();
+    } catch {
+      alert('Gagal mengaktifkan pengguna');
     }
   };
 
@@ -62,13 +108,19 @@ export default function AdminUsersPage() {
     }
   };
 
+  const isUserSuspended = (user: Record<string, unknown>): boolean => {
+    const until = user.suspended_until as string | null;
+    if (!until) return false;
+    return new Date(until).getTime() > Date.now();
+  };
+
   const filteredUsers = users.filter((user) => {
     const role = (user.role as string) ?? (user.roles as string) ?? '—';
     const name = (user.name as string) ?? (user.username as string) ?? 'Pengguna';
-    
+
     const matchesName = name.toLowerCase().includes(searchName.toLowerCase());
     const matchesRole = filterRole === 'all' || role.toLowerCase() === filterRole.toLowerCase();
-    
+
     return matchesName && matchesRole;
   });
 
@@ -80,7 +132,7 @@ export default function AdminUsersPage() {
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <div className="relative flex-1 sm:flex-initial">
               <Filter className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <select 
+              <select
                 value={filterRole}
                 onChange={(e) => setFilterRole(e.target.value)}
                 className="pl-9 pr-8 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 w-full appearance-none bg-white"
@@ -92,9 +144,9 @@ export default function AdminUsersPage() {
             </div>
             <div className="relative flex-1 sm:flex-initial">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input 
-                type="text" 
-                placeholder="Cari pengguna..." 
+              <input
+                type="text"
+                placeholder="Cari pengguna..."
                 value={searchName}
                 onChange={(e) => setSearchName(e.target.value)}
                 className="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 w-full sm:w-64"
@@ -105,41 +157,75 @@ export default function AdminUsersPage() {
         <CardContent className="p-6">
           {loading ? <p className="text-sm text-slate-500">Memuat pengguna...</p> : null}
           {error ? <p className="text-sm text-rose-500">{error}</p> : null}
-          {!loading && !error && filteredUsers.length === 0 ? <p className="text-sm text-slate-500">Tidak ada pengguna yang cocok dengan filter.</p> : null}
+          {!loading && !error && filteredUsers.length === 0 ? (
+            <p className="text-sm text-slate-500">Tidak ada pengguna yang cocok dengan filter.</p>
+          ) : null}
           {filteredUsers.map((user, index) => {
-            const isSuspended = user.status === 'suspended';
+            const suspended = isUserSuspended(user);
+            const suspensionInfo = formatSuspensionInfo(
+              user.suspended_until as string | null,
+              user.suspended_end as string | undefined
+            );
             const userId = (user.id as number | string) || index;
-            const tutorId = (user.tutor_id as number | string) || userId;
             const role = (user.role as string) ?? (user.roles as string) ?? '—';
-            
+
             return (
-              <div key={index} className="mt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 first:mt-0 gap-4 transition-colors hover:bg-slate-50/80">
-                <div className="flex items-center gap-3">
-                  <div className="rounded-full bg-brand-50 p-3 text-brand-700">
+              <div
+                key={index}
+                className="mt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 first:mt-0 gap-4 transition-colors hover:bg-slate-50/80"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="rounded-full bg-brand-50 p-3 text-brand-700 shrink-0">
                     <UserCircle2 className="h-5 w-5" />
                   </div>
-                  <div>
-                    <p className="font-semibold text-slate-900">{(user.name as string) ?? (user.username as string) ?? 'Pengguna'}</p>
-                    <p className="text-xs font-medium px-2 py-0.5 rounded-full inline-block mt-1 uppercase tracking-wider bg-slate-200 text-slate-600">{role}</p>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-slate-900 truncate">
+                      {(user.name as string) ?? (user.username as string) ?? 'Pengguna'}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      <span className="text-xs font-medium px-2 py-0.5 rounded-full uppercase tracking-wider bg-slate-200 text-slate-600">
+                        {role}
+                      </span>
+                      {suspended && suspensionInfo && (
+                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 flex items-center gap-1">
+                          <Clock className="w-3 h-3 shrink-0" />
+                          <span>
+                            <span className="font-semibold">Suspend hingga {suspensionInfo.endDate}</span>
+                            <span className="mx-1">—</span>
+                            <span>{suspensionInfo.remaining}</span>
+                          </span>
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-                
-                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                  <Link 
-                    to={role === 'learner' ? `/admin/learners/${userId}` : `/admin/tutors/${userId}`} 
+
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end shrink-0">
+                  <Link
+                    to={role === 'learner' ? `/admin/learners/${userId}` : `/admin/tutors/${userId}`}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
                     title="Lihat Profil"
                   >
                     <Eye className="w-3.5 h-3.5" /> Profil
                   </Link>
-                  <button 
-                    onClick={() => handleSuspendToggle(userId, isSuspended)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border ${isSuspended ? 'text-green-600 bg-green-50 hover:bg-green-100 border-green-100' : 'text-amber-600 bg-amber-50 hover:bg-amber-100 border-amber-100'}`}
-                    title={isSuspended ? "Unsuspend Pengguna" : "Suspend Pengguna"}
-                  >
-                    {isSuspended ? <><CheckCircle2 className="w-3.5 h-3.5" /> Aktifkan</> : <><Ban className="w-3.5 h-3.5" /> Suspend</>}
-                  </button>
-                  <button 
+                  {suspended ? (
+                    <button
+                      onClick={() => handleUnsuspend(userId)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-green-600 bg-green-50 hover:bg-green-100 border border-green-100 transition-colors"
+                      title="Aktifkan Pengguna"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Aktifkan
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setSuspendModal({ open: true, user })}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 border border-amber-100 transition-colors"
+                      title="Suspend Pengguna"
+                    >
+                      <Ban className="w-3.5 h-3.5" /> Suspend
+                    </button>
+                  )}
+                  <button
                     onClick={() => handleDelete(userId)}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100 transition-colors"
                     title="Hapus Pengguna"
@@ -152,6 +238,64 @@ export default function AdminUsersPage() {
           })}
         </CardContent>
       </Card>
+
+      {/* Suspend Modal */}
+      {suspendModal.open && suspendModal.user && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-slate-800">Suspend Pengguna</h3>
+                  <p className="text-sm text-slate-500">
+                    {(suspendModal.user.name as string) ?? 'Pengguna'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSuspendModal({ open: false, user: null })}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-3">
+              <p className="text-sm text-slate-600 mb-4">
+                Pilih durasi suspend untuk pengguna ini:
+              </p>
+              {SUSPEND_DURATIONS.map((d) => (
+                <button
+                  key={d.value}
+                  onClick={() => handleSuspend(d.value)}
+                  disabled={suspendLoading}
+                  className="w-full flex items-center justify-between p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:border-amber-300 hover:bg-amber-50/50 group transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left"
+                >
+                  <div>
+                    <p className="font-semibold text-slate-800 group-hover:text-amber-700 transition-colors">
+                      {d.label}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-0.5">{d.description}</p>
+                  </div>
+                  <Ban className="w-4 h-4 text-slate-400 group-hover:text-amber-500 transition-colors shrink-0" />
+                </button>
+              ))}
+            </div>
+
+            <div className="p-4 border-t border-slate-100 flex justify-end">
+              <button
+                onClick={() => setSuspendModal({ open: false, user: null })}
+                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

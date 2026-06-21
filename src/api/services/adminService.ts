@@ -58,18 +58,14 @@ class AdminService {
     });
   }
 
-  async suspendUser(id: string | number) {
-    return withRequestCache(`admin.suspendUser.${id}`, async () => {
-      const response = await apiClient.patch(`/admin/users/${id}/suspend`);
-      return response.data;
-    });
+  async suspendUser(id: string | number, duration: string) {
+    const response = await apiClient.patch(`/admin/users/${id}/suspend`, { duration });
+    return response.data;
   }
 
   async unsuspendUser(id: string | number) {
-    return withRequestCache(`admin.unsuspendUser.${id}`, async () => {
-      const response = await apiClient.patch(`/admin/users/${id}/unsuspend`);
-      return response.data;
-    });
+    const response = await apiClient.patch(`/admin/users/${id}/unsuspend`);
+    return response.data;
   }
 
   async getModerationReviews() {
@@ -167,18 +163,6 @@ class AdminService {
     return response.data;
   }
 
-  async getPayments(status?: string) {
-    return withRequestCache(`admin.payments.${status || 'all'}`, async () => {
-      const url = status ? `/admin/payments?status=${status}` : '/admin/payments';
-      const response = await apiClient.get(url);
-      return response.data;
-    });
-  }
-
-  async approvePayment(id: string | number) {
-    const response = await apiClient.patch(`/admin/payments/${id}/approve`);
-    return response.data;
-  }
 }
 
 export const adminService = new AdminService();
