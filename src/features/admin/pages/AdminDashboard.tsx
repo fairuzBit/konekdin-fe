@@ -33,8 +33,8 @@ export default function AdminDashboard() {
         setStats(normalizeRecord(statsResponse));
         
         // Count active complaints (MENUNGGU TINJAUAN or DIPROSES)
-        const reviews = Array.isArray(reviewsResponse) ? reviewsResponse : (reviewsResponse?.data || []);
-        const active = reviews.filter((r: any) => r.moderation_status !== 'SELESAI');
+        const reviewsArray = reviewsResponse?.data?.reviews || reviewsResponse?.reviews || (Array.isArray(reviewsResponse?.data) ? reviewsResponse.data : []) || [];
+        const active = Array.isArray(reviewsArray) ? reviewsArray.filter((r: any) => r.moderation_status !== 'SELESAI') : [];
         setActiveComplaintsCount(active.length);
         
       } catch {

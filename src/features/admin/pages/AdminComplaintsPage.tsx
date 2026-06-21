@@ -79,8 +79,8 @@ export default function AdminComplaintsPage() {
   return (
     <div className="space-y-6">
       <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-[#0B132B] dark:text-white mb-2 tracking-tight">Komplain & Moderasi</h1>
-        <p className="text-slate-500 dark:text-slate-400 font-medium">Tinjau ulasan ber-rating rendah (⭐ 1 & 2) untuk menjaga kualitas layanan KonekDin.</p>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-white mb-2 tracking-tight">Komplain & Moderasi</h1>
+        <p className="text-slate-200 font-medium">Tinjau ulasan ber-rating rendah (⭐ 1 & 2) untuk menjaga kualitas layanan KonekDin.</p>
       </div>
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <Card className="flex-1 border-rose-100 shadow-sm">
