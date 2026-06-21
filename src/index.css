@@ -40,40 +40,61 @@
   }
 
   .dark {
-    /* Deep Midnight Teal for a lively Dark Mode */
-    --bg-primary: 8 25 21; /* #081915 */
-    --bg-secondary: 14 36 30; /* #0e241e */
-    --text-primary: 248 250 252;
-    --text-secondary: 148 163 184; 
-    --border-color: 21 53 44; /* #15352c */
+    /* Background ultra gelap bernuansa hijau charcoal */
+    --bg-primary: 6 11 8;       /* #060b08 */
+    --bg-secondary: 12 22 17;   /* #0c1611 */
+    --text-primary: 255 255 255;
+    --text-secondary: 156 163 175; 
+    --border-color: 138 227 52; /* Lime/neon green */
     
-    /* Brand (Mint Green in Dark Mode) */
-    --brand-50: 10 27 21;
-    --brand-100: 15 41 32;
-    --brand-400: 52 211 153;
-    --brand-500: 30 226 156; /* #1ee29c Mint green */
-    --brand-600: 24 186 128;
-    --brand-700: 20 155 106;
-    --brand-800: 16 124 85;
-    --brand-900: 12 93 64;
+    /* Brand (Vibrant Lime Green / Neon Green) */
+    --brand-50: 244 252 235;
+    --brand-100: 228 249 204;
+    --brand-400: 172 239 88;
+    --brand-500: 138 227 52;   /* #8ae334 */
+    --brand-600: 110 189 36;
+    --brand-700: 84 147 25;
+    --brand-800: 59 104 16;
+    --brand-900: 42 75 10;
 
     /* Accents */
     --accent-pink: 236 102 153;
-    --accent-yellow: 253 224 71; /* yellow-300 */
-    --accent-green: 30 226 156; /* Mint green */
+    --accent-yellow: 250 204 21;
+    --accent-green: 138 227 52;  /* Neon Green */
     
     /* Gradients */
-    --grad-start: 14 36 30; 
-    --grad-end: 8 25 21; 
+    --grad-start: 138 227 52;
+    --grad-end: 6 11 8;
     
     /* Global App BG */
-    --app-bg: 8 25 21; 
+    --app-bg: 6 11 8; 
     
     /* Sidebar (Dark Mode) */
-    --sidebar-bg: 10 27 21; /* Extra dark teal */
+    --sidebar-bg: 6 11 8;
     --sidebar-text: 248 250 252;
-    --sidebar-border: 21 53 44;
-    --sidebar-hover: 21 53 44;
+    --sidebar-border: 138 227 52 / 0.08;
+    --sidebar-hover: 138 227 52 / 0.1;
+  }
+
+  /* Auto-convert cards with bg-bgSecondary to glassmorphic gradient cards in dark mode */
+  .dark .bg-bgSecondary {
+    background: linear-gradient(135deg, rgba(16, 28, 22, 0.45) 0%, rgba(6, 11, 8, 0.75) 100%) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(138, 227, 52, 0.08) !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37),
+                inset 0 0 12px rgba(138, 227, 52, 0.05) !important;
+  }
+
+  /* Make borders translucent neon-green in dark mode */
+  .dark .border, 
+  .dark .border-borderColor {
+    border-color: rgba(138, 227, 52, 0.08) !important;
+  }
+
+  /* Customize scrollbar under dark mode */
+  .dark ::-webkit-scrollbar-thumb {
+    background: rgba(138, 227, 52, 0.2) !important;
   }
 }
 

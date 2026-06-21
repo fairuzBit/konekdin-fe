@@ -133,7 +133,7 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
                   }}
                   className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-colors ${
                     active 
-                      ? 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400' 
+                      ? 'bg-amber-50 text-amber-600 dark:bg-brand-500/10 dark:text-brand-400' 
                       : 'text-textSecondary dark:text-slate-300 hover:bg-bgPrimary hover:text-textPrimary dark:hover:text-white dark:hover:bg-slate-800/50'
                   }`}
                 >

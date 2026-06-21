@@ -24,7 +24,7 @@ export default function TutorAvailabilityPage() {
   const [approvedCourses, setApprovedCourses] = useState<any[]>([]);
 
   // Filters state
-  const [selectedDayFilter, setSelectedDayFilter] = useState('Senin');
+  const [selectedDayFilter, setSelectedDayFilter] = useState('Semua Hari');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState('Semua Status');
 
   // Form state for Modal
@@ -243,6 +243,7 @@ export default function TutorAvailabilityPage() {
               onChange={(e) => setSelectedDayFilter(e.target.value)}
               className="w-full appearance-none bg-slate-50/50 border border-slate-200 text-slate-800 font-semibold text-sm rounded-xl px-4 py-3 outline-none focus:border-brand-500 dark:bg-bgSecondary dark:border-borderColor dark:text-textPrimary cursor-pointer"
             >
+              <option value="Semua Hari">Semua Hari</option>
               <option value="Senin">Senin</option>
               <option value="Selasa">Selasa</option>
               <option value="Rabu">Rabu</option>
@@ -286,7 +287,11 @@ export default function TutorAvailabilityPage() {
               </tr>
             </thead>
             <tbody>
-              {schedules.map((row, index) => (
+              {schedules.filter(row => {
+                const matchDay = selectedDayFilter === 'Semua Hari' || row.day === selectedDayFilter;
+                const matchStatus = selectedStatusFilter === 'Semua Status' || row.status.toUpperCase() === selectedStatusFilter.toUpperCase();
+                return matchDay && matchStatus;
+              }).map((row, index) => (
                 <tr key={index} className="border-b border-slate-50 dark:border-borderColor/20 hover:bg-slate-50/50 dark:hover:bg-bgPrimary/50 transition-colors">
                   <td className="py-4 px-6 text-sm font-bold text-slate-300 dark:text-slate-600">{row.no}</td>
                   <td className="py-4 px-6 text-sm font-bold text-[#0a192f] dark:text-white">{row.day}</td>

@@ -14,6 +14,13 @@ const formatWhatsAppLink = (phone: string | undefined) => {
   return `https://wa.me/${clean}`;
 };
 
+const formatDate = (dateStr: string) => {
+  if (!dateStr || dateStr === '-') return '-';
+  const dateObj = new Date(dateStr);
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+  return `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+};
+
 export default function TutorBookingsPage() {
   const [requests, setRequests] = useState<Array<Record<string, unknown>>>([]);
   const [loading, setLoading] = useState(true);
@@ -52,7 +59,9 @@ export default function TutorBookingsPage() {
                 <div>
                   <p className="font-bold text-slate-900 text-lg">{(request.learner as string) ?? 'Learner'}</p>
                   <p className="text-sm text-slate-500 font-medium mt-1">Mata Kuliah: <span className="text-emerald-600 font-bold">{(request.course as string) ?? '—'}</span></p>
-                  <p className="text-sm text-slate-600 mt-1 font-medium bg-white inline-block px-2 py-1 rounded-md border border-slate-100">Jadwal: {(Array.isArray(request.slots) ? request.slots.join(', ') : request.date as string) ?? '—'}</p>
+                  <p className="text-sm text-slate-600 mt-1 font-medium bg-white inline-block px-2 py-1 rounded-md border border-slate-100">
+                    Jadwal: <span className="font-bold text-[#0B132B]">{formatDate(request.date as string)}</span> | {Array.isArray(request.slots) && request.slots.length > 0 ? request.slots.join(', ') : 'Belum memilih waktu'}
+                  </p>
                 </div>
                 <div className="flex flex-col md:items-end gap-3 shrink-0">
                   <div className="flex items-center gap-2 text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full"><Sparkles className="h-4 w-4" /> Disetujui</div>

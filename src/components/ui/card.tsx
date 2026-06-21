@@ -3,7 +3,7 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={twMerge(clsx('rounded-[24px] border border-slate-200 bg-white bg-opacity-80 backdrop-blur-md p-5 shadow-sm dark:bg-[#ec6699]/65 dark:border-[#ec6699]/50', className))} {...props} />;
+  return <div className={twMerge(clsx('rounded-[24px] border border-slate-200 bg-white bg-opacity-80 backdrop-blur-md p-5 shadow-sm dark:bg-bgSecondary dark:border-borderColor', className))} {...props} />;
 }
 
 export function CardHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
