@@ -47,10 +47,8 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
 
   return (
     <div className="min-h-screen bg-appBg text-textPrimary transition-colors duration-300 relative z-0 overflow-hidden">
-      {/* Decorative Background Shapes (Light Mode only, hidden in dark mode via CSS variables or opacity) */}
-      <div className="absolute inset-0 z-[-1] flex overflow-hidden pointer-events-none">
-        <div className="w-[75%] h-full bg-accentGreen opacity-100 dark:hidden"></div>
-        <div className="w-[25%] h-full bg-accentPink opacity-90 dark:hidden"></div>
+      {/* Decorative Background Shapes (Light/Dark Gradient background) */}
+      <div className="absolute inset-0 z-[-1] flex overflow-hidden pointer-events-none bg-gradient-to-br from-[#ecfdf5] to-[#fdf2f8] dark:from-[#060b08] dark:to-[#08120d]">
         
         {/* Giant Text Overlay - TOP */}
         {/* Di sini Anda bisa mengatur tulisan KonekDin di Background */}

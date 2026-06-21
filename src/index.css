@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --bg-primary: 250 250 250; /* very light gray */
+    --bg-primary: 243 248 245; /* Soft pastel green-gray background base */
     --bg-secondary: 255 255 255; /* white */
     --text-primary: 17 24 39; /* gray-900 */
     --text-secondary: 107 114 128; /* gray-500 */
@@ -21,22 +21,22 @@
     --brand-900: 10 27 21;
     
     /* Accents */
-    --accent-pink: 236 102 153; /* #ec6699 */
-    --accent-yellow: 250 204 21; /* #facc15 */
-    --accent-green: 36 88 70; /* Deep green */
+    --accent-pink: 244 114 182; /* Soft rose/pink */
+    --accent-yellow: 250 204 21;
+    --accent-green: 34 197 94; /* Soft emerald green */
     
     /* Gradients */
-    --grad-start: 36 88 70; /* Green */
-    --grad-end: 236 102 153; /* Pink */
+    --grad-start: 34 197 94; /* Soft emerald green */
+    --grad-end: 244 114 182; /* Soft rose/pink */
     
     /* Global App BG */
-    --app-bg: 236 253 245; /* Soft green tint for light mode */
+    --app-bg: 243 248 245; /* Soft pastel green-gray background */
     
     /* Sidebar (Light Mode) */
-    --sidebar-bg: 24 54 44; /* Very rich forest green */
-    --sidebar-text: 248 250 252;
-    --sidebar-border: 36 88 70;
-    --sidebar-hover: 36 88 70;
+    --sidebar-bg: 255 255 255; /* Matches frosted glass */
+    --sidebar-text: 17 24 39;
+    --sidebar-border: 229 231 235;
+    --sidebar-hover: 243 248 245;
   }
 
   .dark {
@@ -74,6 +74,22 @@
     --sidebar-text: 248 250 252;
     --sidebar-border: 138 227 52 / 0.08;
     --sidebar-hover: 138 227 52 / 0.1;
+  }
+
+  /* Auto-convert cards with bg-bgSecondary to glassmorphic cards in light mode (default) */
+  .bg-bgSecondary {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.75) 100%) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04),
+                inset 0 0 12px rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* Default translucent borders in light mode */
+  .border, 
+  .border-borderColor {
+    border-color: rgba(229, 231, 235, 0.5) !important;
   }
 
   /* Auto-convert cards with bg-bgSecondary to glassmorphic gradient cards in dark mode */
