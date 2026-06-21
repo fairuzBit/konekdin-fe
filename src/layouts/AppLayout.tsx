@@ -10,9 +10,10 @@ interface AppLayoutProps {
     to: string;
     icon: ElementType;
   }>;
+  panelRole?: string;
 }
 
-export default function AppLayout({ children, navigation }: AppLayoutProps) {
+export default function AppLayout({ children, navigation, panelRole }: AppLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -47,21 +48,21 @@ export default function AppLayout({ children, navigation }: AppLayoutProps) {
   return (
     <div className="min-h-screen bg-appBg text-textPrimary transition-colors duration-300 relative z-0 overflow-hidden">
       {/* Decorative Background Shapes (Light Mode only, hidden in dark mode via CSS variables or opacity) */}
-      <div className="absolute inset-0 z-[-1] flex overflow-hidden pointer-events-none dark:hidden">
-        <div className="w-[75%] h-full bg-accentGreen opacity-100"></div>
-        <div className="w-[25%] h-full bg-accentPink opacity-90"></div>
+      <div className="absolute inset-0 z-[-1] flex overflow-hidden pointer-events-none">
+        <div className="w-[75%] h-full bg-accentGreen opacity-100 dark:hidden"></div>
+        <div className="w-[25%] h-full bg-accentPink opacity-90 dark:hidden"></div>
         
         {/* Giant Text Overlay - TOP */}
         {/* Di sini Anda bisa mengatur tulisan KonekDin di Background */}
-        <div className="absolute top-0 w-full flex justify-center pt-8 opacity-40">
-          <span className="text-[25vw] leading-none font-black uppercase tracking-widest text-white/30 whitespace-nowrap select-none">
+        <div className="absolute top-0 w-full flex justify-start lg:pl-[5rem] pt-8 opacity-40 overflow-hidden">
+          <span className="text-[15vw] leading-none font-black uppercase tracking-widest text-white/30 dark:text-white/20 whitespace-nowrap select-none">
             KonekDin
           </span>
         </div>
 
         {/* Giant Text Overlay - BOTTOM */}
-        <div className="absolute bottom-0 w-full flex justify-center pb-8 opacity-40">
-          <span className="text-[25vw] leading-none font-black uppercase tracking-widest text-white/30 whitespace-nowrap select-none">
+        <div className="absolute bottom-0 w-full flex justify-center lg:pl-[5rem] pb-8 opacity-40 overflow-hidden">
+          <span className="text-[15vw] leading-none font-black uppercase tracking-widest text-white/30 dark:text-white/20 whitespace-nowrap select-none">
             KonekDin
           </span>
         </div>
@@ -78,8 +79,8 @@ export default function AppLayout({ children, navigation }: AppLayoutProps) {
 
         {/* Sidebar */}
         <aside 
-          className={`fixed inset-y-0 left-0 z-50 w-64 transform flex flex-col border-r border-borderColor bg-bgSecondary rounded-r-[32px] shadow-[4px_0_24px_rgba(0,0,0,0.02)] text-textPrimary transition-transform duration-300 ease-in-out ${
-            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          className={`fixed top-4 bottom-4 left-4 h-[calc(100vh-2rem)] z-50 w-64 transform flex flex-col border border-borderColor bg-bgSecondary bg-opacity-80 backdrop-blur-md rounded-3xl shadow-[4px_0_24px_rgba(0,0,0,0.02)] text-textPrimary dark:text-white transition-transform duration-300 ease-in-out ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-[calc(100%+1rem)]'
           }`}
         >
           {/* Logo */}
@@ -111,8 +112,8 @@ export default function AppLayout({ children, navigation }: AppLayoutProps) {
                 )}
               </div>
               <div className="flex flex-col overflow-hidden">
-                <span className="truncate text-sm font-bold text-textPrimary">{user?.name ?? 'Budi Santoso'}</span>
-                <span className="truncate text-xs text-textSecondary">{roleLabel}</span>
+                <span className="truncate text-sm font-bold text-textPrimary dark:text-white">{user?.name ?? 'Budi Santoso'}</span>
+                <span className="truncate text-xs text-textSecondary dark:text-slate-400">{panelRole || roleLabel}</span>
               </div>
             </div>
           </div>
@@ -133,7 +134,7 @@ export default function AppLayout({ children, navigation }: AppLayoutProps) {
                   className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-colors ${
                     active 
                       ? 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400' 
-                      : 'text-textSecondary hover:bg-bgPrimary hover:text-textPrimary'
+                      : 'text-textSecondary dark:text-slate-300 hover:bg-bgPrimary hover:text-textPrimary dark:hover:text-white dark:hover:bg-slate-800/50'
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -145,7 +146,7 @@ export default function AppLayout({ children, navigation }: AppLayoutProps) {
 
           {/* Bottom Actions */}
           <div className="p-4 border-t border-borderColor space-y-1">
-            <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-textSecondary hover:bg-bgPrimary transition-colors">
+            <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-textSecondary dark:text-slate-300 hover:bg-bgPrimary dark:hover:bg-slate-800/50 hover:text-textPrimary dark:hover:text-white transition-colors">
               <div className="flex items-center justify-center h-4 w-4 rounded-full border-2 border-current">
                 <span className="text-[10px]">?</span>
               </div>
@@ -164,7 +165,7 @@ export default function AppLayout({ children, navigation }: AppLayoutProps) {
         {/* Main Content */}
         <main 
           className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out p-4 md:p-6 lg:p-8 ${
-            isSidebarOpen ? 'lg:ml-64' : 'ml-0'
+            isSidebarOpen ? 'lg:ml-[17rem]' : 'ml-0'
           }`}
         >
           {/* Unified Header (Back Button, Menu Toggle, Theme) */}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CalendarDays, Clock, Sparkles, TrendingUp, Wallet, CheckCircle, Clock3, BookOpen, Star, Plus, Lightbulb } from 'lucide-react';
+import { CalendarDays, Clock, Sparkles, TrendingUp, Wallet, CheckCircle, Clock3, BookOpen, Star, Plus, Lightbulb, MessageSquareText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLearnerDashboard } from '@/hooks/useLearnerDashboard';
@@ -24,37 +24,21 @@ export default function LearnerDashboard() {
   const { user } = useAuth();
   const { data, stats, loading, error } = useLearnerDashboard();
   
-  const [tutors, setTutors] = useState<Array<Record<string, unknown>>>([]);
-  const [loadingTutors, setLoadingTutors] = useState(true);
-
-  useEffect(() => {
-    const fetchTutors = async () => {
-      try {
-        const response = await learnerService.getTutors();
-        setTutors(normalizeList(response));
-      } catch (err) {
-        console.error('Failed to fetch tutors');
-      } finally {
-        setLoadingTutors(false);
-      }
-    };
-    fetchTutors();
-  }, []);
-
-  const totalSesi = formatNumber(pickValue(stats, ['total_sessions', 'totalSessions', 'completed_sessions', 'activeSessions', 'active_session_count']));
-  const jamBelajar = formatNumber(pickValue(stats, ['total_hours', 'jamBelajar', 'hours']));
-  const mataKuliah = formatNumber(pickValue(stats, ['total_courses', 'courses', 'totalCourses']));
+  const totalSesi = formatNumber(pickValue(stats, ['total_sessions']));
+  const jamBelajar = formatNumber(pickValue(stats, ['total_hours']));
+  const mataKuliah = formatNumber(pickValue(stats, ['total_courses']));
   
-  const upcomingSessions = Array.isArray(pickValue(data, ['upcoming_sessions', 'upcomingSessions', 'schedules']))
-    ? (pickValue(data, ['upcoming_sessions', 'upcomingSessions', 'schedules']) as Array<Record<string, unknown>>)
+  const nextClass = pickValue(data, ['next_class']) as Record<string, unknown> | null;
+  const recommendedTutors = Array.isArray(pickValue(data, ['recommended_tutors'])) 
+    ? (pickValue(data, ['recommended_tutors']) as Array<Record<string, unknown>>) 
     : [];
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-[#001f3f] to-[#00796B] rounded-[32px] p-8 md:p-12 text-white shadow-xl">
-        <div className="absolute right-0 top-0 opacity-20 pointer-events-none">
+      <div className="relative overflow-hidden bg-gradient-to-r from-[#0B132B] to-[#115E59] rounded-[24px] p-8 md:p-10 text-white shadow-lg">
+        <div className="absolute right-0 top-0 opacity-10 pointer-events-none">
           <svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="200" cy="200" r="100" stroke="white" strokeWidth="40"/>
             <circle cx="200" cy="200" r="160" stroke="white" strokeWidth="20"/>
@@ -63,155 +47,197 @@ export default function LearnerDashboard() {
         
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="max-w-2xl">
-            <h1 className="text-3xl md:text-5xl font-extrabold mb-4 leading-tight tracking-tight">
-              Selamat Datang Kembali, <br/>
-              <span className="text-[#64ffda]">{user?.name || 'Budi Santoso'}!</span>
+            <h1 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight">
+              Selamat Datang Kembali, {user?.name?.split(' ')[0] || 'Nina'}! 👋
             </h1>
-            <p className="text-brand-50 text-base md:text-lg opacity-90 max-w-xl">
-              Pahami materi lebih cepat dan lebih terarah. Temukan tutor yang cocok dengan kebutuhan belajarmu.
+            <p className="text-emerald-50 text-sm md:text-base opacity-90 max-w-xl">
+              Siap untuk melanjutkan petualangan belajarmu hari ini?
             </p>
           </div>
           
           <Link 
             to="/learner/bookings/new"
-            className="shrink-0 inline-flex items-center gap-2 bg-white text-[#003E39] font-bold px-6 py-3 rounded-full hover:bg-slate-50 transition-colors shadow-lg"
+            className="shrink-0 inline-flex items-center gap-2 bg-white text-[#003E39] font-bold px-5 py-2.5 rounded-2xl hover:bg-slate-50 transition-colors shadow-sm"
           >
-            <Plus className="w-5 h-5" /> Sesi Baru
+            <Plus className="w-4 h-4" /> Sesi Baru
           </Link>
         </div>
       </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border-0 shadow-sm rounded-3xl p-6 bg-white flex flex-col justify-between">
+        <Card className="border border-slate-100 shadow-sm rounded-[24px] p-6 bg-white flex flex-col justify-between hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-full bg-[#f4f7fe] flex items-center justify-center text-blue-600">
-              <CheckCircle className="w-5 h-5" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100 text-blue-600">
+                <CheckCircle className="w-5 h-5" />
+              </div>
+              <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Total Sesi Selesai</p>
             </div>
-            <span className="bg-[#e8fbf6] text-[#05a660] text-xs font-extrabold px-2 py-1 rounded-full">+12.5%</span>
           </div>
-          <div>
-            <p className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-1">Total Sesi Selesai</p>
-            <h3 className="text-3xl font-extrabold text-[#111840]">{loading ? '...' : totalSesi || '12'}</h3>
+          <div className="flex items-end gap-3">
+            <h3 className="text-3xl font-extrabold text-[#0B132B]">{loading ? '...' : totalSesi || '0'}</h3>
+            {totalSesi !== '0' && <span className="bg-emerald-50 text-emerald-600 text-xs font-bold px-2 py-0.5 rounded-md mb-1 border border-emerald-100">+{totalSesi} sesi</span>}
           </div>
         </Card>
 
-        <Card className="border-0 shadow-sm rounded-3xl p-6 bg-white flex flex-col justify-between">
+        <Card className="border border-slate-100 shadow-sm rounded-[24px] p-6 bg-white flex flex-col justify-between hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-full bg-[#e8fbf6] flex items-center justify-center text-[#05a660]">
-              <Clock3 className="w-5 h-5" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100 text-emerald-600">
+                <Clock className="w-5 h-5" />
+              </div>
+              <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Total Jam Belajar</p>
             </div>
-            <span className="bg-[#e8fbf6] text-[#05a660] text-xs font-extrabold px-2 py-1 rounded-full">+18.5%</span>
           </div>
-          <div>
-            <p className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-1">Jam Belajar</p>
-            <h3 className="text-3xl font-extrabold text-[#111840]">{loading ? '...' : jamBelajar || '18'} <span className="text-lg">jam</span></h3>
+          <div className="flex items-end gap-3">
+            <h3 className="text-3xl font-extrabold text-[#0B132B]">{loading ? '...' : jamBelajar || '0'} <span className="text-lg font-bold text-slate-500">jam</span></h3>
+            {jamBelajar !== '0' && <span className="bg-emerald-50 text-emerald-600 text-xs font-bold px-2 py-0.5 rounded-md mb-1 border border-emerald-100">Aktif</span>}
           </div>
         </Card>
 
-        <Card className="border-0 shadow-sm rounded-3xl p-6 bg-white flex flex-col justify-between">
+        <Card className="border border-slate-100 shadow-sm rounded-[24px] p-6 bg-white flex flex-col justify-between hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-full bg-[#fff4e5] flex items-center justify-center text-[#ff9800]">
-              <BookOpen className="w-5 h-5" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center border border-orange-100 text-orange-500">
+                <BookOpen className="w-5 h-5" />
+              </div>
+              <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Matkul Dipelajari</p>
             </div>
-            <span className="bg-[#e8fbf6] text-[#05a660] text-xs font-extrabold px-2 py-1 rounded-full">+7%</span>
           </div>
-          <div>
-            <p className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-1">Mata Kuliah Dipelajari</p>
-            <h3 className="text-3xl font-extrabold text-[#111840]">{loading ? '...' : mataKuliah || '3'}</h3>
+          <div className="flex items-end gap-3">
+            <h3 className="text-3xl font-extrabold text-[#0B132B]">{loading ? '...' : mataKuliah || '0'}</h3>
           </div>
         </Card>
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Left Column */}
-        <div className="space-y-6">
-          <h2 className="text-xl font-bold text-[#111840]">Jadwal Mendatang</h2>
+        {/* Left Column (Jadwal + Tips) - Takes 2 cols on large */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold text-[#0B132B]">Jadwal Mendatang</h2>
+            <Link to="/learner/history" className="text-sm font-bold text-emerald-600 hover:text-emerald-700">Lihat Semua</Link>
+          </div>
           
-          {loading && <p className="text-sm text-slate-500">Memuat jadwal...</p>}
-          {!loading && upcomingSessions.length === 0 && (
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center h-48">
+          {loading ? (
+            <div className="bg-white rounded-[24px] p-6 shadow-sm border border-slate-100 h-48 flex items-center justify-center text-slate-400">Memuat jadwal...</div>
+          ) : !nextClass ? (
+            <div className="bg-white rounded-[24px] p-8 shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center h-56">
               <CalendarDays className="w-10 h-10 text-slate-300 mb-3" />
-              <p className="text-slate-500 font-medium">Belum ada sesi mendatang.</p>
-              <Link to="/learner/bookings/new" className="text-emerald-600 font-bold mt-2 hover:underline">
-                Buat sesi baru
-              </Link>
+              <p className="text-slate-500 font-medium mb-1">Tidak ada jadwal terdekat.</p>
+              <p className="text-slate-400 text-sm">Yuk pesan sesi baru dan mulai belajar!</p>
             </div>
-          )}
-          
-          {upcomingSessions.map((session, i) => (
-            <div key={i} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+          ) : (
+            <div className="bg-white rounded-[24px] p-6 shadow-sm border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 hover:border-emerald-200 transition-colors">
               <div className="flex items-center gap-4 w-full sm:w-auto">
                 <div className="relative">
-                  <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${session.tutor_name || session.tutor || 'Tutor'}`} className="w-16 h-16 bg-slate-200 rounded-2xl" alt="Tutor" />
-                  <div className="absolute -bottom-2 -right-2 bg-white px-1.5 py-0.5 rounded-lg shadow-sm border border-slate-100 flex items-center text-[10px] font-bold">
-                    <Star className="w-3 h-3 text-amber-400 fill-amber-400 mr-0.5" /> 4.9
-                  </div>
+                  <img src={(nextClass.tutor as any)?.user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${(nextClass.tutor as any)?.user?.name || 'Tutor'}`} className="w-16 h-16 bg-slate-100 rounded-2xl object-cover border border-slate-100" alt="Tutor" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="bg-[#05a660] text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase">BESOK</span>
-                    <span className="bg-slate-100 text-slate-600 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">{session.time || '12:30 WIB'}</span>
+                    <span className="bg-emerald-50 text-emerald-700 text-[10px] font-extrabold px-2 py-0.5 rounded-md border border-emerald-100 uppercase tracking-wider">{nextClass.booking_date as string}</span>
                   </div>
-                  <h4 className="font-bold text-[#111840]">{session.course_name || session.title || 'Algoritma & Struktur Data'}</h4>
-                  <p className="text-sm text-slate-500">{session.tutor_name || session.tutor || 'Irkham Wildan'}</p>
+                  <h4 className="font-bold text-[#0B132B] text-base">{(nextClass.course as any)?.name || 'Mata Kuliah'}</h4>
+                  <p className="text-sm text-slate-500 font-medium">Bersama {(nextClass.tutor as any)?.user?.name || 'Tutor'}</p>
                 </div>
               </div>
               <Link 
-                to={`/learner/bookings/${session.id}`}
-                className="w-full sm:w-auto bg-[#111840] text-white hover:bg-[#1a2352] px-6 py-2.5 rounded-xl font-bold text-sm transition-colors text-center"
+                to={`/learner/bookings/${nextClass.id}`}
+                className="w-full sm:w-auto bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200 px-5 py-2.5 rounded-xl font-bold text-sm transition-colors text-center"
               >
                 Rincian Sesi
               </Link>
             </div>
-          ))}
+          )}
 
-          {/* Tips Card */}
-          <div className="bg-[#fff4e5] border border-[#ffe0b2] rounded-3xl p-6 relative overflow-hidden">
-            <div className="flex items-center gap-2 mb-3">
-              <Lightbulb className="w-5 h-5 text-[#ff9800]" />
-              <h4 className="font-bold text-[#b26a00]">Tips Belajar</h4>
+          {/* 3 Alerts Section */}
+          <div className="space-y-3 pt-4">
+            <div className="bg-blue-50/50 border border-blue-100/50 rounded-2xl p-4 flex gap-4">
+              <div className="mt-0.5">
+                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                  <span className="text-xs font-bold">i</span>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-blue-900 mb-1">Informasi Sesi Belajar</h4>
+                <p className="text-xs text-blue-800/80 leading-relaxed">
+                  Setiap sesi belajar berdurasi <span className="font-bold">50 menit</span>. Anda dapat memesan <span className="font-bold">lebih dari 1 sesi</span> sekaligus untuk memperpanjang waktu belajar bersama tutor secara otomatis.
+                </p>
+              </div>
             </div>
-            <p className="text-[#8c5300] text-sm font-medium leading-relaxed mb-4">
-              Mahasiswa lebih menyukai belajar dengan materi ringkasan di akhir sesi. Coba buat "Catatan Digital" agar sesi belajarmu lebih efektif.
-            </p>
-            <button className="text-[10px] font-extrabold text-[#ff9800] uppercase tracking-widest hover:underline">
-              PELAJARI LEBIH LANJUT
-            </button>
+
+            <div className="bg-emerald-50/50 border border-emerald-100/50 rounded-2xl p-4 flex gap-4">
+              <div className="mt-0.5">
+                <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                  <Lightbulb className="w-3.5 h-3.5" />
+                </div>
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-emerald-900 mb-1">Tips Belajar Maksimal</h4>
+                <p className="text-xs text-emerald-800/80 leading-relaxed">
+                  Pastikan Anda telah <span className="font-bold">menyiapkan materi & pertanyaan</span> sebelum sesi dimulai agar waktu diskusi bersama tutor bisa digunakan secara efisien.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-orange-50/50 border border-orange-100/50 rounded-2xl p-4 flex gap-4">
+              <div className="mt-0.5">
+                <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+                  <MessageSquareText className="w-3.5 h-3.5" />
+                </div>
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-orange-900 mb-1">Bantu Learner Lain</h4>
+                <p className="text-xs text-orange-800/80 leading-relaxed">
+                  Jangan lupa untuk <span className="font-bold">meninggalkan ulasan</span> setelah sesi berakhir! Ulasan Anda sangat berharga bagi teman-teman Learner lain untuk menemukan tutor terbaik.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Right Column */}
+        {/* Right Column (Tutor Rekomendasi) - Takes 1 col */}
         <div className="space-y-6">
-          <h2 className="text-xl font-bold text-[#111840]">Tutor Rekomendasi</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold text-[#0B132B]">Tutor Rekomendasi</h2>
+            <div className="w-6 h-6 rounded-md bg-yellow-50 flex items-center justify-center border border-yellow-100">
+              <Lightbulb className="w-3.5 h-3.5 text-yellow-600" />
+            </div>
+          </div>
           
-          <div className="space-y-4">
-            {loadingTutors && <p className="text-sm text-slate-500">Mencari tutor rekomendasi...</p>}
-            
-            {!loadingTutors && tutors.slice(0, 3).map((tutor, i) => (
-              <div key={i} className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center gap-4 cursor-pointer hover:border-emerald-200 hover:shadow-md transition-all" onClick={() => navigate(`/tutors/${tutor.id}`)}>
-                <div className="relative">
-                  <img src={(tutor.avatar as string) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${tutor.name || 'Tutor'}`} className="w-20 h-20 bg-slate-200 rounded-2xl object-cover" alt="Tutor" />
-                  <div className="absolute top-1 right-1 bg-white px-1.5 py-0.5 rounded-lg shadow-sm flex items-center text-[10px] font-bold">
-                    <Star className="w-3 h-3 text-amber-400 fill-amber-400 mr-0.5" /> {Number(tutor.rating_avg || tutor.rating || 0).toFixed(1) || '0.0'}
+          <div className="space-y-3">
+            {loading ? (
+              <div className="bg-white rounded-[24px] p-6 shadow-sm border border-slate-100 text-center text-sm text-slate-400">Mencari tutor...</div>
+            ) : recommendedTutors.length === 0 ? (
+              <div className="bg-white rounded-[24px] p-8 shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center h-32">
+                <p className="text-slate-500 text-sm font-medium">Belum ada tutor rekomendasi</p>
+              </div>
+            ) : (
+              recommendedTutors.map((tutor, i) => (
+                <div key={i} className="bg-white rounded-[24px] p-4 shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer hover:border-emerald-200 hover:shadow-md transition-all group" onClick={() => navigate(`/tutors/${tutor.id}`)}>
+                  <div className="flex items-center gap-3">
+                    <img src={(tutor.user as any)?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${(tutor.user as any)?.name || 'Tutor'}`} className="w-12 h-12 bg-slate-100 rounded-xl object-cover border border-slate-100" alt="Tutor" />
+                    <div>
+                      <h4 className="font-bold text-[#0B132B] text-sm group-hover:text-emerald-700 transition-colors">{(tutor.user as any)?.name || 'Tutor'}</h4>
+                      <p className="text-xs text-slate-500 truncate max-w-[120px]">{(tutor.major as string) || 'Tutor'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg border border-amber-100">
+                    <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                    <span className="text-xs font-bold text-amber-700">{Number(tutor.rating_avg || tutor.rating || 0).toFixed(1)}</span>
                   </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-[#111840]">{tutor.name as string}</h4>
-                  <p className="text-xs text-slate-500 font-medium mb-1">{(tutor.major as string) || (tutor.taught_courses as any[])?.[0]?.course_name || 'Tutor Umum'}</p>
-                  <p className="text-[10px] text-slate-400 font-medium">({(tutor.total_reviews as number) || (tutor.reviews_count as number) || 0} ulasan)</p>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
           <Link 
             to="/tutors"
-            className="block w-full border-2 border-dashed border-emerald-500 text-emerald-600 hover:bg-emerald-50 font-bold px-6 py-4 rounded-3xl text-center transition-colors"
+            className="block w-full border border-dashed border-emerald-300 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-400 font-bold px-6 py-3.5 rounded-[20px] text-sm text-center transition-all"
           >
-            Jelajahi Tutor Lainnya
+            Jelajahi Tutor Lainnya &gt;
           </Link>
         </div>
 

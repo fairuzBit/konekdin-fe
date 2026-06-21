@@ -72,8 +72,8 @@ export default function AdminDashboard() {
     <div className="space-y-8">
       {/* Header section similar to image */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Dashboard</h1>
-        <p className="text-slate-500">Performa dan aktivitas platform hari ini. Kelola ekosistem akademik dengan presisi.</p>
+        <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+        <p className="text-yellow-400">Performa dan aktivitas platform hari ini. Kelola ekosistem akademik dengan presisi.</p>
       </div>
 
       {error && <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100">{error}</div>}
@@ -87,8 +87,8 @@ export default function AdminDashboard() {
                 <Users className="w-6 h-6" />
               </div>
             </div>
-            <p className="text-xs font-bold tracking-wider text-slate-500 uppercase mb-1">Total Pelajar</p>
-            <h3 className="text-4xl font-extrabold text-slate-900">{loading ? '...' : totalLearners}</h3>
+            <p className="text-xs font-bold tracking-wider text-slate-500 dark:text-pink-50 uppercase mb-1">Total Pelajar</p>
+            <h3 className="text-4xl font-extrabold text-slate-900 dark:text-white">{loading ? '...' : totalLearners}</h3>
           </CardContent>
         </Card>
 
@@ -99,8 +99,8 @@ export default function AdminDashboard() {
                 <ShieldCheck className="w-6 h-6" />
               </div>
             </div>
-            <p className="text-xs font-bold tracking-wider text-slate-500 uppercase mb-1">Tutor Terdaftar</p>
-            <h3 className="text-4xl font-extrabold text-slate-900">{loading ? '...' : tutorVerified}</h3>
+            <p className="text-xs font-bold tracking-wider text-slate-500 dark:text-pink-50 uppercase mb-1">Tutor Terdaftar</p>
+            <h3 className="text-4xl font-extrabold text-slate-900 dark:text-white">{loading ? '...' : tutorVerified}</h3>
           </CardContent>
         </Card>
 
@@ -111,8 +111,8 @@ export default function AdminDashboard() {
                 <AlertTriangle className="w-6 h-6" />
               </div>
             </div>
-            <p className="text-xs font-bold tracking-wider text-slate-500 uppercase mb-1">Komplain Aktif</p>
-            <h3 className="text-4xl font-extrabold text-slate-900">{loading ? '...' : complaints}</h3>
+            <p className="text-xs font-bold tracking-wider text-slate-500 dark:text-pink-50 uppercase mb-1">Komplain Aktif</p>
+            <h3 className="text-4xl font-extrabold text-slate-900 dark:text-white">{loading ? '...' : complaints}</h3>
           </CardContent>
         </Card>
       </div>
@@ -125,21 +125,21 @@ export default function AdminDashboard() {
           <Card className="border-slate-200 shadow-sm rounded-3xl">
             <CardContent className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-slate-900">Aktivitas Terbaru</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Aktivitas Terbaru</h3>
                 <button className="text-sm font-semibold text-brand-600 hover:text-brand-700">Lihat Semua</button>
               </div>
               
               <div className="space-y-4">
-                <div className="grid grid-cols-4 text-xs font-bold text-slate-400 uppercase tracking-wider pb-3 border-b">
+                <div className="grid grid-cols-4 text-xs font-bold text-slate-400 dark:text-pink-100 uppercase tracking-wider pb-3 border-b">
                   <span>Nama Pengguna</span>
                   <span className="col-span-2">Aktivitas</span>
                   <span className="text-right">Status</span>
                 </div>
                 
                 {loading ? (
-                   <p className="text-sm text-slate-500 py-4">Memuat aktivitas...</p>
+                   <p className="text-sm text-slate-500 dark:text-pink-50 py-4">Memuat aktivitas...</p>
                 ) : aktivitasTerbaru.length === 0 ? (
-                  <div className="py-8 text-center text-slate-500">
+                  <div className="py-8 text-center text-slate-500 dark:text-pink-50">
                     <Activity className="w-8 h-8 mx-auto mb-2 text-slate-300" />
                     <p className="text-sm">Belum ada aktivitas baru hari ini.</p>
                   </div>
@@ -147,10 +147,10 @@ export default function AdminDashboard() {
                   <div className="space-y-3">
                     {aktivitasTerbaru.map((activity, idx) => (
                       <div key={idx} className="grid grid-cols-4 items-center text-sm py-2 border-b border-slate-50 last:border-0">
-                        <div className="font-semibold text-slate-900 truncate pr-4">{activity.user_name}</div>
+                        <div className="font-semibold text-slate-900 dark:text-white truncate pr-4">{activity.user_name}</div>
                         <div className="col-span-2">
-                          <p className="text-slate-800 font-medium truncate">{activity.activity}</p>
-                          <p className="text-xs text-slate-400">{activity.time_formatted}</p>
+                          <p className="text-slate-800 dark:text-white font-medium truncate">{activity.activity}</p>
+                          <p className="text-xs text-slate-400 dark:text-pink-100">{activity.time_formatted}</p>
                         </div>
                         <div className="text-right">
                           {getStatusBadge(activity.type, activity.status)}
@@ -167,11 +167,11 @@ export default function AdminDashboard() {
           <div className="grid gap-6 md:grid-cols-2">
             <Card className="border-slate-200 shadow-sm rounded-3xl">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-slate-900 mb-6">Performa Tutor Terbaik</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">Performa Tutor Terbaik</h3>
                 {loading ? (
-                   <p className="text-sm text-slate-500">Memuat data...</p>
+                   <p className="text-sm text-slate-500 dark:text-pink-50">Memuat data...</p>
                 ) : topTutors.length === 0 ? (
-                   <p className="text-sm text-slate-500">Belum ada data tutor.</p>
+                   <p className="text-sm text-slate-500 dark:text-pink-50">Belum ada data tutor.</p>
                 ) : (
                   <div className="space-y-5">
                     {topTutors.map((tutor, idx) => {
@@ -195,8 +195,8 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                             <div>
-                              <p className="font-bold text-slate-900 text-sm truncate max-w-[120px]">{tutor.name}</p>
-                              <p className="text-xs text-slate-500 font-medium">({tutor.sessions} Sesi Selesai)</p>
+                              <p className="font-bold text-slate-900 dark:text-white text-sm truncate max-w-[120px]">{tutor.name}</p>
+                              <p className="text-xs text-slate-500 dark:text-pink-50 font-medium">({tutor.sessions} Sesi Selesai)</p>
                             </div>
                           </div>
                           <div className="flex flex-col items-center">
@@ -213,11 +213,11 @@ export default function AdminDashboard() {
 
             <Card className="border-slate-200 shadow-sm rounded-3xl">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-slate-900 mb-6">Mata Kuliah Populer</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">Mata Kuliah Populer</h3>
                 {loading ? (
-                   <p className="text-sm text-slate-500">Memuat data...</p>
+                   <p className="text-sm text-slate-500 dark:text-pink-50">Memuat data...</p>
                 ) : popularCourses.length === 0 ? (
-                   <p className="text-sm text-slate-500">Belum ada pesanan.</p>
+                   <p className="text-sm text-slate-500 dark:text-pink-50">Belum ada pesanan.</p>
                 ) : (
                   <div className="space-y-6">
                     {popularCourses.map((course, idx) => {
@@ -231,7 +231,7 @@ export default function AdminDashboard() {
                       return (
                         <div key={idx}>
                           <div className="flex justify-between items-end mb-2">
-                            <p className="font-bold text-slate-900 text-sm truncate max-w-[160px]">{course.name}</p>
+                            <p className="font-bold text-slate-900 dark:text-white text-sm truncate max-w-[160px]">{course.name}</p>
                             <p className="text-xs font-bold text-brand-600">{percentage}% Peminat</p>
                           </div>
                           <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
@@ -252,10 +252,10 @@ export default function AdminDashboard() {
           <Card className="border-brand-200 shadow-sm rounded-3xl overflow-hidden border-l-4 border-l-brand-600">
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-bold text-slate-900">Verifikasi Tutor</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Verifikasi Tutor</h3>
                 <span className="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded-md">{loading ? '-' : pendingApplications}</span>
               </div>
-              <p className="text-sm text-slate-500 mb-5">Pengajuan verifikasi dokumen tutor tertunda.</p>
+              <p className="text-sm text-slate-500 dark:text-pink-50 mb-5">Pengajuan verifikasi dokumen tutor tertunda.</p>
               <Link to="/admin/applications" className="block text-center w-full bg-brand-50 hover:bg-brand-100 text-brand-700 font-semibold py-2.5 rounded-xl transition-colors">
                 Lihat Detail
               </Link>
@@ -265,10 +265,10 @@ export default function AdminDashboard() {
           <Card className="border-rose-200 shadow-sm rounded-3xl overflow-hidden border-l-4 border-l-rose-500">
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-bold text-slate-900">Komplain Baru</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Komplain Baru</h3>
                 <span className="bg-rose-100 text-rose-600 text-xs font-bold px-2 py-1 rounded-md">{loading ? '-' : complaints}</span>
               </div>
-              <p className="text-sm text-slate-500 mb-5">Butuh tanggapan admin segera.</p>
+              <p className="text-sm text-slate-500 dark:text-pink-50 mb-5">Butuh tanggapan admin segera.</p>
               <Link to="/admin/complaints" className="block text-center w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold py-2.5 rounded-xl transition-colors">
                 Lihat Detail
               </Link>

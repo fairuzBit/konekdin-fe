@@ -85,9 +85,9 @@ export default function AdminComplaintsPage() {
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <Card className="flex-1 border-rose-100 shadow-sm">
           <CardContent className="p-5 flex flex-col justify-center h-full">
-            <span className="text-sm font-medium text-slate-500 mb-2 block">Total Ulasan Negatif</span>
+            <span className="text-sm font-medium text-slate-500 dark:text-pink-50 mb-2 block">Total Ulasan Negatif</span>
             <div className="flex items-center justify-between">
-              <span className="text-3xl font-extrabold text-slate-900">{stats.total_negative}</span>
+              <span className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.total_negative}</span>
               <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center border border-rose-100">
                 <MessageSquareText className="w-4 h-4 text-rose-500" />
               </div>
@@ -97,9 +97,9 @@ export default function AdminComplaintsPage() {
         
         <Card className="flex-1 border-amber-100 shadow-sm">
           <CardContent className="p-5 flex flex-col justify-center h-full">
-            <span className="text-sm font-medium text-slate-500 mb-2 block">Menunggu Tinjauan</span>
+            <span className="text-sm font-medium text-slate-500 dark:text-pink-50 mb-2 block">Menunggu Tinjauan</span>
             <div className="flex items-center justify-between">
-              <span className="text-3xl font-extrabold text-slate-900">{stats.pending}</span>
+              <span className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.pending}</span>
               <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-full border border-amber-100 uppercase">Action Req.</span>
             </div>
           </CardContent>
@@ -107,9 +107,9 @@ export default function AdminComplaintsPage() {
 
         <Card className="flex-1 border-blue-100 shadow-sm">
           <CardContent className="p-5 flex flex-col justify-center h-full">
-            <span className="text-sm font-medium text-slate-500 mb-2 block">Sedang Diproses</span>
+            <span className="text-sm font-medium text-slate-500 dark:text-pink-50 mb-2 block">Sedang Diproses</span>
             <div className="flex items-center justify-between">
-              <span className="text-3xl font-extrabold text-slate-900">{stats.processing}</span>
+              <span className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.processing}</span>
               <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full border border-blue-100 uppercase">Follow-up</span>
             </div>
           </CardContent>
@@ -117,9 +117,9 @@ export default function AdminComplaintsPage() {
 
         <Card className="flex-1 border-emerald-100 shadow-sm">
           <CardContent className="p-5 flex flex-col justify-center h-full">
-            <span className="text-sm font-medium text-slate-500 mb-2 block">Selesai</span>
+            <span className="text-sm font-medium text-slate-500 dark:text-pink-50 mb-2 block">Selesai</span>
             <div className="flex items-center justify-between">
-              <span className="text-3xl font-extrabold text-slate-900">{stats.resolved}</span>
+              <span className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.resolved}</span>
               <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100 uppercase">Aman</span>
             </div>
           </CardContent>
@@ -131,15 +131,15 @@ export default function AdminComplaintsPage() {
           <CardTitle>Daftar Ulasan Rating Rendah (1-2 Bintang)</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {loading ? <div className="p-6 text-center text-sm text-slate-500">Memuat komplain...</div> : null}
+          {loading ? <div className="p-6 text-center text-sm text-slate-500 dark:text-pink-50">Memuat komplain...</div> : null}
           {error ? <div className="p-6 text-center text-sm text-rose-500">{error}</div> : null}
-          {!loading && !error && complaints.length === 0 ? <div className="p-6 text-center text-sm text-slate-500">Belum ada komplain dari backend. Semua ulasan terlihat baik.</div> : null}
+          {!loading && !error && complaints.length === 0 ? <div className="p-6 text-center text-sm text-slate-500 dark:text-pink-50">Belum ada komplain dari backend. Semua ulasan terlihat baik.</div> : null}
           
           {!loading && !error && complaints.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                  <tr className="border-b border-slate-100 text-[11px] font-bold text-slate-400 dark:text-pink-100 uppercase tracking-wider">
                     <th className="p-5 font-bold">ID Sesi</th>
                     <th className="p-5 font-bold">Learner / Tutor</th>
                     <th className="p-5 font-bold text-center">Rating</th>
@@ -151,8 +151,8 @@ export default function AdminComplaintsPage() {
                   {complaints.map((item, index) => (
                     <tr key={index} className="hover:bg-slate-50/50 transition-colors">
                       <td className="p-5 align-top">
-                        <div className="font-bold text-slate-900 text-sm">#BK-800{item.id}</div>
-                        <div className="text-xs text-slate-400 mt-1">{item.tanggal}</div>
+                        <div className="font-bold text-slate-900 dark:text-white text-sm">#BK-800{item.id}</div>
+                        <div className="text-xs text-slate-400 dark:text-pink-100 mt-1">{item.tanggal}</div>
                         <div className="mt-2">
                           <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${item.moderation_status === 'MENUNGGU TINJAUAN' ? 'bg-amber-100 text-amber-700' : item.moderation_status === 'DIPROSES' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}`}>
                             {item.moderation_status === 'MENUNGGU TINJAUAN' ? 'Pending' : item.moderation_status}
@@ -160,8 +160,8 @@ export default function AdminComplaintsPage() {
                         </div>
                       </td>
                       <td className="p-5 align-top">
-                        <div className="font-bold text-slate-900 text-sm">{item.learner_name}</div>
-                        <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                        <div className="font-bold text-slate-900 dark:text-white text-sm">{item.learner_name}</div>
+                        <div className="text-xs text-slate-500 dark:text-pink-50 mt-1 flex items-center gap-1">
                           <span className="text-slate-300">→</span> {item.tutor_name}
                         </div>
                       </td>
@@ -171,7 +171,7 @@ export default function AdminComplaintsPage() {
                         </div>
                       </td>
                       <td className="p-5 align-top">
-                        <div className="bg-rose-50/50 rounded-xl p-3 text-sm italic text-slate-600 border border-rose-100/50">
+                        <div className="bg-rose-50/50 rounded-xl p-3 text-sm italic text-slate-600 dark:text-pink-50 border border-rose-100/50">
                           "{item.comment || 'Tidak ada komentar'}"
                         </div>
                       </td>
@@ -187,7 +187,7 @@ export default function AdminComplaintsPage() {
                               <CheckCircle className="w-3.5 h-3.5 mr-1.5" /> Selesaikan
                             </Button>
                           )}
-                          <Button size="sm" variant="outline" className="w-32 text-slate-600 border-slate-200 hover:bg-slate-50 text-xs font-bold" onClick={() => handleDelete(item.id, item.moderation_status)}>
+                          <Button size="sm" variant="outline" className="w-32 text-slate-600 dark:text-pink-50 border-slate-200 hover:bg-slate-50 text-xs font-bold" onClick={() => handleDelete(item.id, item.moderation_status)}>
                             <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Hapus
                           </Button>
                         </div>
@@ -207,12 +207,12 @@ export default function AdminComplaintsPage() {
         </CardHeader>
         <CardContent className="p-0">
           {logs.length === 0 ? (
-            <div className="p-6 text-center text-sm text-slate-500">Belum ada aktifitas moderasi.</div>
+            <div className="p-6 text-center text-sm text-slate-500 dark:text-pink-50">Belum ada aktifitas moderasi.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
+                  <tr className="border-b border-slate-100 text-[11px] font-bold text-slate-400 dark:text-pink-100 uppercase tracking-wider bg-slate-50/50">
                     <th className="p-4 font-bold">Waktu</th>
                     <th className="p-4 font-bold">Admin</th>
                     <th className="p-4 font-bold">Aksi</th>
@@ -223,17 +223,17 @@ export default function AdminComplaintsPage() {
                 <tbody className="divide-y divide-slate-50">
                   {logs.map((log, i) => (
                     <tr key={i} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="p-4 text-xs text-slate-500">{log.tanggal}</td>
+                      <td className="p-4 text-xs text-slate-500 dark:text-pink-50">{log.tanggal}</td>
                       <td className="p-4 text-sm font-medium text-slate-700">{log.admin_name}</td>
                       <td className="p-4">
                         <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${log.action === 'DIHAPUS' ? 'bg-rose-100 text-rose-700' : log.action === 'DIPROSES' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}`}>
                           {log.action}
                         </span>
                       </td>
-                      <td className="p-4 text-sm text-slate-600 italic">
+                      <td className="p-4 text-sm text-slate-600 dark:text-pink-50 italic">
                         "{log.reason}"
                       </td>
-                      <td className="p-4 text-xs text-slate-500 max-w-xs truncate" title={log.details?.comment}>
+                      <td className="p-4 text-xs text-slate-500 dark:text-pink-50 max-w-xs truncate" title={log.details?.comment}>
                         ⭐ {log.details?.rating} - {log.details?.comment || '-'}
                       </td>
                     </tr>
