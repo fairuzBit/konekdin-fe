@@ -166,7 +166,7 @@ export default function LearnerNotificationsPage() {
                         <button 
                           onClick={handleOpenTutorPanel}
                           disabled={checkingRole}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 disabled:bg-brand-400 text-white text-xs font-bold rounded-xl transition-colors shadow-sm"
+                          className="inline-flex items-center gap-2 px-4 py-2 btn-glass-primary text-xs font-bold rounded-xl shadow-sm"
                         >
                           {checkingRole ? (
                             <>Memverifikasi... <Loader2 className="w-3.5 h-3.5 animate-spin" /></>

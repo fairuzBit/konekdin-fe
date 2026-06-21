@@ -184,9 +184,17 @@ export default function AdminDashboard() {
                         <div key={idx} className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
                             <div className="relative">
-                              <div className="w-12 h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-sm">
-                                {initials}
-                              </div>
+                              {tutor.avatar ? (
+                                <img
+                                  src={tutor.avatar as string}
+                                  alt={tutor.name}
+                                  className="w-12 h-12 rounded-xl object-cover shrink-0 border border-slate-100 dark:border-brand-500/20 shadow-sm"
+                                />
+                              ) : (
+                                <div className="w-12 h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-sm">
+                                  {initials}
+                                </div>
+                              )}
                               <div className="absolute -top-2 -right-2 bg-white rounded-full p-0.5 shadow-sm">
                                 <div className="bg-amber-100 text-amber-600 rounded-full flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold border border-white">
                                   <Star className="w-3 h-3 mr-0.5 fill-amber-500 text-amber-500" />
@@ -256,7 +264,7 @@ export default function AdminDashboard() {
                 <span className="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded-md">{loading ? '-' : pendingApplications}</span>
               </div>
               <p className="text-sm text-slate-500 dark:text-pink-50 mb-5">Pengajuan verifikasi dokumen tutor tertunda.</p>
-              <Link to="/admin/applications" className="block text-center w-full bg-brand-50 hover:bg-brand-100 text-brand-700 font-semibold py-2.5 rounded-xl transition-colors">
+              <Link to="/admin/applications" className="block text-center w-full btn-glass font-semibold py-2.5 rounded-xl">
                 Lihat Detail
               </Link>
             </CardContent>
@@ -269,7 +277,7 @@ export default function AdminDashboard() {
                 <span className="bg-rose-100 text-rose-600 text-xs font-bold px-2 py-1 rounded-md">{loading ? '-' : complaints}</span>
               </div>
               <p className="text-sm text-slate-500 dark:text-pink-50 mb-5">Butuh tanggapan admin segera.</p>
-              <Link to="/admin/complaints" className="block text-center w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold py-2.5 rounded-xl transition-colors">
+              <Link to="/admin/complaints" className="block text-center w-full btn-glass-destructive font-semibold py-2.5 rounded-xl">
                 Lihat Detail
               </Link>
             </CardContent>

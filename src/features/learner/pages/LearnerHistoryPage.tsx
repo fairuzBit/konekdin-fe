@@ -133,7 +133,7 @@ export default function LearnerHistoryPage() {
                   {item.status === 'completed' && !item.review && (
                     <button 
                       onClick={() => navigate(`/learner/reviews/${item.id}`)}
-                      className="flex items-center gap-2 px-5 py-2.5 bg-white text-emerald-600 border border-emerald-500 text-sm font-bold rounded-xl hover:bg-emerald-50 transition-colors"
+                      className="flex items-center gap-2 px-5 py-2.5 btn-glass-warning text-sm font-bold rounded-xl"
                     >
                       <MessageSquarePlus className="w-4 h-4" /> Beri Ulasan
                     </button>
@@ -145,7 +145,7 @@ export default function LearnerHistoryPage() {
                   )}
                   <button 
                     onClick={() => navigate(`/tutors/${item.tutor?.id}`)}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-[#0B132B] text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-md"
+                    className="flex items-center gap-2 px-5 py-2.5 btn-glass-primary text-sm font-bold rounded-xl shadow-md"
                   >
                     <RotateCcw className="w-4 h-4" /> Belajar Lagi
                   </button>

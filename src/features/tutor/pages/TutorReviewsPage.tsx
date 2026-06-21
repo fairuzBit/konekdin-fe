@@ -144,7 +144,7 @@ export default function TutorReviewsPage() {
               <p className="text-xs font-medium text-slate-500">Kepuasan Mahasiswa</p>
             </div>
           </div>
-          <button className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 hover:bg-indigo-100 transition-colors">
+          <button className="w-10 h-10 rounded-full btn-glass flex items-center justify-center">
             <TrendingUp className="w-5 h-5" />
           </button>
         </div>
@@ -154,10 +154,10 @@ export default function TutorReviewsPage() {
       <div className="flex flex-wrap items-center gap-2 pt-2">
         <button
           onClick={() => handleFilterClick(null)}
-          className={`px-5 py-2 text-sm font-bold rounded-full transition-colors ${
+          className={`px-5 py-2 text-sm font-bold rounded-full transition-all ${
             filterRating === null 
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
-              : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-transparent'
+              ? 'btn-glass' 
+              : 'btn-glass text-slate-600 dark:text-slate-400'
           }`}
         >
           Semua
@@ -166,10 +166,10 @@ export default function TutorReviewsPage() {
           <button
             key={rating}
             onClick={() => handleFilterClick(rating)}
-            className={`px-5 py-2 text-sm font-bold rounded-full transition-colors ${
+            className={`px-5 py-2 text-sm font-bold rounded-full transition-all ${
               filterRating === rating 
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-transparent'
+                ? 'btn-glass' 
+                : 'btn-glass text-slate-600 dark:text-slate-400'
             }`}
           >
             {rating} Bintang
@@ -248,7 +248,7 @@ export default function TutorReviewsPage() {
           <button 
             disabled={page === 1}
             onClick={() => setPage(p => Math.max(1, p - 1))}
-            className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-10 h-10 rounded-xl btn-glass flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -257,10 +257,10 @@ export default function TutorReviewsPage() {
             <button
               key={p}
               onClick={() => setPage(p)}
-              className={`w-10 h-10 rounded-xl font-bold text-sm flex items-center justify-center transition-colors ${
+              className={`w-10 h-10 rounded-xl font-bold text-sm flex items-center justify-center transition-all ${
                 p === page 
-                  ? 'bg-emerald-600 text-white shadow-sm' 
-                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  ? 'btn-glass-primary shadow-sm' 
+                  : 'btn-glass'
               }`}
             >
               {p}
@@ -270,7 +270,7 @@ export default function TutorReviewsPage() {
           <button 
             disabled={page === meta.last_page}
             onClick={() => setPage(p => Math.min(meta.last_page, p + 1))}
-            className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-10 h-10 rounded-xl btn-glass flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronRight className="w-5 h-5" />
           </button>

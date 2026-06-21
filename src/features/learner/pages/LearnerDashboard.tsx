@@ -37,7 +37,7 @@ export default function LearnerDashboard() {
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-[#8A79F6] to-[#48DEB2] dark:from-[#0c1611] dark:to-[#060b08] border border-white/10 dark:border-brand-500/10 rounded-[24px] p-8 md:p-10 text-white shadow-lg transition-all duration-300">
+      <div className="relative overflow-hidden bg-gradient-to-r from-[#99F2D1] to-[#B6F3C9] dark:from-[#0c1611] dark:to-[#060b08] border border-white/10 dark:border-brand-500/10 rounded-[24px] p-8 md:p-10 text-white shadow-lg transition-all duration-300">
         <div className="absolute -right-10 -top-10 opacity-30 dark:opacity-40 pointer-events-none">
           <svg width="450" height="450" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="250" cy="150" r="80" className="stroke-white dark:stroke-brand-500" strokeWidth="30" strokeOpacity="0.2"/>
@@ -59,7 +59,7 @@ export default function LearnerDashboard() {
           
           <Link 
             to="/learner/bookings/new"
-            className="shrink-0 inline-flex items-center gap-2 bg-white text-[#8A79F6] dark:text-[#0c1611] dark:hover:bg-brand-400 dark:hover:text-brand-950 font-bold px-5 py-2.5 rounded-2xl hover:bg-slate-50 transition-all shadow-sm"
+            className="shrink-0 inline-flex items-center gap-2 btn-glass font-bold px-5 py-2.5 rounded-2xl shadow-sm"
           >
             <Plus className="w-4 h-4" /> Sesi Baru
           </Link>
@@ -153,7 +153,7 @@ export default function LearnerDashboard() {
               </div>
               <Link 
                 to={`/learner/bookings/${nextClass.id}`}
-                className="w-full sm:w-auto bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200 px-5 py-2.5 rounded-xl font-bold text-sm transition-colors text-center"
+                className="w-full sm:w-auto btn-glass px-5 py-2.5 rounded-xl font-bold text-sm text-center"
               >
                 Rincian Sesi
               </Link>
@@ -249,7 +249,7 @@ export default function LearnerDashboard() {
 
           <Link 
             to="/tutors"
-            className="block w-full border border-dashed border-emerald-300 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-400 font-bold px-6 py-3.5 rounded-[20px] text-sm text-center transition-all"
+            className="block w-full btn-glass border-dashed font-bold px-6 py-3.5 rounded-[20px] text-sm text-center"
           >
             Jelajahi Tutor Lainnya &gt;
           </Link>

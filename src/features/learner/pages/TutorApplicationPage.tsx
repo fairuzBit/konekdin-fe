@@ -204,7 +204,7 @@ export default function TutorApplicationPage() {
             <div className="pt-6 w-full">
               <Button 
                 onClick={() => navigate('/learner/profile')}
-                className="w-full h-14 rounded-2xl text-base font-bold bg-[#0a192f] hover:bg-[#112240] dark:bg-brand-600 dark:hover:bg-brand-700 text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                className="w-full h-14 rounded-2xl text-base font-bold btn-glass-primary shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 Kembali ke Profil
               </Button>
@@ -371,7 +371,7 @@ export default function TutorApplicationPage() {
                         <button 
                           type="button"
                           onClick={() => handleRemovePortfolioLink(index)}
-                          className="w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center border border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/10 text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors"
+                          className="w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center btn-glass-destructive"
                           title="Hapus Link"
                         >
                           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -398,9 +398,7 @@ export default function TutorApplicationPage() {
                       file:mr-4 file:py-2.5 file:px-4
                       file:rounded-xl file:border-0
                       file:text-sm file:font-bold
-                      file:bg-brand-50 file:text-brand-700
-                      dark:file:bg-brand-500/10 dark:file:text-brand-400
-                      hover:file:bg-brand-100 dark:hover:file:bg-brand-500/20
+                      file:btn-glass
                       cursor-pointer"
                   />
                   {certificateFiles.length > 0 && (
@@ -421,7 +419,7 @@ export default function TutorApplicationPage() {
               <Button 
                 type="submit" 
                 disabled={isSubmitting || availableCourses.length === 0}
-                className="w-full h-14 rounded-2xl text-base font-bold bg-[#0a192f] hover:bg-[#112240] dark:bg-brand-600 dark:hover:bg-brand-700 text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 group disabled:opacity-70 disabled:hover:translate-y-0"
+                className="w-full h-14 rounded-2xl text-base font-bold btn-glass-primary shadow-lg hover:shadow-xl hover:-translate-y-0.5 group disabled:opacity-70 disabled:hover:translate-y-0"
               >
                 {isSubmitting ? (
                   <>

@@ -102,7 +102,7 @@ export default function LearnerBookingDetailPage() {
     return (
       <div className="text-center py-12">
         <p className="text-red-500 mb-4">{error}</p>
-        <button onClick={() => navigate('/learner/bookings')} className="text-emerald-600 font-bold hover:underline">
+        <button onClick={() => navigate('/learner/bookings')} className="btn-glass-primary font-bold px-4 py-2 rounded-xl">
           Kembali ke Daftar Pesanan
         </button>
       </div>
@@ -131,7 +131,7 @@ export default function LearnerBookingDetailPage() {
     <div className="max-w-5xl mx-auto pb-12 animate-in fade-in zoom-in-95 duration-300">
       <button 
         onClick={() => navigate('/learner/bookings')}
-        className="flex items-center gap-2 text-slate-500 hover:text-emerald-600 font-bold mb-6 transition-colors"
+        className="btn-glass flex items-center gap-2 font-bold mb-6 px-4 py-2 rounded-xl"
       >
         <ArrowLeft className="w-4 h-4" /> Kembali
       </button>
@@ -248,10 +248,10 @@ export default function LearnerBookingDetailPage() {
                           <button
                             key={bank}
                             onClick={() => setSelectedProvider(bank)}
-                            className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors border ${
+                            className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${
                               selectedProvider === bank 
-                                ? 'bg-emerald-100 text-emerald-700 border-emerald-200' 
-                                : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                                ? 'btn-glass-primary' 
+                                : 'btn-glass'
                             }`}
                           >
                             {bank}
@@ -287,10 +287,10 @@ export default function LearnerBookingDetailPage() {
                           <button
                             key={wallet}
                             onClick={() => setSelectedProvider(wallet)}
-                            className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors border ${
+                            className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${
                               selectedProvider === wallet 
-                                ? 'bg-blue-100 text-blue-700 border-blue-200' 
-                                : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                                ? 'btn-glass-primary' 
+                                : 'btn-glass'
                             }`}
                           >
                             {wallet}
@@ -383,7 +383,7 @@ export default function LearnerBookingDetailPage() {
             {isCancelled ? (
               <button
                 onClick={() => navigate('/learner/bookings')}
-                className="w-full py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all border border-white/10"
+                className="btn-glass w-full py-4 font-bold rounded-xl"
               >
                 Kembali ke Daftar Pesanan
               </button>
@@ -392,7 +392,7 @@ export default function LearnerBookingDetailPage() {
                 <button
                   onClick={handleConfirm}
                   disabled={isProcessing}
-                  className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 mb-3"
+                  className="btn-glass-primary w-full py-4 font-bold rounded-xl flex items-center justify-center gap-2 mb-3 disabled:opacity-50"
                 >
                   {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Selesaikan Pembayaran'}
                 </button>
@@ -400,7 +400,7 @@ export default function LearnerBookingDetailPage() {
                   type="button"
                   onClick={() => setIsCancelModalOpen(true)}
                   disabled={isProcessing || isCancelling}
-                  className="w-full py-4 bg-transparent border border-red-500/50 hover:bg-red-500/10 text-red-400 disabled:opacity-50 disabled:hover:bg-transparent font-bold rounded-xl transition-all flex items-center justify-center gap-2 mb-4"
+                  className="btn-glass-destructive w-full py-4 font-bold rounded-xl flex items-center justify-center gap-2 mb-4 disabled:opacity-50"
                 >
                   Batalkan Pesanan
                 </button>
@@ -415,14 +415,14 @@ export default function LearnerBookingDetailPage() {
                     href={formatWhatsAppLink(booking.tutor?.phone || booking.tutor?.user?.phone)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 mb-4"
+                    className="btn-glass-whatsapp w-full py-4 font-bold rounded-xl flex items-center justify-center gap-2 mb-4"
                   >
                     <MessageCircle className="w-5 h-5" /> Hubungi Tutor via WhatsApp
                   </a>
                 )}
                 <button
                   onClick={() => navigate('/learner/history')}
-                  className="w-full py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all border border-white/10"
+                  className="btn-glass w-full py-4 font-bold rounded-xl"
                 >
                   Lihat Jadwal Belajar Anda
                 </button>
@@ -430,7 +430,7 @@ export default function LearnerBookingDetailPage() {
             ) : (
               <button
                 onClick={() => navigate('/learner/bookings')}
-                className="w-full py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all border border-white/10"
+                className="btn-glass w-full py-4 font-bold rounded-xl"
               >
                 Kembali ke Daftar Pesanan
               </button>
@@ -454,14 +454,14 @@ export default function LearnerBookingDetailPage() {
               <button
                 onClick={() => setIsCancelModalOpen(false)}
                 disabled={isCancelling}
-                className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/20 text-slate-700 dark:text-white font-bold rounded-xl transition-all text-sm"
+                className="btn-glass flex-1 py-3 font-bold rounded-xl text-sm"
               >
                 Kembali
               </button>
               <button
                 onClick={handleCancelBooking}
                 disabled={isCancelling}
-                className="flex-1 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-500/10 text-sm flex items-center justify-center gap-1.5"
+                className="btn-glass-destructive flex-1 py-3 font-bold rounded-xl text-sm flex items-center justify-center gap-1.5"
               >
                 {isCancelling ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Ya, Batalkan'}
               </button>

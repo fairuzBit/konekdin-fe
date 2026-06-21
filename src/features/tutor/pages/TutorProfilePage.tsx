@@ -169,7 +169,7 @@ export default function TutorProfilePage() {
                 <>
                   <button 
                     onClick={() => setIsEditModalOpen(true)}
-                    className="absolute bottom-2 right-2 bg-brand-500 text-white p-2.5 rounded-2xl shadow-lg hover:bg-brand-600 transition-colors"
+                    className="absolute bottom-2 right-2 btn-glass-primary p-2.5 rounded-2xl shadow-lg"
                   >
                     <Pencil className="w-4 h-4" />
                   </button>
@@ -200,7 +200,7 @@ export default function TutorProfilePage() {
           {!isReadOnly && (
             <Link 
               to="/learner"
-              className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-bgPrimary border border-borderColor text-textPrimary hover:border-brand-500 hover:text-brand-500 transition-colors shadow-sm text-sm font-semibold mt-4 md:mt-0 w-full md:w-auto shrink-0"
+              className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl btn-glass shadow-sm text-sm font-semibold mt-4 md:mt-0 w-full md:w-auto shrink-0"
             >
               <GraduationCap className="w-4 h-4" />
               Beralih ke Panel Learner
@@ -293,7 +293,7 @@ export default function TutorProfilePage() {
                     <button 
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-4 py-2 bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400 font-bold text-sm rounded-xl hover:bg-brand-100 dark:hover:bg-brand-500/20 transition-colors"
+                      className="px-4 py-2 btn-glass font-bold text-sm rounded-xl"
                     >
                       Ganti Foto Profil
                     </button>
@@ -367,7 +367,7 @@ export default function TutorProfilePage() {
                       setIsEditModalOpen(false);
                     }}
                     disabled={saving}
-                    className="px-5 py-2.5 rounded-xl font-bold bg-brand-500 text-white hover:bg-brand-600 transition-colors shadow-sm text-sm disabled:opacity-50 flex items-center gap-2"
+                    className="px-5 py-2.5 rounded-xl font-bold btn-glass-primary shadow-sm text-sm disabled:opacity-50 flex items-center gap-2"
                   >
                     {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                     {saving ? 'Menyimpan...' : 'Simpan Perubahan'}
@@ -403,7 +403,7 @@ export default function TutorProfilePage() {
           )}
           
           {!isReadOnly && (
-            <Button onClick={handleSaveProfile} disabled={saving} className="w-full bg-brand-500 hover:bg-brand-600 text-white rounded-xl py-6 font-bold text-base shadow-sm">
+            <Button onClick={handleSaveProfile} disabled={saving} className="w-full btn-glass-primary rounded-xl py-6 font-bold text-base shadow-sm">
               {saving ? 'Menyimpan...' : 'Perbarui Tarif Mengajar'}
             </Button>
           )}

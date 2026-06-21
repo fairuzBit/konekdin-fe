@@ -53,7 +53,7 @@ export default function LearnerSchedulesPage() {
         <p className="text-red-600 text-sm">{error}</p>
         <button 
           onClick={fetchSchedules}
-          className="mt-4 px-5 py-2 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 transition-colors"
+          className="mt-4 px-5 py-2 btn-glass-destructive text-sm font-bold rounded-xl"
         >
           Coba Lagi
         </button>
@@ -148,7 +148,7 @@ export default function LearnerSchedulesPage() {
                         href={formatWhatsAppLink(schedule.tutor?.phone || schedule.tutor?.user?.phone)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-4 py-2.5 bg-green-50 hover:bg-green-100 text-green-700 text-xs font-bold rounded-xl transition-colors border border-green-200"
+                        className="flex items-center gap-1.5 px-4 py-2.5 btn-glass-whatsapp text-xs font-bold rounded-xl"
                         title="Hubungi Tutor via WhatsApp"
                       >
                         <MessageCircle className="w-3.5 h-3.5" />

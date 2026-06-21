@@ -74,7 +74,7 @@ export function PaymentInvoiceModal({ isOpen, onClose, booking, onSuccess }: Pay
             </div>
             <button 
               onClick={onClose}
-              className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-full transition-colors shrink-0"
+              className="btn-glass p-2 rounded-full shrink-0"
             >
               <X className="w-5 h-5" />
             </button>
@@ -169,10 +169,10 @@ export function PaymentInvoiceModal({ isOpen, onClose, booking, onSuccess }: Pay
                         <button
                           key={bank}
                           onClick={() => setSelectedProvider(bank)}
-                          className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors border ${
+                          className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${
                             selectedProvider === bank 
-                              ? 'bg-emerald-100 text-emerald-700 border-emerald-200' 
-                              : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                              ? 'btn-glass-primary' 
+                              : 'btn-glass'
                           }`}
                         >
                           {bank}
@@ -208,10 +208,10 @@ export function PaymentInvoiceModal({ isOpen, onClose, booking, onSuccess }: Pay
                         <button
                           key={wallet}
                           onClick={() => setSelectedProvider(wallet)}
-                          className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors border ${
+                          className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${
                             selectedProvider === wallet 
-                              ? 'bg-blue-100 text-blue-700 border-blue-200' 
-                              : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                              ? 'btn-glass-primary' 
+                              : 'btn-glass'
                           }`}
                         >
                           {wallet}
@@ -260,7 +260,7 @@ export function PaymentInvoiceModal({ isOpen, onClose, booking, onSuccess }: Pay
             <button
               onClick={handleConfirm}
               disabled={isProcessing}
-              className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 mb-4"
+              className="btn-glass-primary w-full py-4 font-bold rounded-xl flex items-center justify-center gap-2 mb-4 disabled:opacity-50"
             >
               {isProcessing ? 'Memproses...' : 'Konfirmasi'}
             </button>

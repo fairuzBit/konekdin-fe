@@ -108,7 +108,7 @@ export default function AdminApplicationsPage() {
         <div className="p-6 border-b border-borderColor flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h2 className="text-xl font-bold text-textPrimary">Daftar Pengajuan Tutor</h2>
           <div className="flex gap-2">
-            <button className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-textSecondary bg-bgPrimary hover:bg-borderColor rounded-lg border border-borderColor transition-colors">
+            <button className="flex items-center gap-2 px-3 py-2 text-xs font-semibold btn-glass rounded-lg">
               <Filter className="w-3.5 h-3.5" /> Filter
             </button>
             <div className="relative">
@@ -159,9 +159,17 @@ export default function AdminApplicationsPage() {
                   <tr key={index} className="hover:bg-bgPrimary transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                          {getInitials(name)}
-                        </div>
+                        {item.avatar ? (
+                          <img 
+                            src={item.avatar as string} 
+                            alt={name} 
+                            className="w-10 h-10 rounded-full object-cover shrink-0 border border-borderColor shadow-sm"
+                          />
+                        ) : (
+                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                            {getInitials(name)}
+                          </div>
+                        )}
                         <div>
                           <p className="font-bold text-textPrimary">{name}</p>
                           <p className="text-xs text-textSecondary">{email}</p>
@@ -184,7 +192,7 @@ export default function AdminApplicationsPage() {
                             setSelectedLearnerName(name);
                             setSelectedKeahlian((item.keahlian as string[]) || []);
                           }}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-textPrimary bg-bgPrimary hover:bg-borderColor transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold btn-glass"
                         >
                           <FileText className="w-3.5 h-3.5" /> Lihat Berkas ({docs?.length || 0})
                         </button>
@@ -193,13 +201,13 @@ export default function AdminApplicationsPage() {
                           <>
                             <button 
                               onClick={() => handleReject(item.id as number)}
-                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100 transition-colors dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20"
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold btn-glass-destructive"
                             >
                               <X className="w-3.5 h-3.5" /> Tolak
                             </button>
                             <button 
                               onClick={() => handleApprove(item.id as number)}
-                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-brand-600 bg-brand-50 hover:bg-brand-100 border border-brand-100 transition-colors dark:bg-brand-500/10 dark:text-brand-400 dark:border-brand-500/20"
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold btn-glass-primary"
                             >
                               <Check className="w-3.5 h-3.5" /> ACC
                             </button>
@@ -214,7 +222,7 @@ export default function AdminApplicationsPage() {
                             {item.status === 'rejected' && (
                               <button 
                                 onClick={() => handleDelete(item.id as number)}
-                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100 transition-colors dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20"
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold btn-glass-destructive"
                                 title="Hapus Pengajuan"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -299,7 +307,7 @@ export default function AdminApplicationsPage() {
             <div className="p-5 border-t border-borderColor bg-bgPrimary/50 flex justify-end">
               <button 
                 onClick={() => setSelectedDocs(null)}
-                className="px-5 py-2.5 rounded-xl font-bold text-textPrimary bg-bgPrimary border border-borderColor hover:bg-borderColor transition-colors text-sm"
+                className="px-5 py-2.5 rounded-xl font-bold btn-glass text-sm"
               >
                 Tutup
               </button>

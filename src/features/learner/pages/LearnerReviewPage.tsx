@@ -172,7 +172,7 @@ export default function LearnerReviewPage() {
         <button
           type="submit"
           disabled={submitting || rating === 0}
-          className="px-8 py-3.5 bg-[#0B132B] hover:bg-[#15234b] disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm"
+          className="px-8 py-3.5 btn-glass-primary disabled:cursor-not-allowed font-bold rounded-xl shadow-md flex items-center justify-center gap-2 text-sm"
         >
           {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Kirim Ulasan'}
         </button>

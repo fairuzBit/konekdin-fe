@@ -73,6 +73,11 @@ class TutorService {
     });
   }
 
+  async completeBooking(id: number) {
+    const response = await apiClient.patch(`/tutor/bookings/${id}/complete`);
+    return response.data;
+  }
+
   async setAvailability(payload: Record<string, unknown>) {
     const response = await apiClient.post('/tutor/availability', payload);
     return response.data;

@@ -177,7 +177,7 @@ export default function LearnerProfilePage() {
               <>
                 <button 
                   onClick={() => setIsEditModalOpen(true)}
-                  className="absolute bottom-2 right-2 bg-brand-500 text-white p-2.5 rounded-2xl shadow-lg hover:bg-brand-600 transition-colors"
+                  className="absolute bottom-2 right-2 btn-glass-primary p-2.5 rounded-2xl shadow-lg"
                 >
                   <Pencil className="w-4 h-4" />
                 </button>
@@ -208,20 +208,20 @@ export default function LearnerProfilePage() {
           <div className="flex flex-col gap-3 pt-4 md:pt-2 w-full md:w-auto">
             <Link 
               to="/learner/bookings"
-              className="flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-white px-5 py-3 rounded-2xl text-sm font-bold transition-colors shadow-sm"
+              className="flex items-center justify-center gap-2 btn-glass-primary px-5 py-3 rounded-2xl text-sm font-bold shadow-sm"
             >
               <CalendarDays className="w-4 h-4" /> Lihat Jadwal Belajar
             </Link>
             <Link 
               to="/learner/history"
-              className="flex items-center justify-center gap-2 bg-bgPrimary hover:border-brand-500 text-textPrimary border border-borderColor px-5 py-3 rounded-2xl text-sm font-bold transition-colors shadow-sm"
+              className="flex items-center justify-center gap-2 btn-glass px-5 py-3 rounded-2xl text-sm font-bold shadow-sm"
             >
               <History className="w-4 h-4" /> Lihat Riwayat Belajar
             </Link>
             {hasRole(user, 'tutor') && (
               <Link 
                 to="/tutor"
-                className="flex items-center justify-center gap-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/20 px-5 py-3 rounded-2xl text-sm font-bold transition-colors shadow-sm mt-1"
+                className="flex items-center justify-center gap-2 btn-glass px-5 py-3 rounded-2xl text-sm font-bold shadow-sm mt-1"
               >
                 <GraduationCap className="w-4 h-4" /> Beralih ke Panel Tutor
               </Link>
@@ -289,7 +289,7 @@ export default function LearnerProfilePage() {
                     <button 
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-4 py-2 bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400 font-bold text-sm rounded-xl hover:bg-brand-100 dark:hover:bg-brand-500/20 transition-colors"
+                      className="px-4 py-2 btn-glass font-bold text-sm rounded-xl"
                     >
                       Ganti Foto Profil
                     </button>
@@ -361,7 +361,7 @@ export default function LearnerProfilePage() {
                   <button 
                     type="submit"
                     disabled={saving}
-                    className="px-5 py-2.5 rounded-xl font-bold bg-brand-500 text-white hover:bg-brand-600 transition-colors shadow-sm text-sm disabled:opacity-50 flex items-center gap-2"
+                    className="px-5 py-2.5 rounded-xl font-bold btn-glass-primary shadow-sm text-sm disabled:opacity-50 flex items-center gap-2"
                   >
                     {saving && <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />}
                     {saving ? 'Menyimpan...' : 'Simpan Perubahan'}
@@ -385,7 +385,7 @@ export default function LearnerProfilePage() {
             </div>
             <Link 
               to="/register/tutor"
-              className="shrink-0 bg-white hover:bg-slate-50 text-emerald-600 font-bold px-8 py-3.5 rounded-2xl shadow-sm transition-colors text-sm"
+              className="shrink-0 btn-glass font-bold px-8 py-3.5 rounded-2xl shadow-sm text-sm"
             >
               Daftar Tutor
             </Link>

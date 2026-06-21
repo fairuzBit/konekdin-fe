@@ -63,37 +63,37 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-[radial-gradient(circle_at_top_right,_rgba(0,121,107,0.16),_transparent_35%),linear-gradient(135deg,_#f8fffd_0%,_#ebf8f4_100%)] p-2 sm:p-4 lg:p-6 overflow-hidden">
-      <div className="flex w-full max-w-5xl h-full max-h-[850px] flex-col-reverse lg:flex-row rounded-[32px] border border-brand-100 bg-white/90 shadow-[0_30px_80px_rgba(0,121,107,0.16)] overflow-hidden">
+    <div className="h-screen w-screen flex items-center justify-center bg-[radial-gradient(circle_at_top_right,_rgba(0,121,107,0.16),_transparent_35%),linear-gradient(135deg,_#f8fffd_0%,_#ebf8f4_100%)] dark:bg-[radial-gradient(circle_at_top_right,_rgba(138,227,52,0.08),_transparent_35%),linear-gradient(135deg,_#060b08_0%,_#0c1611_100%)] p-2 sm:p-4 lg:p-6 overflow-hidden">
+      <div className="flex w-full max-w-5xl h-full max-h-[850px] flex-col-reverse lg:flex-row rounded-[32px] border border-brand-100 dark:border-brand-500/20 bg-white/90 dark:bg-bgSecondary/95 shadow-[0_30px_80px_rgba(0,121,107,0.16)] dark:shadow-[0_30px_80px_rgba(138,227,52,0.06)] overflow-hidden">
         <section className="flex flex-1 items-center justify-center p-4 md:p-6 overflow-y-auto hide-scrollbar">
-          <div className="w-full max-w-md my-auto rounded-[24px] border border-slate-200 bg-slate-50/80 p-5 md:p-6">
-            <div className="inline-flex rounded-xl bg-brand-50 p-2 text-brand-700">
+          <div className="w-full max-w-md my-auto rounded-[24px] border border-slate-200 dark:border-brand-500/10 bg-slate-50/80 dark:bg-[#0c1611]/80 p-5 md:p-6">
+            <div className="inline-flex rounded-xl bg-brand-50 dark:bg-brand-500/10 p-2 text-brand-700 dark:text-brand-400">
               <Sparkles className="h-4 w-4" />
             </div>
-            <h2 className="mt-3 text-xl font-semibold text-slate-900">Buat akun Learner baru</h2>
-            <p className="mt-1 text-sm text-slate-500">Daftar dan cari tutor sesuai kebutuhan Anda.</p>
+            <h2 className="mt-3 text-xl font-semibold text-slate-900 dark:text-white">Buat akun Learner baru</h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-textSecondary">Daftar dan cari tutor sesuai kebutuhan Anda.</p>
 
             <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label htmlFor="name" className="text-slate-900 text-xs font-semibold">Nama</Label>
-                  <Input id="name" placeholder="Nama lengkap" value={name} onChange={(event) => setName(event.target.value)} className="bg-white text-slate-900 placeholder:text-slate-400 h-9 text-sm" required />
+                  <Label htmlFor="name" className="text-slate-900 dark:text-white text-xs font-semibold">Nama</Label>
+                  <Input id="name" placeholder="Nama lengkap" value={name} onChange={(event) => setName(event.target.value)} className="bg-white dark:bg-bgSecondary text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-textSecondary/50 border border-slate-300 dark:border-brand-500/20 h-9 text-sm" required />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="nim" className="text-slate-900 text-xs font-semibold">NIM</Label>
-                  <Input id="nim" placeholder="123456789" value={nim} onChange={(event) => setNim(event.target.value)} className="bg-white text-slate-900 placeholder:text-slate-400 h-9 text-sm" required />
+                  <Label htmlFor="nim" className="text-slate-900 dark:text-white text-xs font-semibold">NIM</Label>
+                  <Input id="nim" placeholder="123456789" value={nim} onChange={(event) => setNim(event.target.value)} className="bg-white dark:bg-bgSecondary text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-textSecondary/50 border border-slate-300 dark:border-brand-500/20 h-9 text-sm" required />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="phone" className="text-slate-900 text-xs font-semibold">Nomor Telepon</Label>
-                <Input id="phone" placeholder="0812xxxxxxxx" value={phone} onChange={(event) => setPhone(event.target.value)} className="bg-white text-slate-900 placeholder:text-slate-400 h-9 text-sm" required />
+                <Label htmlFor="phone" className="text-slate-900 dark:text-white text-xs font-semibold">Nomor Telepon</Label>
+                <Input id="phone" placeholder="0812xxxxxxxx" value={phone} onChange={(event) => setPhone(event.target.value)} className="bg-white dark:bg-bgSecondary text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-textSecondary/50 border border-slate-300 dark:border-brand-500/20 h-9 text-sm" required />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-slate-900 text-xs font-semibold">Email</Label>
-                <Input id="email" type="email" placeholder="nama@email.com" value={email} onChange={(event) => setEmail(event.target.value)} className="bg-white text-slate-900 placeholder:text-slate-400 h-9 text-sm" required />
+                <Label htmlFor="email" className="text-slate-900 dark:text-white text-xs font-semibold">Email</Label>
+                <Input id="email" type="email" placeholder="nama@email.com" value={email} onChange={(event) => setEmail(event.target.value)} className="bg-white dark:bg-bgSecondary text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-textSecondary/50 border border-slate-300 dark:border-brand-500/20 h-9 text-sm" required />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="password" className="text-slate-900 text-xs font-semibold">Password</Label>
+                <Label htmlFor="password" className="text-slate-900 dark:text-white text-xs font-semibold">Password</Label>
                 <div className="relative">
                   <Input 
                     id="password" 
@@ -101,39 +101,39 @@ export default function RegisterPage() {
                     placeholder="••••••••" 
                     value={password} 
                     onChange={(event) => setPassword(event.target.value)} 
-                    className="bg-white text-slate-900 placeholder:text-slate-400 pr-10 h-9 text-sm" 
+                    className="bg-white dark:bg-bgSecondary text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-textSecondary/50 pr-10 border border-slate-300 dark:border-brand-500/20 h-9 text-sm" 
                     required 
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-textSecondary hover:text-slate-600 dark:hover:text-white transition-colors focus:outline-none"
                     aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
-              {error ? <p className="text-xs text-rose-500 font-medium">{error}</p> : null}
+              {error ? <p className="text-xs text-rose-500 dark:text-rose-400 font-medium">{error}</p> : null}
               <Button className="w-full h-10 mt-2" type="submit" disabled={submitting}>
                 {submitting ? 'Memproses...' : 'Daftar'} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </form>
 
-            <p className="mt-4 text-center text-xs text-slate-500">
+            <p className="mt-4 text-center text-xs text-slate-500 dark:text-textSecondary">
               Sudah punya akun?{' '}
-              <Link to="/login" className="font-semibold text-brand-600 hover:text-brand-700">Masuk di sini</Link>
+              <Link to="/login" className="font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700">Masuk di sini</Link>
             </p>
           </div>
         </section>
 
-        <section className="flex lg:flex-1 flex-col justify-center bg-brand-700 p-8 text-white md:p-12 overflow-y-auto">
+        <section className="flex lg:flex-1 flex-col justify-center bg-brand-700 dark:bg-[#0c1611] p-8 text-white md:p-12 overflow-y-auto border-t lg:border-t-0 lg:border-l border-brand-100 dark:border-brand-500/20">
           <div className="max-w-md mx-auto">
             <div className="inline-flex rounded-2xl bg-white/15 p-3">
               <GraduationCap className="h-8 w-8" />
             </div>
             <h1 className="mt-6 text-3xl font-semibold sm:text-4xl">Gabung sebagai Learner</h1>
-            <p className="mt-4 text-base leading-relaxed text-brand-50">
+            <p className="mt-4 text-base leading-relaxed text-brand-50 dark:text-textSecondary">
               Jelajahi tutor, buat booking, dan dapatkan bimbingan belajar yang terorganisir dengan baik.
             </p>
           </div>

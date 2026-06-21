@@ -140,7 +140,7 @@ export default function AdminPaymentsPage() {
                           <button
                             onClick={() => handleApprove(payment.id)}
                             disabled={processingId === payment.id}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white border border-emerald-200 hover:border-emerald-500 text-xs font-bold rounded-lg transition-colors shadow-sm disabled:opacity-50"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 btn-glass-primary text-xs font-bold rounded-lg shadow-sm disabled:opacity-50"
                           >
                             {processingId === payment.id ? (
                               <Loader2 className="w-3.5 h-3.5 animate-spin" />

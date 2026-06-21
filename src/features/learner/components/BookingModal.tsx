@@ -129,7 +129,7 @@ export function BookingModal({ isOpen, onClose, tutor }: BookingModalProps) {
             </div>
             <button 
               onClick={onClose}
-              className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
+              className="btn-glass p-2 rounded-full"
             >
               <X className="w-5 h-5" />
             </button>
@@ -204,8 +204,8 @@ export function BookingModal({ isOpen, onClose, tutor }: BookingModalProps) {
                         onClick={() => handleSlotToggle(slotId)}
                         className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                           isSelected 
-                            ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20 scale-[1.02]' 
-                            : 'bg-white border border-slate-200 text-slate-600 hover:border-emerald-500 hover:text-emerald-600'
+                            ? 'btn-glass-primary scale-[1.02]' 
+                            : 'btn-glass'
                         }`}
                       >
                         {slot.start_time.slice(0, 5)} - {slot.end_time.slice(0, 5)}
@@ -282,14 +282,14 @@ export function BookingModal({ isOpen, onClose, tutor }: BookingModalProps) {
             <div className="flex gap-3">
               <button
                 onClick={onClose}
-                className="flex-1 py-3.5 px-4 rounded-xl text-sm font-bold text-slate-300 hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
+                className="btn-glass flex-1 py-3.5 px-4 rounded-xl text-sm font-bold"
               >
                 Batal
               </button>
               <button
                 onClick={handleBooking}
                 disabled={isSubmitting || totalSessions === 0 || !selectedCourseId || !selectedDate}
-                className="flex-[2] bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed text-white py-3.5 px-4 rounded-xl text-sm font-bold transition-colors shadow-lg shadow-emerald-500/25 flex justify-center items-center"
+                className="btn-glass-primary flex-[2] py-3.5 px-4 rounded-xl text-sm font-bold flex justify-center items-center disabled:opacity-50"
               >
                 {isSubmitting ? 'Memproses...' : 'Buat Pesanan'}
               </button>

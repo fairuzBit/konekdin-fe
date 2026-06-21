@@ -224,9 +224,17 @@ export default function AdminUsersPage() {
                 className="mt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 first:mt-0 gap-4 transition-colors hover:bg-slate-50/80"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="rounded-full bg-brand-50 p-3 text-brand-700 shrink-0">
-                    <UserCircle2 className="h-5 w-5" />
-                  </div>
+                  {user.avatar ? (
+                    <img 
+                      src={user.avatar as string} 
+                      alt={(user.name as string) ?? 'User'} 
+                      className="w-11 h-11 rounded-full object-cover shrink-0 border border-slate-100 shadow-sm"
+                    />
+                  ) : (
+                    <div className="w-11 h-11 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-100">
+                      {((user.name as string) ?? 'Pengguna').charAt(0).toUpperCase()}
+                    </div>
+                  )}
                   <div className="min-w-0">
                     <p className="font-semibold text-slate-900 truncate">
                       {(user.name as string) ?? (user.username as string) ?? 'Pengguna'}
@@ -252,7 +260,7 @@ export default function AdminUsersPage() {
                 <div className="flex items-center gap-2 w-full sm:w-auto justify-end shrink-0">
                   <Link
                     to={role === 'learner' ? `/admin/learners/${userId}` : `/admin/tutors/${userId}`}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold btn-glass"
                     title="Lihat Profil"
                   >
                     <Eye className="w-3.5 h-3.5" /> Profil
@@ -260,7 +268,7 @@ export default function AdminUsersPage() {
                   {suspended ? (
                     <button
                       onClick={() => handleUnsuspend(userId)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-green-600 bg-green-50 hover:bg-green-100 border border-green-100 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold btn-glass-primary"
                       title="Aktifkan Pengguna"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" /> Aktifkan
@@ -268,7 +276,7 @@ export default function AdminUsersPage() {
                   ) : (
                     <button
                       onClick={() => setSuspendModal({ open: true, user })}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 border border-amber-100 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold btn-glass"
                       title="Suspend Pengguna"
                     >
                       <Ban className="w-3.5 h-3.5" /> Suspend
@@ -276,7 +284,7 @@ export default function AdminUsersPage() {
                   )}
                   <button
                     onClick={() => handleDelete(userId)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100 transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold btn-glass-destructive"
                     title="Hapus Pengguna"
                   >
                     <Trash2 className="w-3.5 h-3.5" /> Hapus
@@ -321,7 +329,7 @@ export default function AdminUsersPage() {
                   key={d.value}
                   onClick={() => handleSuspend(d.value)}
                   disabled={suspendLoading}
-                  className="w-full flex items-center justify-between p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:border-amber-300 hover:bg-amber-50/50 group transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left"
+                  className="w-full flex items-center justify-between p-4 rounded-2xl btn-glass group disabled:opacity-50 disabled:cursor-not-allowed text-left"
                 >
                   <div>
                     <p className="font-semibold text-slate-800 group-hover:text-amber-700 transition-colors">

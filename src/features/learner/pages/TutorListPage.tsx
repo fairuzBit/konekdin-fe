@@ -123,7 +123,7 @@ export default function TutorListPage() {
                   setSelectedDay('');
                   setSelectedTime('');
                 }}
-                className="rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 px-6 py-2 text-sm font-bold transition-colors shadow-sm"
+                className="rounded-xl btn-glass-destructive px-6 py-2 text-sm font-bold shadow-sm"
               >
                 Reset
               </button>
@@ -247,7 +247,7 @@ export default function TutorListPage() {
                 <div className="mt-auto grid grid-cols-2 gap-2 pt-2">
                   <button 
                     onClick={() => handleOpenBookingModal(tutor)}
-                    className="bg-emerald-500 hover:bg-emerald-600 text-white text-[13px] font-bold py-2.5 rounded-xl transition-colors shadow-sm"
+                    className="btn-glass-primary text-[13px] font-bold py-2.5 rounded-xl shadow-sm"
                   >
                     Pesan Sesi
                   </button>

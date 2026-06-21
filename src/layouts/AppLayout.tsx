@@ -48,7 +48,7 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
   return (
     <div className="min-h-screen bg-transparent dark:bg-appBg text-textPrimary transition-colors duration-300 relative z-0 overflow-hidden">
       {/* Decorative Background Shapes (Light/Dark Gradient background) */}
-      <div className="absolute inset-0 z-[-1] flex overflow-hidden pointer-events-none bg-gradient-to-br from-[#d1fae5] to-[#fbcfe8] dark:from-[#060b08] dark:to-[#08120d]">
+      <div className="absolute inset-0 z-[-1] flex overflow-hidden pointer-events-none bg-gradient-to-br from-[#99F2D1] to-[#1C3E35] dark:from-[#060b08] dark:to-[#08120d]">
         
         {/* Giant Text Overlay - TOP */}
         {/* Di sini Anda bisa mengatur tulisan KonekDin di Background */}
@@ -91,7 +91,7 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
             </div>
             <span className="text-xl font-bold text-brand-600 tracking-tight">KonekDin</span>
             <button 
-              className="ml-auto rounded-lg p-2 hover:bg-bgPrimary text-textSecondary transition-colors" 
+              className="btn-glass ml-auto p-2 rounded-lg" 
               onClick={() => setIsSidebarOpen(false)}
               title="Tutup Sidebar"
             >
@@ -144,7 +144,7 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
 
           {/* Bottom Actions */}
           <div className="p-4 border-t border-borderColor space-y-1">
-            <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-textSecondary dark:text-slate-300 hover:bg-bgPrimary dark:hover:bg-slate-800/50 hover:text-textPrimary dark:hover:text-white transition-colors">
+            <button className="btn-glass flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold">
               <div className="flex items-center justify-center h-4 w-4 rounded-full border-2 border-current">
                 <span className="text-[10px]">?</span>
               </div>
@@ -152,7 +152,7 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
             </button>
             <button 
               onClick={handleLogout} 
-              className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
+              className="btn-glass-destructive flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold"
             >
               <LogOut className="h-4 w-4" />
               Keluar
@@ -172,7 +172,7 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
               {!isSidebarOpen && (
                 <button 
                   onClick={() => setIsSidebarOpen(true)}
-                  className="rounded-xl border border-borderColor bg-bgSecondary p-2.5 text-textSecondary shadow-sm hover:text-brand-500 hover:border-brand-500 transition-colors"
+                  className="btn-glass p-2.5 rounded-xl"
                   title="Buka Sidebar"
                 >
                   <Menu className="h-5 w-5" />
@@ -180,7 +180,7 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
               )}
               <button 
                 onClick={() => navigate(-1)}
-                className="rounded-xl border border-borderColor bg-bgSecondary p-2.5 text-textSecondary shadow-sm hover:text-brand-500 hover:border-brand-500 transition-colors flex items-center gap-2"
+                className="btn-glass p-2.5 rounded-xl flex items-center gap-2"
                 title="Go Back"
               >
                 <ArrowLeft className="h-5 w-5" />
@@ -191,7 +191,7 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
             <div className="flex gap-2 z-50 relative">
               <button 
                 onClick={toggleTheme} 
-                className="rounded-xl border border-borderColor bg-bgSecondary p-2.5 text-textSecondary shadow-sm hover:text-brand-500 hover:border-brand-500 transition-colors"
+                className="btn-glass p-2.5 rounded-xl"
                 title="Toggle Theme"
               >
                 {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}

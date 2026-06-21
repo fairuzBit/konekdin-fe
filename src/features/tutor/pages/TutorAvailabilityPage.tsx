@@ -89,6 +89,13 @@ export default function TutorAvailabilityPage() {
 
   const handleSaveSchedule = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Guard: masterSlots must be loaded before we can build a valid payload
+    if (masterSlots.length === 0) {
+      alert('Data jam belajar belum tersedia. Coba refresh halaman.');
+      return;
+    }
+
     setSaving(true);
     try {
       const dayMapRev: Record<string, string> = {
@@ -118,15 +125,29 @@ export default function TutorAvailabilityPage() {
           status: formStatus as any
         });
       }
-      
+
+      // Normalize time format: API returns '07:00:00', display uses '07:00 - 07:50'
+      const normalizeTime = (t: string) => t.slice(0, 5);
       const payloadSlots = newSchedules.map(s => {
-        const slotMatch = masterSlots.find(m => `${m.start_time.slice(0, 5)} - ${m.end_time.slice(0, 5)}` === s.time);
+        const [startDisp, endDisp] = s.time.split(' - ');
+        const slotMatch = masterSlots.find(m =>
+          normalizeTime(m.start_time) === normalizeTime(startDisp || '') &&
+          normalizeTime(m.end_time) === normalizeTime(endDisp || '')
+        );
         return {
           day_of_week: dayMapRev[s.day] || s.day,
-          master_slot_id: slotMatch?.id,
+          master_slot_id: slotMatch?.id as number | undefined,
           is_active: s.status.toUpperCase() !== 'NON AVAILABLE'
         };
-      }).filter(s => s.master_slot_id);
+      }).filter((s): s is { day_of_week: string; master_slot_id: number; is_active: boolean } =>
+        s.master_slot_id !== undefined
+      );
+
+      // Guard: abort if all slots failed to match — prevents silent data wipe
+      if (payloadSlots.length === 0) {
+        alert('Gagal membangun jadwal: data jam tidak cocok. Coba refresh halaman dan ulangi.');
+        return;
+      }
 
       await tutorService.setAvailability({ slots: payloadSlots });
       
@@ -161,14 +182,28 @@ export default function TutorAvailabilityPage() {
         'Minggu': 'Sunday'
       };
 
+      // Normalize time format: same fix as handleSaveSchedule
+      const normalizeTime = (t: string) => t.slice(0, 5);
       const payloadSlots = newSchedules.map(s => {
-        const slotMatch = masterSlots.find(m => `${m.start_time.slice(0, 5)} - ${m.end_time.slice(0, 5)}` === s.time);
+        const [startDisp, endDisp] = s.time.split(' - ');
+        const slotMatch = masterSlots.find(m =>
+          normalizeTime(m.start_time) === normalizeTime(startDisp || '') &&
+          normalizeTime(m.end_time) === normalizeTime(endDisp || '')
+        );
         return {
           day_of_week: dayMapRev[s.day] || s.day,
-          master_slot_id: slotMatch?.id,
+          master_slot_id: slotMatch?.id as number | undefined,
           is_active: s.status.toUpperCase() !== 'NON AVAILABLE'
         };
-      }).filter(s => s.master_slot_id);
+      }).filter((s): s is { day_of_week: string; master_slot_id: number; is_active: boolean } =>
+        s.master_slot_id !== undefined
+      );
+
+      // If remaining schedules exist but none matched, abort to avoid silent wipe
+      if (newSchedules.length > 0 && payloadSlots.length === 0) {
+        alert('Gagal menghapus: data jam tidak cocok. Coba refresh halaman dan ulangi.');
+        return;
+      }
 
       await tutorService.setAvailability({ slots: payloadSlots });
       
@@ -220,14 +255,14 @@ export default function TutorAvailabilityPage() {
               <p className="text-red-700 text-xs">Anda wajib melengkapi nomor telepon di profil Anda sebelum dapat mengatur jadwal.</p>
             </div>
           </div>
-          <Link to="/tutor/profile" className="shrink-0 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl transition-colors text-center w-full sm:w-auto">
+          <Link to="/tutor/profile" className="shrink-0 px-5 py-2.5 btn-glass-destructive font-bold text-xs rounded-xl text-center w-full sm:w-auto">
             Lengkapi Profil
           </Link>
         </div>
       ) : (
         <button 
           onClick={() => setIsEditModalOpen(true)}
-          className="bg-[#0a192f] hover:bg-[#112240] text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 mb-8 shadow-md transition-colors"
+          className="btn-glass-primary px-6 py-3 rounded-xl font-bold flex items-center gap-2 mb-8 shadow-md"
         >
           <Plus className="w-5 h-5" /> Edit Jadwal
         </button>
@@ -308,7 +343,7 @@ export default function TutorAvailabilityPage() {
                     <button 
                       onClick={() => handleDeleteSchedule(row)}
                       disabled={saving || !hasPhone}
-                      className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                      className="p-2 btn-glass-destructive rounded-lg disabled:opacity-50"
                       title={!hasPhone ? "Lengkapi nomor telepon di profil untuk menghapus jadwal" : "Hapus Jadwal"}
                     >
                       <Trash2 className="w-5 h-5" />
@@ -417,8 +452,9 @@ export default function TutorAvailabilityPage() {
                   </button>
                   <button 
                     type="submit"
-                    disabled={saving}
-                    className="px-6 py-3 rounded-xl font-bold bg-[#0a192f] hover:bg-[#112240] text-white transition-colors shadow-sm text-sm disabled:opacity-50 flex items-center gap-2"
+                    disabled={saving || masterSlots.length === 0}
+                    title={masterSlots.length === 0 ? 'Data jam belajar belum tersedia' : undefined}
+                    className="px-6 py-3 rounded-xl font-bold btn-glass-primary shadow-sm text-sm disabled:opacity-50 flex items-center gap-2"
                   >
                     {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                     {saving ? 'Menyimpan...' : 'Simpan Jadwal'}

@@ -68,7 +68,7 @@ export default function AdminCoursesPage() {
           <CardTitle>Mata Kuliah per Semester (1 - 5)</CardTitle>
           <button 
             onClick={() => setIsAdding(!isAdding)}
-            className="flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+            className="flex items-center gap-2 rounded-lg btn-glass-primary px-4 py-2 text-sm font-medium"
           >
             <Plus className="h-4 w-4" />
             Tambah
@@ -95,8 +95,8 @@ export default function AdminCoursesPage() {
                 </div>
               </div>
               <div className="flex justify-end gap-2">
-                <button type="button" onClick={() => setIsAdding(false)} className="px-4 py-2 text-sm rounded-lg border hover:bg-slate-100">Batal</button>
-                <button type="submit" className="px-4 py-2 text-sm rounded-lg bg-brand-600 text-white hover:bg-brand-700">Simpan</button>
+                <button type="button" onClick={() => setIsAdding(false)} className="px-4 py-2 text-sm rounded-lg btn-glass">Batal</button>
+                <button type="submit" className="px-4 py-2 text-sm rounded-lg btn-glass-primary">Simpan</button>
               </div>
             </form>
           )}
@@ -128,7 +128,7 @@ export default function AdminCoursesPage() {
                           </div>
                           <button 
                             onClick={() => handleDelete(course.id as number)} 
-                            className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                            className="p-2 btn-glass-destructive rounded-lg"
                             title="Hapus Mata Kuliah"
                           >
                             <Trash2 className="h-5 w-5" />
