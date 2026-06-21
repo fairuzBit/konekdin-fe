@@ -9,6 +9,12 @@ export default function LearnerBookingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Cancellation State
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState<number | string | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
+
   const fetchBookings = async () => {
     try {
       setLoading(true);
@@ -24,6 +30,22 @@ export default function LearnerBookingsPage() {
   useEffect(() => {
     fetchBookings();
   }, []);
+
+  const handleCancelBooking = async () => {
+    if (!selectedBookingId) return;
+    try {
+      setIsCancelling(true);
+      setCancelError(null);
+      await learnerService.cancelBooking(selectedBookingId);
+      setIsCancelModalOpen(false);
+      setSelectedBookingId(null);
+      await fetchBookings();
+    } catch (err: any) {
+      setCancelError(err.response?.data?.message || 'Gagal membatalkan pesanan. Coba lagi.');
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
 
 
@@ -157,12 +179,23 @@ export default function LearnerBookingsPage() {
                       Menunggu Verifikasi <Clock className="w-3.5 h-3.5" />
                     </Link>
                   ) : (
-                    <Link 
-                      to={`/learner/bookings/${booking.id}`}
-                      className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl shadow-sm transition-colors"
-                    >
-                      Bayar Sekarang <Banknote className="w-3.5 h-3.5" />
-                    </Link>
+                    <div className="flex flex-row md:flex-col gap-2 w-full md:w-auto">
+                      <Link 
+                        to={`/learner/bookings/${booking.id}`}
+                        className="flex-1 md:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl shadow-sm transition-colors text-center"
+                      >
+                        Bayar Sekarang <Banknote className="w-3.5 h-3.5" />
+                      </Link>
+                      <button
+                        onClick={() => {
+                          setSelectedBookingId(booking.id);
+                          setIsCancelModalOpen(true);
+                        }}
+                        className="flex-1 md:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 bg-transparent border border-red-200 text-red-500 hover:bg-red-50 hover:border-red-300 text-xs font-bold rounded-xl transition-colors"
+                      >
+                        Batalkan
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -171,6 +204,46 @@ export default function LearnerBookingsPage() {
         )}
       </div>
 
+      {/* Cancellation Confirmation Modal */}
+      {isCancelModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-bgSecondary border border-slate-200 dark:border-borderColor/20 rounded-[28px] max-w-md w-full p-6 md:p-8 shadow-2xl relative animate-in zoom-in-95 duration-200 text-left">
+            <h3 className="text-xl font-extrabold text-[#0B132B] dark:text-white mb-2">
+              Batalkan Pesanan?
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-textSecondary leading-relaxed mb-4">
+              Apakah Anda yakin ingin membatalkan pesanan ini? <span className="text-red-500 font-medium">Tindakan ini tidak dapat dibatalkan</span> dan slot belajar Anda akan dilepaskan untuk learner lain.
+            </p>
+
+            {cancelError && (
+              <div className="mb-4 p-3 bg-red-50/50 border border-red-100/50 rounded-xl text-xs text-red-600 font-medium">
+                {cancelError}
+              </div>
+            )}
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setIsCancelModalOpen(false);
+                  setSelectedBookingId(null);
+                  setCancelError(null);
+                }}
+                disabled={isCancelling}
+                className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/20 text-slate-700 dark:text-white font-bold rounded-xl transition-all text-sm"
+              >
+                Kembali
+              </button>
+              <button
+                onClick={handleCancelBooking}
+                disabled={isCancelling}
+                className="flex-1 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-500/10 text-sm flex items-center justify-center gap-1.5"
+              >
+                {isCancelling ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : 'Ya, Batalkan'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
