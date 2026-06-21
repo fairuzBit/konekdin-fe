@@ -46,9 +46,9 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
   const roleLabel = getRoleLabel(user);
 
   return (
-    <div className="min-h-screen bg-appBg text-textPrimary transition-colors duration-300 relative z-0 overflow-hidden">
+    <div className="min-h-screen bg-transparent dark:bg-appBg text-textPrimary transition-colors duration-300 relative z-0 overflow-hidden">
       {/* Decorative Background Shapes (Light/Dark Gradient background) */}
-      <div className="absolute inset-0 z-[-1] flex overflow-hidden pointer-events-none bg-gradient-to-br from-[#ecfdf5] to-[#fdf2f8] dark:from-[#060b08] dark:to-[#08120d]">
+      <div className="absolute inset-0 z-[-1] flex overflow-hidden pointer-events-none bg-gradient-to-br from-[#d1fae5] to-[#fbcfe8] dark:from-[#060b08] dark:to-[#08120d]">
         
         {/* Giant Text Overlay - TOP */}
         {/* Di sini Anda bisa mengatur tulisan KonekDin di Background */}

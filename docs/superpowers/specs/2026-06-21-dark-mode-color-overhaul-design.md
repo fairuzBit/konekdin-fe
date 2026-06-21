@@ -51,10 +51,10 @@ Update the `:root` and `.dark` blocks in `src/index.css` to define the new varia
    - `html:not(.dark) .border`, `html:not(.dark) .border-borderColor`: Translucent white borders (`rgba(255, 255, 255, 0.4)` or soft gray).
 
 ### Phase 3: Background Layout Gradient Update (`src/layouts/AppLayout.tsx`)
-In `src/layouts/AppLayout.tsx`, replace the two solid split-colored blocks with a single full-screen diagonal gradient from pastel green to pastel pink:
+In `src/layouts/AppLayout.tsx`, replace the solid split-colored blocks with a single full-screen diagonal gradient from pastel green to pastel pink and set the parent container background to transparent in light mode:
 ```tsx
 {/* Decorative Background Shapes */}
-<div className="absolute inset-0 z-[-1] flex overflow-hidden pointer-events-none bg-gradient-to-br from-[#ecfdf5] to-[#fdf2f8] dark:from-[#060b08] dark:to-[#08120d]">
+<div className="absolute inset-0 z-[-1] flex overflow-hidden pointer-events-none bg-gradient-to-br from-[#d1fae5] to-[#fbcfe8] dark:from-[#060b08] dark:to-[#08120d]">
   {/* Giant Text overlays can remain with subtle opacity */}
 </div>
 ```
