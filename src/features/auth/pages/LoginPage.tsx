@@ -70,8 +70,13 @@ export default function LoginPage() {
         }
       }
     } catch (err: any) {
-      const msg = err.response?.data?.message || 'Login gagal. Periksa email dan password Anda.';
-      setError(msg);
+      if (err.response?.data?.errors) {
+        const errorMessages = Object.values(err.response.data.errors).flat().join(' ');
+        setError(errorMessages);
+      } else {
+        const msg = err.response?.data?.message || 'Login gagal. Periksa email dan password Anda.';
+        setError(msg);
+      }
     } finally {
       setSubmitting(false);
     }

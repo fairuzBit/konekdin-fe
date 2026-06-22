@@ -47,8 +47,15 @@ export default function RegisterPage() {
       sessionStorage.removeItem('konekdin_reg_password');
 
       navigate('/learner', { replace: true });
-    } catch {
-      setError('Pendaftaran gagal. Silakan coba lagi.');
+    } catch (err: any) {
+      if (err.response?.data?.errors) {
+        const errorMessages = Object.values(err.response.data.errors).flat().join(' ');
+        setError(errorMessages);
+      } else if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError('Pendaftaran gagal. Silakan coba lagi.');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -114,7 +121,11 @@ export default function RegisterPage() {
                   </button>
                 </div>
               </div>
-              {error ? <p className="text-xs text-rose-500 dark:text-rose-400 font-medium">{error}</p> : null}
+              {error ? (
+                <div className="rounded-xl border border-rose-200 dark:border-rose-500/20 bg-rose-50 dark:bg-rose-500/10 p-3 text-xs text-rose-600 dark:text-rose-400 font-medium">
+                  {error}
+                </div>
+              ) : null}
               <Button className="w-full h-10 mt-2" type="submit" disabled={submitting}>
                 {submitting ? 'Memproses...' : 'Daftar'} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>

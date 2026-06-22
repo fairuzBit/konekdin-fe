@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { adminService } from '@/api/services/adminService';
 import { normalizeList } from '@/lib/apiData';
 import { Link, useLocation } from 'react-router-dom';
+import AdminNavigationTabs from '@/features/admin/components/AdminNavigationTabs';
 
 export default function AdminApplicationsPage() {
   const [applications, setApplications] = useState<Array<Record<string, unknown>>>([]);
@@ -82,26 +83,7 @@ export default function AdminApplicationsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-borderColor pb-px">
-        <Link
-          to="/admin/users"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-t-xl transition-colors text-textSecondary hover:bg-bgSecondary hover:text-textPrimary"
-        >
-          <Users className="w-4 h-4" /> Manajemen Pengguna
-        </Link>
-        <Link
-          to="/admin/applications"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-t-xl transition-colors bg-accentYellow text-slate-900 shadow-[0_-2px_10px_rgba(250,204,21,0.2)] border-x border-t border-accentYellow relative top-px"
-        >
-          <ShieldCheck className="w-4 h-4" /> Verifikasi Tutor
-        </Link>
-        <Link
-          to="/admin/payments"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-t-xl transition-colors text-textSecondary hover:bg-bgSecondary hover:text-textPrimary"
-        >
-          <Wallet className="w-4 h-4" /> Manajemen Keuangan
-        </Link>
-      </div>
+      <AdminNavigationTabs />
 
       {/* Main Content Card */}
       <Card className="border-0 shadow-sm rounded-3xl overflow-hidden bg-bgSecondary">
