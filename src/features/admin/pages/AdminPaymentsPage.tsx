@@ -3,6 +3,7 @@ import { adminService } from '@/api/services/adminService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Banknote, CheckCircle, Clock, Loader2, Search, XCircle, Users, ShieldCheck, Wallet } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import AdminNavigationTabs from '@/features/admin/components/AdminNavigationTabs';
 
 export default function AdminPaymentsPage() {
   const [payments, setPayments] = useState<any[]>([]);
@@ -62,26 +63,7 @@ export default function AdminPaymentsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-px">
-        <Link
-          to="/admin/users"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-t-xl transition-colors text-slate-500 hover:bg-slate-100 hover:text-slate-800"
-        >
-          <Users className="w-4 h-4" /> Manajemen Pengguna
-        </Link>
-        <Link
-          to="/admin/applications"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-t-xl transition-colors text-slate-500 hover:bg-slate-100 hover:text-slate-800"
-        >
-          <ShieldCheck className="w-4 h-4" /> Verifikasi Tutor
-        </Link>
-        <Link
-          to="/admin/payments"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-t-xl transition-colors bg-emerald-500 text-white shadow-sm border-x border-t border-emerald-500 relative top-px"
-        >
-          <Wallet className="w-4 h-4" /> Manajemen Keuangan
-        </Link>
-      </div>
+      <AdminNavigationTabs />
 
       <Card className="border-slate-200 shadow-sm rounded-2xl overflow-hidden">
         <CardContent className="p-0">

@@ -1,7 +1,7 @@
 import { useState, useEffect, type ElementType, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Bell, ChevronRight, GraduationCap, LogOut, Menu, X, ArrowLeft, Sun, Moon } from 'lucide-react';
-import { useAuth, getRoleLabel } from '@/context/AuthContext';
+import { useAuth, getRoleLabel, hasRole } from '@/context/AuthContext';
 import apiClient from '@/api/axios';
 
 interface AppLayoutProps {
@@ -53,11 +53,11 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
     const checkNotifications = async () => {
       try {
         let unread = false;
-        if (panelRole === 'Learner') {
+        if (panelRole === 'Learner' && hasRole(user, 'learner')) {
           const res = await apiClient.get('/learner/notification');
           const list = res.data.data || res.data || [];
           unread = list.some((n: any) => !n.is_read);
-        } else if (panelRole === 'Tutor') {
+        } else if (panelRole === 'Tutor' && hasRole(user, 'tutor')) {
           const res = await apiClient.get('/tutor/notifications');
           const list = res.data.data || res.data || [];
           unread = list.some((n: any) => !n.is_read);
@@ -79,10 +79,10 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
 
     const markAsRead = async () => {
       try {
-        if (panelRole === 'Learner' && location.pathname === '/learner/notifications') {
+        if (panelRole === 'Learner' && location.pathname === '/learner/notifications' && hasRole(user, 'learner')) {
           await apiClient.post('/learner/notifications/read-all');
           setHasUnreadNotifications(false);
-        } else if (panelRole === 'Tutor' && location.pathname === '/tutor/notifications') {
+        } else if (panelRole === 'Tutor' && location.pathname === '/tutor/notifications' && hasRole(user, 'tutor')) {
           await apiClient.post('/tutor/notifications/read-all');
           setHasUnreadNotifications(false);
         }
