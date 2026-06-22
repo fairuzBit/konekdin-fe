@@ -78,7 +78,7 @@ export default function LearnerDashboard() {
             </div>
           </div>
           <div className="flex items-end gap-3">
-            <h3 className="text-3xl font-extrabold text-[#0B132B]">{loading ? '...' : totalSesi || '0'}</h3>
+            <h3 className="text-3xl font-extrabold text-textPrimary">{loading ? '...' : totalSesi || '0'}</h3>
             {totalSesi !== '0' && <span className="bg-emerald-50 text-emerald-600 text-xs font-bold px-2 py-0.5 rounded-md mb-1 border border-emerald-100">+{totalSesi} sesi</span>}
           </div>
         </Card>
@@ -93,7 +93,7 @@ export default function LearnerDashboard() {
             </div>
           </div>
           <div className="flex items-end gap-3">
-            <h3 className="text-3xl font-extrabold text-[#0B132B]">{loading ? '...' : jamBelajar || '0'} <span className="text-lg font-bold text-slate-500">jam</span></h3>
+            <h3 className="text-3xl font-extrabold text-textPrimary">{loading ? '...' : jamBelajar || '0'} <span className="text-lg font-bold text-slate-500">jam</span></h3>
             {jamBelajar !== '0' && <span className="bg-emerald-50 text-emerald-600 text-xs font-bold px-2 py-0.5 rounded-md mb-1 border border-emerald-100">Aktif</span>}
           </div>
         </Card>
@@ -108,7 +108,7 @@ export default function LearnerDashboard() {
             </div>
           </div>
           <div className="flex items-end gap-3">
-            <h3 className="text-3xl font-extrabold text-[#0B132B]">{loading ? '...' : mataKuliah || '0'}</h3>
+            <h3 className="text-3xl font-extrabold text-textPrimary">{loading ? '...' : mataKuliah || '0'}</h3>
           </div>
         </Card>
       </div>
@@ -119,7 +119,7 @@ export default function LearnerDashboard() {
         {/* Left Column (Jadwal + Tips) - Takes 2 cols on large */}
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-[#0B132B]">Jadwal Mendatang</h2>
+            <h2 className="text-lg font-bold text-textPrimary">Jadwal Mendatang</h2>
             <Link to="/learner/history" className="text-sm font-bold text-emerald-600 hover:text-emerald-700">Lihat Semua</Link>
           </div>
           
@@ -147,7 +147,7 @@ export default function LearnerDashboard() {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="bg-emerald-50 text-emerald-700 text-[10px] font-extrabold px-2 py-0.5 rounded-md border border-emerald-100 uppercase tracking-wider">{nextClass.booking_date as string}</span>
                   </div>
-                  <h4 className="font-bold text-[#0B132B] text-base">{(nextClass.course as any)?.name || 'Mata Kuliah'}</h4>
+                  <h4 className="font-bold text-textPrimary text-base">{(nextClass.course as any)?.name || 'Mata Kuliah'}</h4>
                   <p className="text-sm text-slate-500 font-medium">Bersama {(nextClass.tutor as any)?.user?.name || 'Tutor'}</p>
                 </div>
               </div>
@@ -209,7 +209,7 @@ export default function LearnerDashboard() {
         {/* Right Column (Tutor Rekomendasi) - Takes 1 col */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-[#0B132B]">Tutor Rekomendasi</h2>
+            <h2 className="text-lg font-bold text-textPrimary">Tutor Rekomendasi</h2>
             <div className="w-6 h-6 rounded-md bg-yellow-50 flex items-center justify-center border border-yellow-100">
               <Lightbulb className="w-3.5 h-3.5 text-yellow-600" />
             </div>
@@ -234,7 +234,7 @@ export default function LearnerDashboard() {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <h4 className="font-bold text-[#0B132B] text-sm group-hover:text-emerald-700 transition-colors truncate">{(tutor.name as string) || 'Tutor'}</h4>
+                      <h4 className="font-bold text-textPrimary text-sm group-hover:text-emerald-700 transition-colors truncate">{(tutor.name as string) || 'Tutor'}</h4>
                       <p className="text-xs text-slate-500 truncate">{(tutor.major as string) || (tutor.taught_courses as any[])?.[0]?.course_name || 'Tutor Umum'}</p>
                     </div>
                   </div>

@@ -77,7 +77,7 @@ export default function TutorReviewsPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-12">
-      <h1 className="text-2xl font-bold text-[#0B132B] mb-6">Ulasan & Rating</h1>
+      <h1 className="text-2xl font-bold text-textPrimary mb-6">Ulasan & Rating</h1>
 
       {/* Summary Card */}
       <div className="bg-[#F8FBFB] border border-emerald-50 rounded-[32px] p-8 shadow-sm">
@@ -87,7 +87,7 @@ export default function TutorReviewsPage() {
           <div className="flex-1">
             <h3 className="text-[11px] font-bold text-emerald-700 tracking-wider mb-2">RATA-RATA RATING</h3>
             <div className="flex items-baseline gap-2 mb-2">
-              <span className="text-6xl font-extrabold text-[#0B132B]">{summary?.average_rating.toFixed(1) || '0.0'}</span>
+              <span className="text-6xl font-extrabold text-textPrimary">{summary?.average_rating.toFixed(1) || '0.0'}</span>
               <span className="text-lg font-bold text-slate-400">/ 5.0</span>
             </div>
             {renderStars(Math.round(summary?.average_rating || 0))}
@@ -122,7 +122,7 @@ export default function TutorReviewsPage() {
                   </div>
                   
                   {/* Count */}
-                  <div className="w-8 text-right text-sm font-bold text-[#0B132B]">
+                  <div className="w-8 text-right text-sm font-bold text-textPrimary">
                     {count}
                   </div>
                 </div>
@@ -136,11 +136,11 @@ export default function TutorReviewsPage() {
         <div className="flex items-center justify-between">
           <div className="flex gap-12">
             <div>
-              <p className="text-2xl font-bold text-[#0B132B]">{summary?.total_reviews || 0}</p>
+              <p className="text-2xl font-bold text-textPrimary">{summary?.total_reviews || 0}</p>
               <p className="text-xs font-medium text-slate-500">Total Ulasan</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-[#0B132B]">{summary?.satisfaction_percent || 0}%</p>
+              <p className="text-2xl font-bold text-textPrimary">{summary?.satisfaction_percent || 0}%</p>
               <p className="text-xs font-medium text-slate-500">Kepuasan Mahasiswa</p>
             </div>
           </div>
@@ -209,7 +209,7 @@ export default function TutorReviewsPage() {
                 <div className="flex-1">
                   <div className="flex items-start justify-between gap-4 mb-3">
                     <div>
-                      <h4 className="font-bold text-[#0B132B] text-base">{learnerName}</h4>
+                      <h4 className="font-bold text-textPrimary text-base">{learnerName}</h4>
                       <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-2">
                         {review.course?.name || 'MATA KULIAH'}
                       </p>

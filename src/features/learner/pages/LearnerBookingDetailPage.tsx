@@ -141,7 +141,7 @@ export default function LearnerBookingDetailPage() {
         {/* Left Side: Detail & Methods */}
         <div className="w-full md:w-3/5 p-6 md:p-10">
           <div className="mb-8">
-            <h2 className="text-2xl font-extrabold text-[#0B132B]">Invoice Pembayaran</h2>
+            <h2 className="text-2xl font-extrabold text-textPrimary">Invoice Pembayaran</h2>
             <p className="text-sm text-slate-500 mt-1">ID Pesanan: <span className="font-mono text-slate-700">#{booking.id.toString().padStart(5, '0')}</span></p>
           </div>
 
@@ -443,7 +443,7 @@ export default function LearnerBookingDetailPage() {
       {isCancelModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-bgSecondary border border-slate-200 dark:border-borderColor/20 rounded-[28px] max-w-md w-full p-6 md:p-8 shadow-2xl relative animate-in zoom-in-95 duration-200">
-            <h3 className="text-xl font-extrabold text-[#0B132B] dark:text-white mb-2">
+            <h3 className="text-xl font-extrabold text-textPrimary dark:text-white mb-2">
               Batalkan Pesanan?
             </h3>
             <p className="text-sm text-slate-600 dark:text-textSecondary leading-relaxed mb-6">

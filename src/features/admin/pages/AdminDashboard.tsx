@@ -50,7 +50,7 @@ export default function AdminDashboard() {
   const totalLearners = formatNumber(pickValue(stats, ['total_learners', 'total_users', 'users_count']));
   const tutorVerified = formatNumber(pickValue(stats, ['verified_tutors', 'total_tutors', 'tutors_count']));
   const complaints = formatNumber(activeComplaintsCount);
-  const pendingApplications = formatNumber(pickValue(stats, ['pending_applications', 'tutor_applications', 'applications_count']));
+  const pendingApplications = formatNumber(pickValue(stats, ['pending_verifications', 'pending_applications', 'tutor_applications', 'applications_count']));
 
   const aktivitasTerbaru = (stats.aktivitas_terbaru as any[]) || [];
   const topTutors = (stats.top_tutors as any[]) || [];
