@@ -191,7 +191,7 @@ export default function TutorListPage() {
                   </div>
                   <div className="text-right shrink-0 pl-2">
                     <p className="text-[15px] font-black text-emerald-600">
-                      Rp {tutor.price ? tutor.price.toLocaleString('id-ID') : tutor.price_per_session ? tutor.price_per_session.toLocaleString('id-ID') : '0'}
+                      Rp{tutor.price ? tutor.price.toLocaleString('id-ID') : tutor.price_per_session ? tutor.price_per_session.toLocaleString('id-ID') : '0'}
                     </p>
                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">/ Sesi</p>
                   </div>

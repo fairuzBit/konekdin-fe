@@ -287,16 +287,16 @@ export function BookingModal({ isOpen, onClose, tutor, prefilledBooking }: Booki
           <div>
             <div className="border-t border-white/10 pt-6 space-y-3 mb-6">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-slate-400 font-medium">Biaya Sesi (Rp {pricePerSession.toLocaleString('id-ID')} × {totalSessions} Sesi)</span>
-                <span className="font-bold">Rp {sessionsCost.toLocaleString('id-ID')}</span>
+                <span className="text-slate-400 font-medium">Biaya Sesi (Rp{pricePerSession.toLocaleString('id-ID')} × {totalSessions} Sesi)</span>
+                <span className="font-bold">Rp{sessionsCost.toLocaleString('id-ID')}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-slate-400 font-medium">Biaya Layanan</span>
-                <span className="font-bold">Rp {platformFee.toLocaleString('id-ID')}</span>
+                <span className="font-bold">Rp{platformFee.toLocaleString('id-ID')}</span>
               </div>
               <div className="flex justify-between items-center pt-3 border-t border-white/10">
                 <span className="text-lg font-bold text-emerald-400">Total Pembayaran</span>
-                <span className="text-2xl font-black text-white">Rp {grandTotal.toLocaleString('id-ID')}</span>
+                <span className="text-2xl font-black text-white">Rp{grandTotal.toLocaleString('id-ID')}</span>
               </div>
             </div>
 

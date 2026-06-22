@@ -30,6 +30,7 @@ export default function TutorProfilePage() {
   const isReadOnly = isAdminView || isLearnerView;
 
   const [isAvailable, setIsAvailable] = useState(true);
+  const [togglingStatus, setTogglingStatus] = useState(false);
   const [tutor, setTutor] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -66,7 +67,9 @@ export default function TutorProfilePage() {
         setTutor(data);
         
         if (data) {
-          if (data.status !== undefined) {
+          if (data.is_active !== undefined) {
+            setIsAvailable(!!data.is_active);
+          } else if (data.status !== undefined) {
             setIsAvailable(data.status === 'active');
           }
           setFormData({
@@ -130,6 +133,26 @@ export default function TutorProfilePage() {
       alert('Gagal memperbarui profil: ' + msg);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleToggleStatus = async () => {
+    setTogglingStatus(true);
+    const previousState = isAvailable;
+    setIsAvailable(!previousState);
+    
+    try {
+      const response = await tutorService.toggleStatus();
+      if (response && response.is_active !== undefined) {
+        setIsAvailable(!!response.is_active);
+      }
+    } catch (err: any) {
+      console.error('Failed to toggle availability status:', err);
+      setIsAvailable(previousState);
+      const msg = err.response?.data?.message || err.message || 'Error tidak diketahui';
+      alert('Gagal memperbarui status ketersediaan: ' + msg);
+    } finally {
+      setTogglingStatus(false);
     }
   };
 
@@ -225,8 +248,9 @@ export default function TutorProfilePage() {
           {!isReadOnly && (
             <div className="shrink-0 ml-4">
               <button 
-                onClick={() => setIsAvailable(!isAvailable)}
-                className={`w-14 h-8 flex items-center rounded-full p-1 transition-colors duration-300 ${isAvailable ? 'bg-brand-500' : 'bg-borderColor'}`}
+                onClick={handleToggleStatus}
+                disabled={togglingStatus}
+                className={`w-14 h-8 flex items-center rounded-full p-1 transition-colors duration-300 ${togglingStatus ? 'opacity-50 cursor-not-allowed' : ''} ${isAvailable ? 'bg-brand-500' : 'bg-borderColor'}`}
               >
                 <div className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 ${isAvailable ? 'translate-x-6' : 'translate-x-0'}`} />
               </button>
@@ -400,7 +424,7 @@ export default function TutorProfilePage() {
               />
             </div>
           ) : (
-            <div className="text-4xl font-extrabold text-textPrimary mb-6">Rp {tutor?.price_per_session ? tutor.price_per_session.toLocaleString('id-ID') : tutor?.price ? tutor.price.toLocaleString('id-ID') : '0'}</div>
+            <div className="text-4xl font-extrabold text-textPrimary mb-6">Rp{tutor?.price_per_session ? tutor.price_per_session.toLocaleString('id-ID') : tutor?.price ? tutor.price.toLocaleString('id-ID') : '0'}</div>
           )}
           
           {!isReadOnly && (
