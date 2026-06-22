@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Users, ShieldCheck, Wallet } from 'lucide-react';
+import { Users, ShieldCheck, Wallet, Activity } from 'lucide-react';
 import apiClient from '@/api/axios';
 
 export default function AdminNavigationTabs() {
@@ -47,6 +47,12 @@ export default function AdminNavigationTabs() {
       label: 'Manajemen Keuangan',
       icon: Wallet,
       count: counts.pendingPayments,
+    },
+    {
+      to: '/admin/activities',
+      label: 'Riwayat Aktivitas',
+      icon: Activity,
+      count: 0,
     },
   ];
 

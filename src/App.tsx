@@ -9,6 +9,7 @@ import AdminCoursesPage from '@/features/admin/pages/AdminCoursesPage';
 import AdminMasterSlotsPage from '@/features/admin/pages/AdminMasterSlotsPage';
 import AdminUsersPage from '@/features/admin/pages/AdminUsersPage';
 import AdminPaymentsPage from '@/features/admin/pages/AdminPaymentsPage';
+import AdminActivitiesPage from '@/features/admin/pages/AdminActivitiesPage';
 import LearnerBookingsPage from '@/features/learner/pages/LearnerBookingsPage';
 import LearnerSchedulesPage from '@/features/learner/pages/LearnerSchedulesPage';
 import LearnerBookingDetailPage from '@/features/learner/pages/LearnerBookingDetailPage';
@@ -89,6 +90,7 @@ function App() {
       <Route path="/admin/courses" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout><AdminCoursesPage /></AdminLayout></ProtectedRoute>} />
       <Route path="/admin/master-slots" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout><AdminMasterSlotsPage /></AdminLayout></ProtectedRoute>} />
       <Route path="/admin/payments" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout><AdminPaymentsPage /></AdminLayout></ProtectedRoute>} />
+      <Route path="/admin/activities" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout><AdminActivitiesPage /></AdminLayout></ProtectedRoute>} />
       <Route path="/admin/tutors/:id" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout><TutorProfilePage /></AdminLayout></ProtectedRoute>} />
       <Route path="/admin/learners/:id" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout><LearnerProfilePage /></AdminLayout></ProtectedRoute>} />
     </Routes>
