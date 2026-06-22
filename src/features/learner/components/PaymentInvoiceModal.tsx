@@ -235,17 +235,17 @@ export function PaymentInvoiceModal({ isOpen, onClose, booking, onSuccess }: Pay
             <div className="space-y-4 mb-8">
               <div className="flex justify-between text-sm">
                 <span className="text-slate-400 font-medium">Biaya Sesi ({booking.slots?.length || 0} Sesi)</span>
-                <span className="font-bold">Rp {booking.total_price?.toLocaleString('id-ID')}</span>
+                <span className="font-bold">Rp{booking.total_price?.toLocaleString('id-ID')}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-400 font-medium">Biaya Layanan</span>
-                <span className="font-bold">Rp {booking.service_fee?.toLocaleString('id-ID')}</span>
+                <span className="font-bold">Rp{booking.service_fee?.toLocaleString('id-ID')}</span>
               </div>
             </div>
 
             <div className="pt-6 border-t border-white/10 mb-8">
               <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-1">Total Pembayaran</p>
-              <p className="text-4xl font-black text-white">Rp {booking.grand_total?.toLocaleString('id-ID')}</p>
+              <p className="text-4xl font-black text-white">Rp{booking.grand_total?.toLocaleString('id-ID')}</p>
             </div>
 
             <div className="bg-white/5 border border-white/10 rounded-xl p-4 flex gap-3">

@@ -112,7 +112,7 @@ export default function AdminPaymentsPage() {
                         {payment.metode?.replace('_', ' ') || '-'}
                       </td>
                       <td className="p-4 text-sm font-black text-emerald-600">
-                        Rp {payment.nominal?.toLocaleString('id-ID')}
+                        Rp{payment.nominal?.toLocaleString('id-ID')}
                       </td>
                       <td className="p-4">
                         {getStatusBadge(payment.status)}

@@ -100,6 +100,11 @@ class TutorService {
     return response.data;
   }
 
+  async toggleStatus() {
+    const response = await apiClient.patch('/tutor/profile/status');
+    return response.data;
+  }
+
   async getNotifications() {
     return withRequestCache('tutor.notifications', async () => {
       const response = await apiClient.get('/tutor/notifications');

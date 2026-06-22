@@ -69,3 +69,10 @@ export function pickValue(payload: unknown, keys: string[]): unknown {
 
   return null;
 }
+
+export function formatRupiah(value: unknown): string {
+  if (value === null || value === undefined) return 'Rp0';
+  const number = Number(value);
+  if (isNaN(number)) return 'Rp0';
+  return `Rp${number.toLocaleString('id-ID')}`;
+}
