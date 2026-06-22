@@ -126,7 +126,7 @@ export default function AdminDashboard() {
             <CardContent className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">Aktivitas Terbaru</h3>
-                <button className="text-sm font-semibold text-brand-600 hover:text-brand-700">Lihat Semua</button>
+                <Link to="/admin/activities" className="text-sm font-semibold text-brand-600 hover:text-brand-700">Lihat Semua</Link>
               </div>
               
               <div className="space-y-4">
