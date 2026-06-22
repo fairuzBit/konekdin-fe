@@ -79,7 +79,7 @@ export default function LearnerBookingsPage() {
   return (
     <div className="max-w-4xl space-y-8 animate-in fade-in duration-500">
       <div>
-        <h1 className="text-2xl md:text-3xl font-extrabold text-[#0B132B] mb-2 tracking-tight">Detail Pesanan</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-textPrimary mb-2 tracking-tight">Detail Pesanan</h1>
         <p className="text-slate-500 font-medium">Lihat detail pesanan dan selesaikan pembayaran.</p>
       </div>
 
@@ -211,7 +211,7 @@ export default function LearnerBookingsPage() {
       {isCancelModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-bgSecondary border border-slate-200 dark:border-borderColor/20 rounded-[28px] max-w-md w-full p-6 md:p-8 shadow-2xl relative animate-in zoom-in-95 duration-200 text-left">
-            <h3 className="text-xl font-extrabold text-[#0B132B] dark:text-white mb-2">
+            <h3 className="text-xl font-extrabold text-textPrimary dark:text-white mb-2">
               Batalkan Pesanan?
             </h3>
             <p className="text-sm text-slate-600 dark:text-textSecondary leading-relaxed mb-4">

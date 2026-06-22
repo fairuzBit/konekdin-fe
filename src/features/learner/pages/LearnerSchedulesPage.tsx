@@ -64,7 +64,7 @@ export default function LearnerSchedulesPage() {
   return (
     <div className="max-w-4xl space-y-8 animate-in fade-in duration-500">
       <div>
-        <h1 className="text-2xl md:text-3xl font-extrabold text-[#0B132B] mb-2 tracking-tight">Jadwal Belajar</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-textPrimary mb-2 tracking-tight">Jadwal Belajar</h1>
         <p className="text-slate-500 font-medium">Lihat sesi belajar Anda yang sudah terkonfirmasi.</p>
       </div>
 

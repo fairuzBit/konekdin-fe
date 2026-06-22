@@ -95,7 +95,7 @@ export default function LearnerReviewPage() {
 
       <div className="flex flex-col md:flex-row justify-between gap-8 mb-10">
         <div className="max-w-md">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-[#0B132B] leading-tight mb-4 tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-textPrimary leading-tight mb-4 tracking-tight">
             Bagaimana pengalaman belajarmu bersama <span className="text-emerald-600">{tutorName}</span>?
           </h1>
           <p className="text-slate-500 font-medium">

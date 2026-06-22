@@ -69,7 +69,7 @@ export function PaymentInvoiceModal({ isOpen, onClose, booking, onSuccess }: Pay
         <div className="w-full md:w-3/5 p-6 md:p-10 overflow-y-auto">
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h2 className="text-2xl font-extrabold text-[#0B132B]">Invoice Pembayaran</h2>
+              <h2 className="text-2xl font-extrabold text-textPrimary">Invoice Pembayaran</h2>
               <p className="text-sm text-slate-500 mt-1">Tinjau rincian sesi dan pilih metode pembayaran untuk sesi Anda.</p>
             </div>
             <button 
