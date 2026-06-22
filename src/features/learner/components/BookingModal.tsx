@@ -303,14 +303,14 @@ export function BookingModal({ isOpen, onClose, tutor, prefilledBooking }: Booki
             <div className="flex gap-3">
               <button
                 onClick={onClose}
-                className="btn-glass flex-1 py-3.5 px-4 rounded-xl text-sm font-bold"
+                className="flex-1 py-3.5 px-4 rounded-xl text-sm font-bold bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-all"
               >
                 Batal
               </button>
               <button
                 onClick={handleBooking}
                 disabled={isSubmitting || totalSessions === 0 || !selectedCourseId || !selectedDate}
-                className="btn-glass-primary flex-[2] py-3.5 px-4 rounded-xl text-sm font-bold flex justify-center items-center disabled:opacity-50"
+                className="flex-[2] py-3.5 px-4 rounded-xl text-sm font-bold flex justify-center items-center disabled:opacity-50 bg-emerald-500 hover:bg-emerald-600 text-white transition-all shadow-md shadow-emerald-950/20"
               >
                 {isSubmitting ? 'Memproses...' : 'Buat Pesanan'}
               </button>

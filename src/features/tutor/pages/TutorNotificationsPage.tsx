@@ -83,7 +83,7 @@ export default function TutorNotificationsPage() {
           }, {} as Record<string, typeof notifications>)
         ).map(([group, groupNotifications]) => (
           <div key={group} className="mb-8 space-y-4">
-            <h3 className="text-xs font-black text-textSecondary tracking-widest uppercase pl-4 mb-4">
+            <h3 className="text-xs font-black text-slate-500 dark:text-slate-400 tracking-widest uppercase pl-4 mb-4">
               {group}
             </h3>
             
@@ -124,7 +124,7 @@ export default function TutorNotificationsPage() {
                     }`}>
                       {(item.message as string) ?? (item.body as string) ?? '—'}
                     </p>
-                    <p className="mt-3 text-[11px] font-bold uppercase tracking-widest text-textSecondary opacity-70">
+                    <p className="mt-3 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                       {(item.time_ago as string) ?? (item.time as string) ?? (item.created_at as string) ?? '—'}
                     </p>
                   </div>
