@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { formatNIM } from '@/lib/nimHelper';
+import { formatRupiah } from '@/lib/apiData';
 import { 
   CheckCircle2, 
   Pencil, 
@@ -11,7 +12,8 @@ import {
   Briefcase,
   Loader2,
   ArrowLeft,
-  GraduationCap
+  GraduationCap,
+  AlertTriangle
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,6 +33,7 @@ export default function TutorProfilePage() {
 
   const [isAvailable, setIsAvailable] = useState(true);
   const [togglingStatus, setTogglingStatus] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [tutor, setTutor] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -64,21 +67,22 @@ export default function TutorProfilePage() {
           const response = await tutorService.getProfile();
           data = response.data || response;
         }
-        setTutor(data);
+        const unwrapped = data.data || data;
+        setTutor(unwrapped);
         
-        if (data) {
-          if (data.is_active !== undefined) {
-            setIsAvailable(!!data.is_active);
-          } else if (data.status !== undefined) {
-            setIsAvailable(data.status === 'active');
+        if (unwrapped) {
+          if (unwrapped.is_active !== undefined) {
+            setIsAvailable(!!unwrapped.is_active);
+          } else if (unwrapped.status !== undefined) {
+            setIsAvailable(unwrapped.status === 'active');
           }
           setFormData({
-            name: data.name || data.username || '',
-            nim: data.nim || '',
-            major: data.major || '',
-            faculty: data.faculty || '',
-            phone: data.phone || '',
-            price_per_session: data.price_per_session || data.price || 0
+            name: unwrapped.name || unwrapped.username || '',
+            nim: unwrapped.nim || '',
+            major: unwrapped.major || '',
+            faculty: unwrapped.faculty || '',
+            phone: unwrapped.phone || '',
+            price_per_session: unwrapped.price_per_session || unwrapped.price || 0
           });
         }
       } catch (err) {
@@ -136,7 +140,7 @@ export default function TutorProfilePage() {
     }
   };
 
-  const handleToggleStatus = async () => {
+  const executeToggleStatus = async () => {
     setTogglingStatus(true);
     const previousState = isAvailable;
     setIsAvailable(!previousState);
@@ -153,6 +157,14 @@ export default function TutorProfilePage() {
       alert('Gagal memperbarui status ketersediaan: ' + msg);
     } finally {
       setTogglingStatus(false);
+    }
+  };
+
+  const handleToggleStatus = () => {
+    if (isAvailable) {
+      setIsConfirmModalOpen(true);
+    } else {
+      executeToggleStatus();
     }
   };
 
@@ -250,7 +262,7 @@ export default function TutorProfilePage() {
               <button 
                 onClick={handleToggleStatus}
                 disabled={togglingStatus}
-                className={`w-14 h-8 flex items-center rounded-full p-1 transition-colors duration-300 ${togglingStatus ? 'opacity-50 cursor-not-allowed' : ''} ${isAvailable ? 'bg-brand-500' : 'bg-borderColor'}`}
+                className={`w-14 h-8 flex items-center rounded-full p-1 transition-colors duration-300 ${togglingStatus ? 'opacity-50 cursor-not-allowed' : ''} ${isAvailable ? 'bg-brand-500' : 'bg-slate-300 dark:bg-slate-700'}`}
               >
                 <div className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 ${isAvailable ? 'translate-x-6' : 'translate-x-0'}`} />
               </button>
@@ -424,7 +436,7 @@ export default function TutorProfilePage() {
               />
             </div>
           ) : (
-            <div className="text-4xl font-extrabold text-textPrimary mb-6">Rp{tutor?.price_per_session ? tutor.price_per_session.toLocaleString('id-ID') : tutor?.price ? tutor.price.toLocaleString('id-ID') : '0'}</div>
+            <div className="text-4xl font-extrabold text-textPrimary mb-6">{formatRupiah(tutor?.price_per_session ?? tutor?.price ?? 0)}</div>
           )}
           
           {!isReadOnly && (
@@ -582,6 +594,40 @@ export default function TutorProfilePage() {
               <p className="text-textSecondary text-sm font-medium">Belum ada ulasan untuk tutor ini.</p>
             </div>
           )}
+        </div>
+      )}
+      
+      {/* Custom Confirmation Modal */}
+      {isConfirmModalOpen && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-bgSecondary w-full max-w-md rounded-[32px] border border-borderColor shadow-2xl p-8 flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-500 mb-6">
+              <AlertTriangle className="w-8 h-8" />
+            </div>
+            
+            <h3 className="text-2xl font-bold text-textPrimary mb-3">Nonaktifkan Akun?</h3>
+            <p className="text-sm text-textSecondary leading-relaxed mb-8">
+              Apakah Anda yakin ingin menonaktifkan akun Anda? Anda tidak akan muncul di pencarian learner dan tidak dapat menerima pemesanan baru untuk sementara waktu.
+            </p>
+            
+            <div className="flex w-full gap-3">
+              <button 
+                onClick={() => setIsConfirmModalOpen(false)}
+                className="flex-1 py-3.5 rounded-2xl border border-borderColor hover:bg-bgPrimary transition-colors font-bold text-sm text-textSecondary"
+              >
+                Batal
+              </button>
+              <button 
+                onClick={() => {
+                  setIsConfirmModalOpen(false);
+                  executeToggleStatus();
+                }}
+                className="flex-1 py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 transition-colors font-bold text-sm text-white shadow-lg shadow-red-600/20"
+              >
+                Ya, Nonaktifkan
+              </button>
+            </div>
+          </div>
         </div>
       )}
       
