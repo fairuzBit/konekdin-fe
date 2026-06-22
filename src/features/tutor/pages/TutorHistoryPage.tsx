@@ -125,7 +125,7 @@ export default function TutorHistoryPage() {
 
             return (
               <div
-                key={item.id ?? index}
+                key={String(item.id ?? index)}
                 className="bg-white border border-slate-200 rounded-[24px] p-5 flex flex-col md:flex-row md:items-center justify-between gap-5 transition-all hover:shadow-lg hover:shadow-slate-200/50 hover:border-brand-200"
               >
                 {/* Left: Avatar + Info */}
