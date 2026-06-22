@@ -4,17 +4,26 @@ import { tutorService } from '@/api/services/tutorService';
 import { normalizeList } from '@/lib/apiData';
 
 function StatusBadge({ status }: { status: string }) {
-  switch (status) {
-    case 'completed':
+  switch (status?.toUpperCase()) {
+    case 'SELESAI':
+    case 'COMPLETED':
       return (
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
           <CheckCircle2 className="w-3 h-3" /> Selesai
         </span>
       );
-    case 'cancelled':
+    case 'DIBATALKAN':
+    case 'CANCELLED':
       return (
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-50 text-red-600 border border-red-100">
           <XCircle className="w-3 h-3" /> Dibatalkan
+        </span>
+      );
+    case 'DITOLAK':
+    case 'REJECTED':
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-orange-50 text-orange-600 border border-orange-100">
+          <XCircle className="w-3 h-3" /> Ditolak
         </span>
       );
     default:
@@ -85,7 +94,16 @@ export default function TutorHistoryPage() {
           </div>
         ) : (
           history.map((item, index) => {
-            const slots = (item.slots as Array<Record<string, string>>) || [];
+            // Slots: handle both object {start_time, end_time} and legacy string format
+            const rawSlots = (item.slots as Array<unknown>) || [];
+            const slots = rawSlots.map((s) => {
+              if (typeof s === 'string') {
+                // Legacy format: "10:20 - 11:10"
+                const parts = s.split(' - ');
+                return { start_time: parts[0] ?? s, end_time: parts[1] ?? s };
+              }
+              return s as Record<string, string>;
+            });
 
             // Date formatting
             let dateText = 'Tanggal tidak tersedia';
@@ -103,22 +121,19 @@ export default function TutorHistoryPage() {
             if (slots.length > 0) {
               const start = slots[0].start_time;
               const end = slots[slots.length - 1].end_time;
-              timeText = `${start} – ${end} WIB`;
+              if (start && end) timeText = `${start} – ${end} WIB`;
             }
 
             // Duration in slots (1 slot = 1 hour typically)
             const durationText = slots.length > 0 ? `${slots.length} jam` : null;
 
-            // Learner info
+            // Learner info — BE returns learner as {name, avatar} object
             const learner = item.learner as Record<string, unknown> | undefined;
-            const learnerUser = learner?.user as Record<string, unknown> | undefined;
-            const learnerName = (learnerUser?.name ?? learner?.name ?? item.title ?? 'Siswa') as string;
-            const learnerInitials = learnerName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase();
-            const learnerAvatar = (learner?.avatar ?? learnerUser?.avatar) as string | undefined;
+            const learnerName = (learner?.name ?? item.title ?? 'Siswa') as string;
+            const learnerAvatar = learner?.avatar as string | undefined;
 
-            // Course info
-            const course = item.course as Record<string, unknown> | undefined;
-            const courseName = (course?.name ?? item.detail ?? '-') as string;
+            // Course info — BE returns course as plain string
+            const courseName = (typeof item.course === 'string' ? item.course : (item.course as Record<string, unknown>)?.name ?? item.detail ?? '-') as string;
 
             // Status
             const status = (item.status as string) ?? '';
