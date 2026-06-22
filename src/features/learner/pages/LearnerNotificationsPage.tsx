@@ -156,9 +156,21 @@ export default function LearnerNotificationsPage() {
                     }`}>
                       {(item.message as string) ?? (item.body as string) ?? '—'}
                     </p>
-                    <p className="mt-3 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                    <p className="mt-3 text-[11px] font-bold uppercase tracking-widest text-slate-400">
                       {(item.time_ago as string) ?? (item.time as string) ?? (item.created_at as string) ?? '—'}
                     </p>
+
+                    {/* Tombol Mulai Belajar */}
+                    {type === 'payment' && (
+                      <div className="mt-4">
+                        <Link 
+                          to="/learner/schedules"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl shadow-sm transition-colors"
+                        >
+                          Mulai Belajar <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    )}
 
                     {/* Tombol Akses Cepat Panel Tutor */}
                     {type === 'application' && ((item.title as string)?.toLowerCase().includes('selamat') || (item.title as string)?.toLowerCase().includes('disetujui')) && (

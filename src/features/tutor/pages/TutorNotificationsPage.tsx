@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { BellRing, CalendarCheck, Clock, GraduationCap, Star, Wallet } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { BellRing, CalendarCheck, Clock, GraduationCap, Star, Wallet, ArrowRight } from 'lucide-react';
 import { tutorService } from '@/api/services/tutorService';
 import { normalizeList } from '@/lib/apiData';
 
@@ -124,9 +125,21 @@ export default function TutorNotificationsPage() {
                     }`}>
                       {(item.message as string) ?? (item.body as string) ?? '—'}
                     </p>
-                    <p className="mt-3 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                     <p className="mt-3 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                       {(item.time_ago as string) ?? (item.time as string) ?? (item.created_at as string) ?? '—'}
                     </p>
+
+                    {/* Tombol Cek Booking */}
+                    {type === 'booking' && (
+                      <div className="mt-4">
+                        <Link 
+                          to="/tutor/bookings"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 dark:bg-brand-500/20 dark:hover:bg-brand-500/30 text-white dark:text-brand-400 text-xs font-bold rounded-xl shadow-sm transition-colors"
+                        >
+                          Cek Booking <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
