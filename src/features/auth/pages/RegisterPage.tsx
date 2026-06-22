@@ -81,7 +81,7 @@ export default function RegisterPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="nim" className="text-slate-900 dark:text-white text-xs font-semibold">NIM</Label>
-                  <Input id="nim" placeholder="123456789" value={nim} onChange={(event) => setNim(event.target.value)} className="bg-white dark:bg-bgSecondary text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-textSecondary/50 border border-slate-300 dark:border-brand-500/20 h-9 text-sm" required />
+                  <Input id="nim" placeholder="A11202415836" value={nim} onChange={(event) => setNim(event.target.value.replace(/\./g, ''))} className="bg-white dark:bg-bgSecondary text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-textSecondary/50 border border-slate-300 dark:border-brand-500/20 h-9 text-sm" required />
                 </div>
               </div>
               <div className="space-y-1.5">

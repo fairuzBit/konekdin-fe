@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { formatNIM } from '@/lib/nimHelper';
 import { 
   CheckCircle2, 
   Pencil, 
@@ -252,7 +253,7 @@ export default function TutorProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {[
               { label: 'Nama', value: formData.name || tutorName },
-              { label: 'NIM', value: formData.nim },
+              { label: 'NIM', value: formatNIM(formData.nim) },
               { label: 'Jurusan', value: 'Teknik Informatika' },
               { label: 'Fakultas', value: 'Ilmu Komputer' },
               { label: 'Email', value: tutor?.email || 'email@example.com' },
@@ -314,10 +315,10 @@ export default function TutorProfilePage() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-textSecondary mb-1.5">NIM</label>
-                    <input 
+                     <input 
                       type="text" 
                       value={formData.nim} 
-                      onChange={(e) => handleInputChange('nim', e.target.value)}
+                      onChange={(e) => handleInputChange('nim', e.target.value.replace(/\./g, ''))}
                       className="w-full rounded-xl p-3 bg-bgPrimary border border-borderColor focus:border-brand-500 outline-none text-textPrimary font-medium text-sm transition-colors"
                     />
                   </div>

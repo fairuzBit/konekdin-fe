@@ -104,6 +104,11 @@ class LearnerService {
     });
   }
 
+  async markAllNotificationsAsRead() {
+    const response = await apiClient.post('/learner/notifications/read-all');
+    return response.data;
+  }
+
   async createBooking(payload: Record<string, unknown>) {
     const response = await apiClient.post('/learner/bookings', payload);
     return response.data;

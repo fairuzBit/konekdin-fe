@@ -392,7 +392,7 @@ export default function LearnerBookingDetailPage() {
                 <button
                   onClick={handleConfirm}
                   disabled={isProcessing}
-                  className="btn-glass-primary w-full py-4 font-bold rounded-xl flex items-center justify-center gap-2 mb-3 disabled:opacity-50"
+                  className="w-full py-4 font-bold rounded-xl flex items-center justify-center gap-2 mb-3 disabled:opacity-50 bg-emerald-500 hover:bg-emerald-600 text-white transition-all shadow-md"
                 >
                   {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Selesaikan Pembayaran'}
                 </button>

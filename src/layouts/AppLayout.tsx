@@ -2,6 +2,7 @@ import { useState, useEffect, type ElementType, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Bell, ChevronRight, GraduationCap, LogOut, Menu, X, ArrowLeft, Sun, Moon } from 'lucide-react';
 import { useAuth, getRoleLabel } from '@/context/AuthContext';
+import apiClient from '@/api/axios';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -18,6 +19,7 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   
   // Theme state
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -42,6 +44,55 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
     await logout();
     navigate('/login', { replace: true });
   };
+
+  // Poll for notifications
+  useEffect(() => {
+    if (!user) return;
+    if (panelRole !== 'Learner' && panelRole !== 'Tutor') return;
+
+    const checkNotifications = async () => {
+      try {
+        let unread = false;
+        if (panelRole === 'Learner') {
+          const res = await apiClient.get('/learner/notification');
+          const list = res.data.data || res.data || [];
+          unread = list.some((n: any) => !n.is_read);
+        } else if (panelRole === 'Tutor') {
+          const res = await apiClient.get('/tutor/notifications');
+          const list = res.data.data || res.data || [];
+          unread = list.some((n: any) => !n.is_read);
+        }
+        setHasUnreadNotifications(unread);
+      } catch (err) {
+        console.error("Failed to check notifications", err);
+      }
+    };
+
+    checkNotifications();
+    const interval = setInterval(checkNotifications, 10000);
+    return () => clearInterval(interval);
+  }, [panelRole, user]);
+
+  // Mark all as read when opening notifications page
+  useEffect(() => {
+    if (!user) return;
+
+    const markAsRead = async () => {
+      try {
+        if (panelRole === 'Learner' && location.pathname === '/learner/notifications') {
+          await apiClient.post('/learner/notifications/read-all');
+          setHasUnreadNotifications(false);
+        } else if (panelRole === 'Tutor' && location.pathname === '/tutor/notifications') {
+          await apiClient.post('/tutor/notifications/read-all');
+          setHasUnreadNotifications(false);
+        }
+      } catch (err) {
+        console.error("Failed to mark notifications as read", err);
+      }
+    };
+
+    markAsRead();
+  }, [location.pathname, panelRole, user]);
 
   const roleLabel = getRoleLabel(user);
 
@@ -121,6 +172,7 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
             {navigation.map((item) => {
               const Icon = item.icon;
               const active = location.pathname === item.to;
+              const isNotificationLink = item.label === 'Notifikasi';
 
               return (
                 <Link
@@ -135,7 +187,12 @@ export default function AppLayout({ children, navigation, panelRole }: AppLayout
                       : 'text-textSecondary dark:text-slate-300 hover:bg-bgPrimary hover:text-textPrimary dark:hover:text-white dark:hover:bg-slate-800/50'
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
+                  <div className="relative">
+                    <Icon className="h-4 w-4" />
+                    {isNotificationLink && hasUnreadNotifications && (
+                      <span className="absolute -top-1 -right-1 flex h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-900 animate-pulse" />
+                    )}
+                  </div>
                   {item.label}
                 </Link>
               );

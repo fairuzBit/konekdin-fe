@@ -107,6 +107,11 @@ class TutorService {
     });
   }
 
+  async markAllNotificationsAsRead() {
+    const response = await apiClient.post('/tutor/notifications/read-all');
+    return response.data;
+  }
+
   async upgradeSemester(payload: FormData | Record<string, unknown>) {
     const config = payload instanceof FormData 
       ? { headers: { 'Content-Type': 'multipart/form-data' } }

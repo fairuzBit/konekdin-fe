@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, type FormEvent } from 'react';
 import { Building2, FileText, Pencil, CalendarDays, History, ArrowLeft, GraduationCap, Check, X } from 'lucide-react';
+import { formatNIM } from '@/lib/nimHelper';
 import { Card } from '@/components/ui/card';
 import { learnerService } from '@/api/services/learnerService';
 import { adminService } from '@/api/services/adminService';
@@ -248,7 +249,7 @@ export default function LearnerProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {[
               { label: 'Nama', value: profile.name },
-              { label: 'NIM', value: profile.nim },
+              { label: 'NIM', value: formatNIM(profile.nim) },
               { label: 'Jurusan', value: 'Teknik Informatika' },
               { label: 'Fakultas', value: 'Ilmu Komputer' },
               { label: 'Email', value: profile.email },
@@ -314,7 +315,7 @@ export default function LearnerProfilePage() {
                     <input 
                       type="text" 
                       value={profile.nim} 
-                      onChange={(e) => setProfile(prev => ({ ...prev, nim: e.target.value }))}
+                      onChange={(e) => setProfile(prev => ({ ...prev, nim: e.target.value.replace(/\./g, '') }))}
                       className="w-full rounded-xl p-3 bg-bgPrimary border border-borderColor focus:border-brand-500 outline-none text-textPrimary font-medium text-sm transition-colors"
                     />
                   </div>
