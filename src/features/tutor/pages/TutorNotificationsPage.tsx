@@ -76,19 +76,19 @@ export default function TutorNotificationsPage() {
         ) : null}
 
         {!loading && !error && Object.entries(
-          notifications.reduce((acc, item) => {
+          notifications.reduce<Record<string, Array<any>>>((acc, item) => {
             const group = (item.group as string) || 'TERBARU';
             if (!acc[group]) acc[group] = [];
             acc[group].push(item);
             return acc;
-          }, {} as Record<string, typeof notifications>)
+          }, {})
         ).map(([group, groupNotifications]) => (
           <div key={group} className="mb-8 space-y-4">
             <h3 className="text-xs font-black text-slate-500 dark:text-slate-400 tracking-widest uppercase pl-4 mb-4">
               {group}
             </h3>
             
-            {groupNotifications.map((item, index) => {
+            {(groupNotifications as Array<any>).map((item: any, index: number) => {
               const type = (item.type as string) || 'default';
               const { icon: Icon, style } = getNotificationIcon(type);
               const isRead = item.is_read === true || item.is_read === 1;
