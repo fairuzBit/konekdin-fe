@@ -28,11 +28,19 @@ export default function AdminActivitiesPage() {
 
   const filteredLogs = logs.filter((log) => {
     const query = searchQuery.toLowerCase();
+    let detailsString = '';
+    if (log.details) {
+      if (typeof log.details === 'object') {
+        detailsString = `${log.details.rating || ''} ${log.details.comment || ''} ${JSON.stringify(log.details)}`;
+      } else {
+        detailsString = String(log.details);
+      }
+    }
     return (
       (log.admin_name?.toLowerCase() || '').includes(query) ||
       (log.action?.toLowerCase() || '').includes(query) ||
       (log.reason?.toLowerCase() || '').includes(query) ||
-      (log.details?.toLowerCase() || '').includes(query)
+      detailsString.toLowerCase().includes(query)
     );
   });
 
@@ -127,9 +135,17 @@ export default function AdminActivitiesPage() {
                       <td className="p-5 text-sm text-textPrimary max-w-md">
                         <p className="font-bold text-textSecondary mb-0.5">Alasan: {log.reason || '-'}</p>
                         {log.details && (
-                          <p className="text-xs text-textSecondary font-medium leading-relaxed bg-bgPrimary/50 p-2.5 rounded-xl border border-borderColor/20 mt-1.5 font-mono">
-                            {log.details}
-                          </p>
+                          <div className="text-xs text-textSecondary font-medium leading-relaxed bg-bgPrimary/50 p-2.5 rounded-xl border border-borderColor/20 mt-1.5 font-mono">
+                            {typeof log.details === 'object' ? (
+                              <>
+                                {log.details.rating && <div className="mb-1">⭐ {log.details.rating}</div>}
+                                {log.details.comment && <div>Ulasan: "{log.details.comment}"</div>}
+                                {!log.details.rating && !log.details.comment && JSON.stringify(log.details)}
+                              </>
+                            ) : (
+                              log.details
+                            )}
+                          </div>
                         )}
                       </td>
                     </tr>
